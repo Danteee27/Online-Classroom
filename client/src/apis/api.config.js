@@ -1,0 +1,1 @@
+exports.baseUrl = "https://awp-authentication-production.up.railway.app/";
