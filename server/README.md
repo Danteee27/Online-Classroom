@@ -100,3 +100,52 @@ docker compose -f docker-compose.ci.yaml --env-file env-example -p ci up --build
 ```bash
 docker run --rm jordi/ab -n 100 -c 100 -T application/json -H "Authorization: Bearer USER_TOKEN" -v 2 http://<server_ip>:3000/api/v1/users
 ```
+
+### Auth via email flow
+
+By default boilerplate used sign in and sign up via email and password.
+
+```mermaid
+sequenceDiagram
+    participant A as Fronted App (Web, Mobile, Desktop)
+    participant B as Backend App
+
+    A->>B: 1. Sign up via email and password
+    A->>B: 2. Sign in via email and password
+    B->>A: 3. Get a JWT token
+    A->>B: 4. Make any requests using a JWT token
+```
+
+### Auth via external services or social networks flow
+
+Also you can sign up via another external services or social networks like Apple, Facebook, Google, and Twitter.
+
+```mermaid
+sequenceDiagram
+    participant B as External Auth Services (Apple, Google, etc)
+    participant A as Fronted App (Web, Mobile, Desktop)
+    participant C as Backend App
+
+    A->>B: 1. Sign in through an external service
+    B->>A: 2. Get Access Token
+    A->>C: 3. Send Access Token to auth endpoint
+    C->>A: 4. Get a JWT token
+    A->>C: 5. Make any requests using a JWT token
+```
+
+For auth with external services or social networks you need:
+
+1. Sign in through an external service and get access token(s).
+2. Call one of endpoints with access token received in frontend app on 1-st step and get JWT token from the backend app.
+
+   ```text
+   POST /api/v1/auth/facebook/login
+
+   POST /api/v1/auth/google/login
+
+   POST /api/v1/auth/twitter/login
+
+   POST /api/v1/auth/apple/login
+   ```
+
+3. Make any requests using a JWT token
