@@ -1,1 +1,1 @@
-exports.baseUrl = "https://awp-authentication-production.up.railway.app/";
+exports.baseUrl = "http://localhost:3000/";
