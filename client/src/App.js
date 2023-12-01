@@ -9,6 +9,7 @@ import axios from "axios";
 import {baseUrl} from "./apis/api.config";
 import VerificationSent from "./components/pages/VerificationSent";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
+import {StyledEngineProvider} from "@mui/material";
 
 const theme = createTheme({
     palette: {
@@ -30,7 +31,7 @@ function App() {
     axios.defaults.baseURL = baseUrl;
 
     return (
-        <ThemeProvider theme={theme}>
+        <StyledEngineProvider injectFirst><ThemeProvider theme={theme}>
             <ToastContainer
                 position="top-right"
                 autoClose={4000}
@@ -50,7 +51,7 @@ function App() {
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/" element={<Navigate to="/login" replace={true}/>}/>
             </Routes>
-        </ThemeProvider>
+        </ThemeProvider></StyledEngineProvider>
     );
 }
 

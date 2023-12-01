@@ -11,7 +11,8 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import {Copyright} from "../Copyright";
-import PrimarySearchAppBar from "../PrimarySearchAppBar";
+import PrimarySearchAppBar from "../layouts/PrimarySearchAppBar";
+import MiniDrawer from "../layouts/MiniDrawer";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function Home() {
 
     return (
         <div>
-            <PrimarySearchAppBar></PrimarySearchAppBar>
+            <MiniDrawer></MiniDrawer>
             <CssBaseline/>
             <Box
                 sx={{
