@@ -11,6 +11,7 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import {Copyright} from "../Copyright";
+import PrimarySearchAppBar from "../PrimarySearchAppBar";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -36,7 +37,8 @@ export default function Home() {
     const username = localStorage.getItem("username");
 
     return (
-        <Container component="main" maxWidth="xs">
+        <div>
+            <PrimarySearchAppBar></PrimarySearchAppBar>
             <CssBaseline/>
             <Box
                 sx={{
@@ -66,6 +68,6 @@ export default function Home() {
                 </Button>
             </Box>
             <Copyright sx={{mt: 8, mb: 4}}/>
-        </Container>
+        </div>
     );
 }

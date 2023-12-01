@@ -8,12 +8,29 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import {baseUrl} from "./apis/api.config";
 import VerificationSent from "./components/pages/VerificationSent";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
+
+const theme = createTheme({
+    palette: {
+        mode: 'light',
+        primary: {
+            main: '#ffffff',
+        },
+        secondary: {
+            main: '#185acb',
+            light: '#73a6ff',
+        },
+        text: {
+            primary: '#5f6368',
+        },
+    },
+});
 
 function App() {
     axios.defaults.baseURL = baseUrl;
 
     return (
-        <div>
+        <ThemeProvider theme={theme}>
             <ToastContainer
                 position="top-right"
                 autoClose={4000}
@@ -33,7 +50,7 @@ function App() {
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/" element={<Navigate to="/login" replace={true}/>}/>
             </Routes>
-        </div>
+        </ThemeProvider>
     );
 }
 
