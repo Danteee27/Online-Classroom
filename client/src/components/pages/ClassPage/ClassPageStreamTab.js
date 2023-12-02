@@ -1,12 +1,9 @@
 import * as React from 'react';
 import {IconButton, Paper, useTheme} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {CropFree, InfoOutlined, MoreVert, Repeat} from "@mui/icons-material";
+import {CropFree, InfoOutlined, MoreVert} from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import EmptyConversation from "../../misc/EmptyConversation";
@@ -82,7 +79,15 @@ export default function ClassPageStreamTab() {
     </Box>)
 
     const rightColumn = (<Box>
-        <Box sx={{boxShadow: 3, p: 2,border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <Box sx={{
+            boxShadow: 3,
+            p: 2,
+            border: '0.0625rem solid rgb(218,220,224)',
+            borderRadius: 2,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+        }}>
             <Box sx={{gap: 1, display: 'flex', alignItems: 'center'}}><Avatar/>
                 <Typography
                     sx={{fontSize: '.8125rem', fontColor: 'rgba(0,0,0,.549)'}}>
@@ -96,10 +101,10 @@ export default function ClassPageStreamTab() {
                 </svg>
             </IconButton>
         </Box>
-        <Box mt={3} sx={{px: 4, py: 4 ,border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex'}}>
-       <EmptyConversation style={{width: '150px'}}/>
+        <Box mt={3} sx={{px: 4, py: 4, border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex'}}>
+            <EmptyConversation style={{width: '150px'}}/>
             <div style={{marginLeft: '4ch'}}><Typography variant={'h5'}
-                             sx={{fontFamily: 'Google',  color: theme.palette.primary.main}}>
+                                                         sx={{fontFamily: 'Google', color: theme.palette.primary.main}}>
                 This is where you can talk to your class
             </Typography>
                 <Typography variant={'subtitle2'}
