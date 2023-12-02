@@ -2,7 +2,6 @@ import * as React from 'react';
 import {styled} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
 import List from '@mui/material/List';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
@@ -11,23 +10,17 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import PrimaryAppBar from "./PrimarySearchAppBar";
 import {
-    ArchiveOutlined,
+    ArchiveOutlined, ArrowDownward, ArrowDropDown, ArrowLeft, ArrowRight,
+    AssignmentOutlined,
     CalendarToday,
-    Home,
-    HomeMax,
-    HomeMini,
-    HomeOutlined,
-    HomeRounded,
-    HomeWorkOutlined,
-    SchoolOutlined, Settings, SettingsOutlined
+    ExpandLess,
+    ExpandMore,
+    SchoolOutlined
 } from "@mui/icons-material";
 import '../../App.css';
-import * as PropTypes from "prop-types";
-import {SvgIcon} from "@mui/material";
+import {Collapse} from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -88,6 +81,7 @@ function DrawerItem(props) {
             }}
             onClick={props.onClick}
         >
+            <ListItemIcon sx={{minWidth: '1.25rem', margin: '0 0 0 -1.25rem', padding: 0}}>{props.left}</ListItemIcon>
             <ListItemIcon
                 sx={{
                     minWidth: 0,
@@ -106,6 +100,12 @@ function DrawerItem(props) {
 }
 
 export default function MiniDrawer() {
+    const [openEnrolled, setOpenEnrolled] = React.useState(true);
+
+    const handleEnrolledClick = () => {
+        setOpenEnrolled(!openEnrolled);
+    };
+
     const [open, setOpen] = React.useState(false);
 
     const handleDrawerOpenOrClosed = () => {
@@ -133,8 +133,18 @@ export default function MiniDrawer() {
                     title={'Enrolled'}
                     icon={(<SchoolOutlined/>)}
                     open={open}
-                    onClick={() => {
-                    }}/>
+                    left={openEnrolled ? <ArrowDropDown sx={{fontSize: 20}}/> : <ArrowRight sx={{fontSize: 20}}/>}
+                    onClick={handleEnrolledClick}/>
+        <Collapse in={openEnrolled} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+                <DrawerItem key={'Todo'}
+                            title={'To-do'}
+                            icon={(<AssignmentOutlined/>)}
+                            open={open}
+                            onClick={() => {
+                            }}/>
+            </List>
+        </Collapse>
         <Divider/>
         <DrawerItem key={'Archived'}
                     title={'Archived Class'}
