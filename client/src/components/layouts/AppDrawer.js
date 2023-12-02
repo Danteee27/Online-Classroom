@@ -81,7 +81,7 @@ function DrawerItem(props) {
             </ListItemIcon>
             <ListItemText
                 disableTypography
-                primary={<Typography style={{fontFamily: "Google"}}>{props.title}</Typography>}
+                primary={<Typography style={{fontFamily: "Google", fontSize: '0.875rem', fontWeight:500}}>{props.title}</Typography>}
                 sx={{opacity: props.open ? 1 : 0}}/>
         </ListItemButton>
     </ListItem>;

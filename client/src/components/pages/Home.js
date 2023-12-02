@@ -15,27 +15,8 @@ import PrimarySearchAppBar from "../layouts/PrimaryAppBar";
 import AppLayout from "../layouts/AppLayout";
 
 export default function Home() {
-    const navigate = useNavigate();
 
-    const handleLogout = async (e) => {
-        e.preventDefault();
 
-        try {
-            const response = await axios.post(
-                "api/auth/logout",
-                {}
-            );
-            console.log("Log out successfully", response.data);
-            localStorage.setItem("isAuthenticated", "0");
-            navigate("/");
-            // Add any additional logic or redirection after successful logout
-        } catch (error) {
-            console.error("Error logging in", error.response.data);
-            // Handle errors, display messages, etc.
-        }
-    };
-
-    const username = localStorage.getItem("username");
 
     return (
         <div>
@@ -46,27 +27,9 @@ export default function Home() {
                     flexDirection: 'column',
                     alignItems: 'center',
                 }}>
-                <Avatar
-                    sx={{width: 56, height: 56}}></Avatar>
-                <br/>
-                <Typography component="h1" variant="h5">
-                    Welcome {username ?? 'N/A'}!
-                </Typography>
                 This is a homepage :D
-                <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    color={"error"}
-                    sx={{mt: 3, mb: 2}}
-                    onClick={handleLogout}
-                >
-                    Logout
-                </Button>
             </Box></AppLayout>
             <CssBaseline/>
-
-            <Copyright sx={{mt: 8, mb: 4}}/>
         </div>
     );
 }
