@@ -42,7 +42,7 @@ function App() {
     axios.defaults.baseURL = baseUrl;
 
     return (
-        <StyledEngineProvider injectFirst><ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
             <ToastContainer
                 position="top-right"
                 autoClose={4000}
@@ -62,7 +62,7 @@ function App() {
                 <Route path="/home" element={<Home/>}/>
                 <Route path="/" element={<Navigate to="/login" replace={true}/>}/>
             </Routes>
-        </ThemeProvider></StyledEngineProvider>
+        </ThemeProvider>
     );
 }
 
