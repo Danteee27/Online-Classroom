@@ -2,7 +2,7 @@ import './App.css';
 import SignIn from "./components/pages/SignIn.js";
 import {Navigate, Route, Routes} from "react-router-dom";
 import SignUp from "./components/pages/SignUp";
-import Home from "./components/pages/Home";
+import MainPage from "./components/pages/MainPage";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -59,7 +59,7 @@ function App() {
                 <Route path="/login" element={<SignIn/>}/>
                 <Route path="/signup" element={<SignUp/>}/>
                 <Route path="/verificationSent" element={<VerificationSent/>}/>
-                <Route path="/home" element={<Home/>}/>
+                <Route path="/home" element={<MainPage/>}/>
                 <Route path="/" element={<Navigate to="/login" replace={true}/>}/>
             </Routes>
         </ThemeProvider>

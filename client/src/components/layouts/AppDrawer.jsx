@@ -100,7 +100,7 @@ function DrawerItem(props) {
 }
 
 
-export default function AppDrawer({open}) {
+export default function AppDrawer({open, setPage}) {
     const theme = useTheme();
 
     const role = 'teacher';
@@ -121,7 +121,6 @@ export default function AppDrawer({open}) {
         setOpenEnrolled(!openEnrolled);
     };
 
-
     const drawerList = (<List sx={{paddingTop: '4rem'}}>
 
         <DrawerItem key={'Home'}
@@ -130,14 +129,12 @@ export default function AppDrawer({open}) {
                         <path fill='#5f6368' d="M12 3L4 9v12h16V9l-8-6zm6 16h-3v-6H9v6H6v-9l6-4.5 6 4.5v9z"></path>
                     </svg>)}
                     open={open}
-                    onClick={() => {
-                    }}/>
+                    onClick={() => setPage('home')}/>
         <DrawerItem key={'Calendar'}
                     title={'Calendar'}
                     icon={(<CalendarToday/>)}
                     open={open}
-                    onClick={() => {
-                    }}/>
+                    onClick={() => setPage('calendar')}/>
         <Divider/>
         {
             role === 'student' &&
@@ -154,8 +151,7 @@ export default function AppDrawer({open}) {
                                     title={'To-do'}
                                     icon={(<AssignmentOutlined/>)}
                                     open={open}
-                                    onClick={() => {
-                                    }}/>
+                                    onClick={() => setPage('todo')}/>
                     </List>
                 </Collapse>
                 <Divider/></>
@@ -171,7 +167,8 @@ export default function AppDrawer({open}) {
                                     d="M17 15.62c-1.67 0-5 .84-5 2.5V20h10v-1.88c0-1.66-3.33-2.5-5-2.5zM10 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm1.82 9.17c.01 0 0 0 0 0zM10 13c-2.67 0-8 1.34-8 4v3h8v-2H4v-.99c.2-.72 3.3-2.01 6-2.01.6 0 1.22.07 1.82.17h.01l2.07-1.55c-1.39-.41-2.85-.62-3.9-.62z"></path>
                             </svg>)}
                             open={open}
-                            left={openEnrolled ? <ArrowDropDown sx={{fontSize: 20}}/> : <ArrowRight sx={{fontSize: 20}}/>}
+                            left={open && openEnrolled ? <ArrowDropDown sx={{fontSize: 20}}/> :
+                                <ArrowRight sx={{fontSize: 20}}/>}
                             onClick={handleEnrolledClick}/>
                 <Collapse in={openEnrolled} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
@@ -179,8 +176,7 @@ export default function AppDrawer({open}) {
                                     title={'To-review'}
                                     icon={(<SourceOutlined/>)}
                                     open={open}
-                                    onClick={() => {
-                                    }}/>
+                                    onClick={() => setPage('toreview')}/>
                         {open && classes.map((item) => (
                             <DrawerItem key={item.className}
                                         title={item.className}
@@ -194,8 +190,7 @@ export default function AppDrawer({open}) {
                                             background: theme.palette.primary.main
                                         }}> {item.className[0]}</Avatar>)}
                                         open={open}
-                                        onClick={() => {
-                                        }}
+                                        onClick={() => setPage('class')}
                                         subtitle={item.classSubject}
                             />
 
@@ -208,15 +203,13 @@ export default function AppDrawer({open}) {
                     title={'Archived Class'}
                     icon={(<ArchiveOutlined/>)}
                     open={open}
-                    onClick={() => {
-                    }}/>
+                    onClick={() => setPage('archivedClasses')}/>
 
         <DrawerItem key={'Settings'}
                     title={'Settings'}
                     icon={(<Settings/>)}
                     open={open}
-                    onClick={() => {
-                    }}/>
+                    onClick={() => setPage('settings')}/>
     </List>);
 
     return (<Drawer variant="permanent" open={open}>
