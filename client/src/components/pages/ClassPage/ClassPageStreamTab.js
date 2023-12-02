@@ -9,6 +9,8 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
+import EmptyConversation from "../../misc/EmptyConversation";
+import Settings from "../../misc/Settings";
 
 export default function ClassPageStreamTab() {
     const classCode = "cl75z6n";
@@ -66,7 +68,6 @@ export default function ClassPageStreamTab() {
             <Button sx={{
                 textTransform: 'none',
                 fontWeight: 600,
-                alignContent: 'end',
                 mb: -1,
                 mr: -1,
                 ml: 'auto',
@@ -95,8 +96,27 @@ export default function ClassPageStreamTab() {
                 </svg>
             </IconButton>
         </Box>
-        <Box mt={3} sx={{border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2}}>
-            This is where you can talk to your class
+        <Box mt={3} sx={{px: 4, py: 4 ,border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex'}}>
+       <EmptyConversation style={{width: '150px'}}/>
+            <div style={{marginLeft: '4ch'}}><Typography variant={'h5'}
+                             sx={{fontFamily: 'Google',  color: theme.palette.primary.main}}>
+                This is where you can talk to your class
+            </Typography>
+                <Typography variant={'subtitle2'}
+                            sx={{fontFamily: 'Google'}}>
+                    Use the stream to share announcements, post assignments, and respond to student questions
+                </Typography>
+                <Button sx={{
+                    textTransform: 'none', fontFamily: 'Google', border: '0.0625rem solid rgb(218,220,224)',
+                    mb: -1,
+                    mr: -1,
+                    ml: 'auto',
+                    display: 'flex', alignItems: 'center'
+                }}>
+                    <Settings fill={theme.palette.primary.main} style={{width: '20px', marginRight: '1ch'}}/>
+                    Stream settings
+                </Button>
+            </div>
         </Box>
     </Box>)
 
