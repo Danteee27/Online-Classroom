@@ -1,7 +1,8 @@
 import * as React from 'react';
 import {IconButton, Tab, Tabs} from "@mui/material";
 import Box from "@mui/material/Box";
-import TabPanel from "../TabPanel";
+import TabPanel from "../../TabPanel";
+import ClassPageStreamTab from "./ClassPageStreamTab";
 
 
 export default function ClassPage() {
@@ -42,7 +43,7 @@ export default function ClassPage() {
                 </Box>
             </div>
             <TabPanel value={value} index={0}>
-                Item One
+                <ClassPageStreamTab/>
             </TabPanel>
             <TabPanel value={value} index={1}>
                 Item Two
