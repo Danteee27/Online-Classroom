@@ -11,8 +11,8 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
 import {Copyright} from "../Copyright";
-import PrimarySearchAppBar from "../layouts/PrimarySearchAppBar";
-import MiniDrawer from "../layouts/MiniDrawer";
+import PrimarySearchAppBar from "../layouts/PrimaryAppBar";
+import AppLayout from "../layouts/AppLayout";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -39,17 +39,13 @@ export default function Home() {
 
     return (
         <div>
-            <MiniDrawer></MiniDrawer>
-            <CssBaseline/>
-            <Box
+            <AppLayout><Box
                 sx={{
                     marginTop: 8,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                }}
-            >
-
+                }}>
                 <Avatar
                     sx={{width: 56, height: 56}}></Avatar>
                 <br/>
@@ -67,7 +63,9 @@ export default function Home() {
                 >
                     Logout
                 </Button>
-            </Box>
+            </Box></AppLayout>
+            <CssBaseline/>
+
             <Copyright sx={{mt: 8, mb: 4}}/>
         </div>
     );
