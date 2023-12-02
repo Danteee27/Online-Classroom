@@ -1,13 +1,14 @@
 import * as React from 'react';
 import {IconButton, Paper, useTheme} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {CropFree, InfoOutlined, MoreVert} from "@mui/icons-material";
+import {CropFree, InfoOutlined, MoreVert, Repeat} from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
 
 export default function ClassPageStreamTab() {
     const classCode = "cl75z6n";
@@ -80,8 +81,19 @@ export default function ClassPageStreamTab() {
     </Box>)
 
     const rightColumn = (<Box>
-        <Box sx={{border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2}}>
-            Announce something to your class
+        <Box sx={{boxShadow: 3, p: 2,border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+            <Box sx={{gap: 1, display: 'flex', alignItems: 'center'}}><Avatar/>
+                <Typography
+                    sx={{fontSize: '.8125rem', fontColor: 'rgba(0,0,0,.549)'}}>
+                    Announce something to your class
+                </Typography></Box>
+            <IconButton>
+                <svg fill='#5f6368' focusable="false" width="24" height="24" viewBox="0 0 24 24" className=" NMm5M">
+                    <path d="M19 5H4v6h2V7h13M5 19h15v-6h-2v4H5"></path>
+                    <path
+                        d="M16.29 10.71l-1.41-1.42L18.17 6l-3.29-3.29 1.41-1.42L21 6zm-8.58 12L3 18l4.71-4.71 1.41 1.42L5.83 18l3.29 3.29z"></path>
+                </svg>
+            </IconButton>
         </Box>
         <Box mt={3} sx={{border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2}}>
             This is where you can talk to your class
