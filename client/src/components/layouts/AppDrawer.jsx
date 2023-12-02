@@ -106,13 +106,16 @@ export default function AppDrawer({open, setPage}) {
     const role = 'teacher';
     const classes = [{
         className: '2310-CLC-AWP-20KTPM2',
-        classSubject: 'Advanced Web Programming'
+        classSubject: 'Advanced Web Programming',
+        teacher: 'Michael'
     }, {
         className: '2310-CLC-DSA-20KTPM1',
-        classSubject: 'Data Structure and Algorithm'
+        classSubject: 'Data Structure and Algorithm',
+        teacher: 'Jack'
     }, {
         className: '2310-CLC-ML-20KTPM2',
-        classSubject: 'Machine Learning'
+        classSubject: 'Machine Learning',
+        teacher: 'Son'
     }];
 
     const [openEnrolled, setOpenEnrolled] = React.useState(true);
