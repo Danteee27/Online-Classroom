@@ -23,7 +23,7 @@ export default function PrimaryAppBar({onClick}) {
 
     return (
         <AppBar elevation={0}
-                sx={{borderBottom: '1px solid lightgrey', zIndex: (theme) => theme.zIndex.drawer + 1}}>
+                sx={{borderBottom: '0.0625rem solid rgb(218,220,224)', zIndex: (theme) => theme.zIndex.drawer + 1, height:'4rem'}}>
             <Toolbar>
                 <IconButton
                     size="large"
@@ -35,7 +35,7 @@ export default function PrimaryAppBar({onClick}) {
                 >
                     <MenuIcon/>
                 </IconButton>
-                <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                <Typography variant="h5" component="div" sx={{flexGrow: 1, fontFamily:'Google'}}>
                     Classroom
                 </Typography>
                 <div>

@@ -15,7 +15,8 @@ const theme = createTheme({
     palette: {
         mode: 'light',
         primary: {
-            main: '#ffffff',
+            contrastText: '#5f6368',
+            main: '#185acb',
         },
         secondary: {
             main: '#185acb',
@@ -24,6 +25,16 @@ const theme = createTheme({
         text: {
             primary: '#5f6368',
         },
+    },
+    components:{
+        MuiAppBar:{
+            styleOverrides:{
+                colorPrimary:{
+                    backgroundColor: 'white',
+                    backgroundImage: 'unset'
+                },
+            }
+        }
     },
 });
 
