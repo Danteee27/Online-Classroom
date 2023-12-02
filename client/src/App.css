@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: "Google";
+  src: local("Google"), url("../public/fonts/GoogleSans/ProductSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Google";
+  src: local("Google"), url("../public/fonts/GoogleSans/ProductSans-Bold.ttf") format("truetype");
+  font-weight: 500;
+}

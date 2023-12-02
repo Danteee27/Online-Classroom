@@ -4,7 +4,7 @@ import * as React from "react";
 
 export function Copyright(props) {
     return (
-        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+        <Typography variant="caption" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
             <Link color="inherit">
                 AWP Online Classroom
