@@ -14,23 +14,16 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import {Logout} from "@mui/icons-material";
+import {Add, Logout} from "@mui/icons-material";
+import {MenuItem} from "@mui/material";
+import AddClassButton from "./AddClassButton";
 
 export default function PrimaryAppBar({onClick}) {
-
-    const [anchorEl, setAnchorEl] = React.useState(null);
 
     const username = localStorage.getItem("username");
     const email = localStorage.getItem("email");
 
-    const handleMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
+    const [anchorEl, setAnchorEl] = React.useState(null);
     const navigate = useNavigate();
 
     const handleLogout = async (e) => {
@@ -56,7 +49,7 @@ export default function PrimaryAppBar({onClick}) {
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
-        onClose={handleClose}
+        onClose={() => setAnchorEl(null)}
         elevation={0}
         sx={
             {
@@ -159,15 +152,16 @@ export default function PrimaryAppBar({onClick}) {
                     Classroom
                 </Typography>
                 <div>
+                    <AddClassButton/>
                     <IconButton
                         size="small"
                         aria-label="account of current user"
                         aria-controls="menu-appbar"
                         aria-haspopup="true"
-                        onClick={handleMenu}
+                        onClick={(e) => setAnchorEl(e.currentTarget)}
                         color="inherit"
                     >
-                        <Avatar onClick={handleMenu}/>
+                        <Avatar/>
                     </IconButton>
                     {menu}
                 </div>
