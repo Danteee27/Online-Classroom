@@ -3,16 +3,19 @@ import {Card, CardActionArea, CardActions, CardContent, CardMedia, IconButton} f
 import Typography from "@mui/material/Typography";
 import {FolderOpenOutlined, MoreVert, TrendingUp} from "@mui/icons-material";
 import Avatar from "@mui/material/Avatar";
+import {useNavigate} from "react-router-dom";
 
 
 function ClassItem({className, classSubject, teacherName, avatar}) {
+    const navigate = useNavigate();
+
     return (<Card sx={{
         position: 'relative',
         borderRadius: 2,
         boxShadow: 0,
         border: '0.0625rem solid rgb(218,220,224)'
     }}>
-        <CardActionArea>
+        <CardActionArea onClick={()=> navigate('/u/class')}>
             <CardMedia
                 component="img"
                 height="100"

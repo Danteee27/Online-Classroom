@@ -1,7 +1,7 @@
 import * as React from 'react';
-import {IconButton, Paper, useTheme} from "@mui/material";
+import {IconButton, Paper, Tooltip, useTheme} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {CropFree, InfoOutlined, MoreVert} from "@mui/icons-material";
+import {ContentCopy, InfoOutlined, MoreVert} from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -40,7 +40,7 @@ export default function ClassPageStreamTab() {
         <Box sx={{border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, padding: '1ch 2ch'}}>
             <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 < Typography variant={'subtitle2'} sx={{fontFamily: 'Google', justifyContent: 'space-between'}}>
-                    Class code
+                    Class invite link
                 </Typography>
                 <IconButton><MoreVert/></IconButton>
             </Box>
@@ -52,7 +52,7 @@ export default function ClassPageStreamTab() {
                                 alignContent: 'end'
                             }}>{classCode}
                 </Typography>
-                <IconButton><CropFree sx={{color: theme.palette.primary.main}}/></IconButton>
+                <Tooltip title={'copy'}><IconButton><ContentCopy sx={{color: theme.palette.primary.main}}/></IconButton></Tooltip>
             </Box>
         </Box>
         <Box sx={{border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, padding: 2, mt: 3}}>
