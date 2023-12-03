@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import TabPanel from "../../TabPanel";
 import ClassPageStreamTab from "./ClassPageStreamTab";
 import Settings from "../../misc/Settings";
+import ClassPagePeopleTab from "./ClassPagePeopleTab";
 
 
 export default function ClassPage() {
@@ -45,7 +46,7 @@ export default function ClassPage() {
                 Item Two
             </TabPanel>
             <TabPanel value={value} index={2}>
-                Item Three
+                <ClassPagePeopleTab/>
             </TabPanel>
             <TabPanel value={value} index={3}>
                 Item Four
