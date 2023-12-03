@@ -170,7 +170,7 @@ export default function ClassPagePeopleTab() {
                     <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                         <Button onClick={() => setInviteStudentAnchorEl(null)} color={'inherit'}
                                 sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>
-                        <Button type={"submit"}
+                        <Button type={"submit"} disabled={studentEmails.length === 0}
                                 sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Invite</Button>
                     </div>
                 </Box>
@@ -217,7 +217,7 @@ export default function ClassPagePeopleTab() {
                     <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                         <Button onClick={() => setInviteTeacherAnchorEl(null)} color={'inherit'}
                                 sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>
-                        <Button type={"submit"}
+                        <Button type={"submit"} disabled={teacherEmails.length === 0}
                                 sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Invite</Button>
                     </div>
                 </Box>
