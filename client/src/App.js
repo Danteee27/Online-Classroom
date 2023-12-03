@@ -1,6 +1,6 @@
 import './App.css';
 import SignIn from "./components/pages/SignIn.js";
-import {Navigate, Outlet, Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import SignUp from "./components/pages/SignUp";
 import AppLayout from "./components/pages/AppLayout";
 import {ToastContainer} from "react-toastify";
@@ -9,7 +9,6 @@ import axios from "axios";
 import {baseUrl} from "./apis/api.config";
 import VerificationSent from "./components/pages/VerificationSent";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
-import {StyledEngineProvider} from "@mui/material";
 import ClassPage from "./components/pages/ClassPage/ClassPage";
 import HomePage from "./components/pages/HomePage";
 
@@ -41,9 +40,9 @@ const theme = createTheme({
 });
 
 const toast = ( <ToastContainer
-    position="top-right"
-    autoClose={4000}
-    hideProgressBar={false}
+    position="bottom-left"
+    autoClose={1500}
+    hideProgressBar={true}
     newestOnTop={false}
     closeOnClick
     rtl={false}
