@@ -1,8 +1,8 @@
 import './App.css';
 import SignIn from "./components/pages/SignIn.js";
-import {Navigate, Route, Routes} from "react-router-dom";
+import {Navigate, Outlet, Route, Routes} from "react-router-dom";
 import SignUp from "./components/pages/SignUp";
-import MainPage from "./components/pages/MainPage";
+import AppLayout from "./components/pages/AppLayout";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -10,6 +10,8 @@ import {baseUrl} from "./apis/api.config";
 import VerificationSent from "./components/pages/VerificationSent";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import {StyledEngineProvider} from "@mui/material";
+import ClassPage from "./components/pages/ClassPage/ClassPage";
+import HomePage from "./components/pages/HomePage";
 
 const theme = createTheme({
     palette: {
@@ -38,29 +40,38 @@ const theme = createTheme({
     },
 });
 
+const toast = ( <ToastContainer
+    position="top-right"
+    autoClose={4000}
+    hideProgressBar={false}
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    draggable
+    pauseOnHover
+    theme="light"
+/>);
+
 function App() {
     axios.defaults.baseURL = baseUrl;
 
     return (
         <ThemeProvider theme={theme}>
-            <ToastContainer
-                position="top-right"
-                autoClose={4000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-            />
+            {toast}
             <Routes>
+                <Route path="/" element={<Navigate to="/login" replace={true}/>}/>
                 <Route path="/login" element={<SignIn/>}/>
                 <Route path="/signup" element={<SignUp/>}/>
                 <Route path="/verificationSent" element={<VerificationSent/>}/>
-                <Route path="/home" element={<MainPage/>}/>
-                <Route path="/" element={<Navigate to="/login" replace={true}/>}/>
+                <Route path="/u" element={<AppLayout/>}>
+                    <Route path="home" element={<HomePage/>}/>
+                    <Route path="class" element={<ClassPage/>}/>
+                    <Route path="calendar" element={<div/>}/>
+                    <Route path="toreview" element={<div/>}/>
+                    <Route path="archivedClasses" element={<div/>}/>
+                    <Route path="settings" element={<div/>}/>
+                </Route>
             </Routes>
         </ThemeProvider>
     );

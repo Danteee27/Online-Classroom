@@ -6,6 +6,7 @@ import PrimaryAppBar from "../layouts/PrimaryAppBar";
 import AppDrawer from "../layouts/AppDrawer";
 import {styled} from "@mui/material/styles";
 import HomePage from "./HomePage";
+import {Outlet} from "react-router-dom";
 
 const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
@@ -16,9 +17,8 @@ const DrawerHeader = styled('div')(({theme}) => ({
     ...theme.mixins.toolbar,
 }));
 
-export default function MainPage() {
+export default function AppLayout() {
     const [openDrawer, setOpenDrawer] = React.useState(false);
-    const [page, setPage] = React.useState('home');
 
     return (
         <div>
@@ -26,11 +26,10 @@ export default function MainPage() {
             <Box sx={{display: 'flex'}}>
                 <CssBaseline/>
                 <PrimaryAppBar onClick={() => setOpenDrawer(!openDrawer)}/>
-                <AppDrawer open={openDrawer} setPage={setPage}/>
+                <AppDrawer open={openDrawer}/>
                 <Box component="main" sx={{flexGrow: 1, p: 0}}>
                     <DrawerHeader/>
-                    {page === 'class' && <ClassPage/>}
-                    {page === 'home' && <HomePage/>}
+                    <Outlet/>
                 </Box>
             </Box>
         </div>

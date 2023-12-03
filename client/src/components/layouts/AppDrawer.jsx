@@ -20,6 +20,7 @@ import {styled} from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import Settings from "../misc/Settings";
 import Avatar from "@mui/material/Avatar";
+import {useNavigate} from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -100,8 +101,9 @@ function DrawerItem(props) {
 }
 
 
-export default function AppDrawer({open, setPage}) {
+export default function AppDrawer({open}) {
     const theme = useTheme();
+    const navigate = useNavigate();
 
     const role = 'teacher';
     const classes = [{
@@ -132,12 +134,12 @@ export default function AppDrawer({open, setPage}) {
                         <path fill='#5f6368' d="M12 3L4 9v12h16V9l-8-6zm6 16h-3v-6H9v6H6v-9l6-4.5 6 4.5v9z"></path>
                     </svg>)}
                     open={open}
-                    onClick={() => setPage('home')}/>
+                    onClick={() => navigate('home')}/>
         <DrawerItem key={'Calendar'}
                     title={'Calendar'}
                     icon={(<CalendarToday/>)}
                     open={open}
-                    onClick={() => setPage('calendar')}/>
+                    onClick={() => navigate('calendar')}/>
         <Divider/>
         {
             role === 'student' &&
@@ -154,7 +156,7 @@ export default function AppDrawer({open, setPage}) {
                                     title={'To-do'}
                                     icon={(<AssignmentOutlined/>)}
                                     open={open}
-                                    onClick={() => setPage('todo')}/>
+                                    onClick={() => navigate('todo')}/>
                     </List>
                 </Collapse>
                 <Divider/></>
@@ -179,7 +181,7 @@ export default function AppDrawer({open, setPage}) {
                                     title={'To-review'}
                                     icon={(<SourceOutlined/>)}
                                     open={open}
-                                    onClick={() => setPage('toreview')}/>
+                                    onClick={() => navigate('toreview')}/>
                         {open && classes.map((item) => (
                             <DrawerItem key={item.className}
                                         title={item.className}
@@ -193,7 +195,7 @@ export default function AppDrawer({open, setPage}) {
                                             background: theme.palette.primary.main
                                         }}> {item.className[0]}</Avatar>)}
                                         open={open}
-                                        onClick={() => setPage('class')}
+                                        onClick={() => navigate('class')}
                                         subtitle={item.classSubject}
                             />
 
@@ -206,13 +208,13 @@ export default function AppDrawer({open, setPage}) {
                     title={'Archived Class'}
                     icon={(<ArchiveOutlined/>)}
                     open={open}
-                    onClick={() => setPage('archivedClasses')}/>
+                    onClick={() => navigate('archivedClasses')}/>
 
         <DrawerItem key={'Settings'}
                     title={'Settings'}
                     icon={(<Settings/>)}
                     open={open}
-                    onClick={() => setPage('settings')}/>
+                    onClick={() => navigate('settings')}/>
     </List>);
 
     return (<Drawer variant="permanent" open={open}>
