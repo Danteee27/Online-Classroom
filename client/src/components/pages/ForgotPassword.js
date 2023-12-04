@@ -1,15 +1,40 @@
+import { Divider } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
+import Link from "@mui/material/Link";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "react-toastify";
 import { Copyright } from "../Copyright";
+import axios from "axios";
 
-export default function VerificationSent({ hash }) {
+export default function ForgotPassword() {
   const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = new FormData(e.currentTarget);
+
+    const formData = {
+      email: data.get("email"),
+    };
+
+    try {
+      const response = await axios.post(
+        "api/v1/auth/forgot/password",
+        formData
+      );
+
+      console.log("Sent forgot password email", response.data);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <Container
@@ -41,22 +66,39 @@ export default function VerificationSent({ hash }) {
           }}
         >
           <Typography component="h1" variant="h5">
-            Verification Sent!
+            Forgot Password
           </Typography>
-          <Box component="form" noValidate sx={{ mt: 1 }} width="100%">
-            <Typography component="body1">
-              We have sent an e-mail to you for verification. Follow the link
-              provided to finalize the signup process. Please contact us if you
-              do not receive it within a few minutes.
-            </Typography>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+            width="100%"
+          >
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
             <Button
+              type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={() => navigate("/login")}
             >
-              Back to Login
+              Submit
             </Button>
+            <Divider> OR</Divider>
+            <br />
+
+            <Link href="/login" variant="body2">
+              {"Back to Log In"}
+            </Link>
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />

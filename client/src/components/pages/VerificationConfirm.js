@@ -4,12 +4,28 @@ import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Copyright } from "../Copyright";
+import axios from "axios";
+import { baseUrl } from "../../apis/api.config";
 
-export default function VerificationSent({ hash }) {
+export default function VerificationConfirm() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const confirm = async () => {
+    try {
+      const response = await axios.post(baseUrl + "api/v1/auth/email/confirm", {
+        hash: searchParams.get("hash"),
+      });
+
+      console.log("Confirmed registration", response.data);
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Container
@@ -41,21 +57,19 @@ export default function VerificationSent({ hash }) {
           }}
         >
           <Typography component="h1" variant="h5">
-            Verification Sent!
+            Verification Confirm
           </Typography>
           <Box component="form" noValidate sx={{ mt: 1 }} width="100%">
             <Typography component="body1">
-              We have sent an e-mail to you for verification. Follow the link
-              provided to finalize the signup process. Please contact us if you
-              do not receive it within a few minutes.
+              Thank you. Please click this button to verify your account.
             </Typography>
             <Button
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              onClick={() => navigate("/login")}
+              onClick={confirm}
             >
-              Back to Login
+              Confirm registration
             </Button>
           </Box>
         </Box>

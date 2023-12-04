@@ -220,8 +220,6 @@ export class AuthService {
         hash,
       },
     });
-
-    console.log(hash);
   }
 
   async confirmEmail(hash: string): Promise<void> {

@@ -20,7 +20,7 @@ const GoogleLoginButton = () => {
     const userInfo = await axios.post(baseUrl + "api/v1/auth/google/login", {
       access_token: response.access_token,
     });
-    console.log(userInfo);
+    console.log(userInfo.data);
     // // navigate("/home");
     // localStorage.setItem("isAuthenticated", "1");
     // localStorage.setItem("name", userInfo.name);

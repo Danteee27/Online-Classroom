@@ -40,7 +40,8 @@ export default function SignIn() {
       console.log("Log in successfully", response.data);
       navigate("/home");
       localStorage.setItem("isAuthenticated", "1");
-      localStorage.setItem("username", response.data.username);
+      localStorage.setItem("firstName", response.data.user.firstName);
+      localStorage.setItem("lastName", response.data.user.lastName);
       localStorage.setItem("email", response.data.email);
     } catch (error) {
       toast.error(error.message);
@@ -118,7 +119,7 @@ export default function SignIn() {
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
-              <Link href="#" variant="body2">
+              <Link href="forgotpassword" variant="body2">
                 Forgot password?
               </Link>
             </Box>
