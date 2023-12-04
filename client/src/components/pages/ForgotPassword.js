@@ -24,6 +24,17 @@ export default function ForgotPassword() {
       email: data.get("email"),
     };
 
+    const isEmailValid = (email) => {
+      // Use a regular expression to validate the email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    };
+
+    if (!isEmailValid(formData.email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "api/v1/auth/forgot/password",

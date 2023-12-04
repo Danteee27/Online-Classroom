@@ -48,9 +48,6 @@ const handleSubmit = async (e) => {
     toast.error("Please enter a valid email address.");
     return;
   }
-  if (formData.email === ""){
-    toast.error("Please enter your email.");
-  }
 
   // Validate password
   if (!isPasswordValid(formData.password) || formData.password !== confirmPassword) {
