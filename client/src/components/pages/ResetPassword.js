@@ -24,12 +24,18 @@ export default function ResetPassword() {
     e.preventDefault();
 
     const data = new FormData(e.currentTarget);
+    const isPasswordValid = (password) => {
+      return password.length >= 8 && password.length <= 16;
+    };
 
     const formData = {
       password: data.get("password"),
       confirmPassword: data.get("confirmPassword"),
     };
-
+    if (!isPasswordValid(formData.password) || formData.password !== formData.confirmPassword) {
+      toast.error("Please check your password. It should be between 8 and 16 characters and match the confirm password.");
+      return;
+    }
     try {
       if (formData.confirmPassword !== formData.password) {
         toast.error("Please enter the same password twice.");
