@@ -1,10 +1,10 @@
-import React from "react";
-import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { IconButton } from "@mui/material";
 import { Google } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { baseUrl } from "../apis/api.config";
 
 const GoogleLoginButton = () => {
@@ -16,18 +16,16 @@ const GoogleLoginButton = () => {
   const navigate = useNavigate();
 
   async function onResponseSuccess(response) {
-    console.log(response);
-
-    const userInfo = await axios
-      .get("https://www.googleapis.com/oauth2/v3/userinfo", {
-        headers: { Authorization: `Bearer ${response.access_token}` },
-      })
-      .then((res) => res.data);
-
-    navigate("/home");
-    localStorage.setItem("isAuthenticated", "1");
-    localStorage.setItem("username", userInfo.name);
-    localStorage.setItem("email", userInfo.email);
+    console.log(response.access_token);
+    const userInfo = await axios.post(baseUrl + "api/v1/auth/google/login", {
+      access_token: response.access_token,
+    });
+    console.log(userInfo);
+    // // navigate("/home");
+    // localStorage.setItem("isAuthenticated", "1");
+    // localStorage.setItem("name", userInfo.name);
+    // localStorage.setItem("email", userInfo.email);
+    return;
   }
 
   function onResponseError(response) {
