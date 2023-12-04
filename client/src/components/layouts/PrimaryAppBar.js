@@ -10,28 +10,20 @@ import Avatar from "@mui/material/Avatar";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import {Copyright} from "../Copyright";
-import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import {Logout, Person} from "@mui/icons-material";
+import {Add, Logout} from "@mui/icons-material";
+import {MenuItem} from "@mui/material";
+import AddClassButton from "./AddClassButton";
 
 export default function PrimaryAppBar({onClick}) {
-
-    const [anchorEl, setAnchorEl] = React.useState(null);
 
     const username = localStorage.getItem("username");
     const email = localStorage.getItem("email");
 
-    const handleMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
+    const [anchorEl, setAnchorEl] = React.useState(null);
     const navigate = useNavigate();
 
     const handleLogout = async (e) => {
@@ -51,6 +43,92 @@ export default function PrimaryAppBar({onClick}) {
             // Handle errors, display messages, etc.
         }
     };
+
+    const menu = (<Menu
+        id="menu-appbar"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+        elevation={0}
+        sx={
+            {
+                mt: "1px", "& .MuiMenu-paper":
+                    {backgroundColor: "transparent",},
+            }
+        }
+    >
+        <Box sx={{
+            width: '40dvh',
+            borderRadius: 10,
+            background: '#e9eef6',
+            boxShadow: 2,
+            margin: 2,
+            padding: 3,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+        }}>
+            <Typography component="h6" variant="subtitle2" sx={{fontFamily: 'Google'}}>
+                {email ?? 'N/A'}
+            </Typography>
+            <br/>
+            <Avatar
+                sx={{width: 70, height: 70}}></Avatar>
+            <Typography pt={2} component="h1" variant="h5">
+                Hi, {username ?? 'N/A'}!
+            </Typography>
+            <ListItem disablePadding sx={{display: "block", margin: "1rem 0"}}>
+                <ListItemButton
+                    sx={{
+                        minHeight: 48,
+                        px: 2.5,
+                        background: '#f8fafd',
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        margin: "3px",
+                    }}
+                >
+                    <ListItemText
+                        primary={'Manage your Account'}/>
+                </ListItemButton>
+                <ListItemButton
+                    sx={{
+                        minHeight: 48,
+                        px: 2.5,
+                        background: '#f8fafd',
+                        margin: "3px",
+                    }}
+                >
+                    <ListItemText
+                        primary={'Languages'}/>
+                </ListItemButton>
+                <ListItemButton
+                    sx={{
+                        minHeight: 48,
+                        px: 2.5,
+                        background: '#f8fafd',
+                        borderBottomLeftRadius: 20,
+                        borderBottomRightRadius: 20,
+                        margin: "3px",
+                    }}
+                    onClick={handleLogout}
+                >
+                    <ListItemIcon
+                        sx={{
+                            minWidth: 0,
+                            justifyContent: "center",
+                        }}
+                    >
+                        <Logout/>
+                    </ListItemIcon>
+                    <ListItemText
+                        primary={'Sign out'}/>
+                </ListItemButton>
+            </ListItem>
+            <Copyright/>
+        </Box>
+    </Menu>)
 
     return (
         <AppBar elevation={0}
@@ -74,102 +152,18 @@ export default function PrimaryAppBar({onClick}) {
                     Classroom
                 </Typography>
                 <div>
+                    <AddClassButton/>
                     <IconButton
                         size="small"
                         aria-label="account of current user"
                         aria-controls="menu-appbar"
                         aria-haspopup="true"
-                        onClick={handleMenu}
+                        onClick={(e) => setAnchorEl(e.currentTarget)}
                         color="inherit"
                     >
-                        <Avatar onClick={handleMenu}/>
+                        <Avatar/>
                     </IconButton>
-
-                    <Menu
-                        id="menu-appbar"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                        elevation={0}
-                        sx={
-                            {
-                                mt: "1px", "& .MuiMenu-paper":
-                                    {backgroundColor: "transparent",},
-                            }
-                        }
-                    >
-                        <Box sx={{
-                            width: '40dvh',
-                            borderRadius: 10,
-                            background: '#e9eef6',
-                            boxShadow: 2,
-                            margin: 2,
-                            padding: 3,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center'
-                        }}>
-                            <Typography component="h6" variant="subtitle2" sx={{fontFamily: 'Google'}}>
-                                {email ?? 'N/A'}
-                            </Typography>
-                            <br/>
-                            <Avatar
-                                sx={{width: 70, height: 70}}></Avatar>
-                            <Typography pt={2} component="h1" variant="h5">
-                                Hi, {username ?? 'N/A'}!
-                            </Typography>
-                            <ListItem disablePadding sx={{display: "block", margin: "1rem 0"}}>
-                                <ListItemButton
-                                    sx={{
-                                        minHeight: 48,
-                                        px: 2.5,
-                                        background: '#f8fafd',
-                                        borderTopLeftRadius: 20,
-                                        borderTopRightRadius: 20,
-                                        margin: "3px",
-                                    }}
-                                >
-                                    <ListItemText
-                                        primary={'Manage your Account'}/>
-                                </ListItemButton>
-                                <ListItemButton
-                                    sx={{
-                                        minHeight: 48,
-                                        px: 2.5,
-                                        background: '#f8fafd',
-                                        margin: "3px",
-                                    }}
-                                >
-                                    <ListItemText
-                                        primary={'Settings'}/>
-                                </ListItemButton>
-                                <ListItemButton
-                                    sx={{
-                                        minHeight: 48,
-                                        px: 2.5,
-                                        background: '#f8fafd',
-                                        borderBottomLeftRadius: 20,
-                                        borderBottomRightRadius: 20,
-                                        margin: "3px",
-                                    }}
-                                    onClick={handleLogout}
-                                >
-                                    <ListItemIcon
-                                        sx={{
-                                            minWidth: 0,
-                                            justifyContent: "center",
-                                        }}
-                                    >
-                                        <Logout/>
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={'Sign out'}/>
-                                </ListItemButton>
-                            </ListItem>
-                            <Copyright/>
-                        </Box>
-                    </Menu>
+                    {menu}
                 </div>
             </Toolbar>
         </AppBar>
