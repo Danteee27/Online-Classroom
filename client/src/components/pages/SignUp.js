@@ -18,45 +18,64 @@ import { Copyright } from "../Copyright";
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const isPasswordValid = (password) => {
-    return password.length >= 8 && password.length <= 16;
+
+const isPasswordValid = (password) => {
+  return password.length >= 8 && password.length <= 16;
+};
+
+const isEmailValid = (email) => {
+  // Use a regular expression to validate the email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const data = new FormData(e.currentTarget);
+
+  const formData = {
+    firstName: data.get("firstName"),
+    lastName: data.get("lastName"),
+    password: data.get("password"),
+    email: data.get("email"),
   };
-  
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    const data = new FormData(e.currentTarget);
-  
-    const formData = {
-      firstName: data.get("firstName"),
-      lastName: data.get("lastName"),
-      password: data.get("password"),
-      email: data.get("email"),
-    };
-  
-    const confirmPassword = data.get("confirmPassword");
-  
-    if (!isPasswordValid(formData.password) || formData.password !== confirmPassword) {
-      toast.error("Please check your password. It should be between 8 and 16 characters and match the confirm password.");
-      return;
-    }
-  
-    try {
-      const response = await axios.post(
-        baseUrl + "api/v1/auth/email/register",
-        formData
-      );
-  
-      console.log("Created account successfully", response.data);
-      navigate("/verificationSent");
-      localStorage.setItem("isAuthenticated", "1");
-      localStorage.setItem("firstName", response.data.firstname);
-      localStorage.setItem("lastName", response.data.lastname);
-      localStorage.setItem("email", response.data.email);
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+
+  const confirmPassword = data.get("confirmPassword");
+
+  // Validate email format
+  if (!isEmailValid(formData.email)) {
+    toast.error("Please enter a valid email address.");
+    return;
+  }
+
+  // Validate password
+  if (!isPasswordValid(formData.password) || formData.password !== confirmPassword) {
+    toast.error("Please check your password. It should be between 8 and 16 characters and match the confirm password.");
+    return;
+  }
+
+  if (data.get(confirmPassword) !== formData.password)
+  {
+    toast.error("Your confirm password does not match.")
+  }
+
+  try {
+    const response = await axios.post(
+      baseUrl + "api/v1/auth/email/register",
+      formData
+    );
+
+    console.log("Created account successfully", response.data);
+    navigate("/verificationSent");
+    localStorage.setItem("isAuthenticated", "1");
+    localStorage.setItem("firstName", response.data.firstname);
+    localStorage.setItem("lastName", response.data.lastname);
+    localStorage.setItem("email", response.data.email);
+  } catch (error) {
+    toast.error(error.message);
+  }
+};
 
   return (
     <Container
@@ -145,6 +164,7 @@ export default function SignUp() {
                   type="password"
                   id="confirmPassword"
                   autoComplete="new-password"
+                  
                 />
               </Grid>
               <Grid item xs={12}>
