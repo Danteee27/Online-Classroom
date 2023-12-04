@@ -1,50 +1,26 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { OAuth2Client } from 'google-auth-library';
+import { Injectable } from '@nestjs/common';
+import axios from 'axios';
 import { SocialInterface } from '../social/interfaces/social.interface';
 import { AuthGoogleLoginDto } from './dto/auth-google-login.dto';
-import { AllConfigType } from 'src/config/config.type';
 
 @Injectable()
 export class AuthGoogleService {
-  private google: OAuth2Client;
-
-  constructor(private configService: ConfigService<AllConfigType>) {
-    this.google = new OAuth2Client(
-      configService.get('google.clientId', { infer: true }),
-      configService.get('google.clientSecret', { infer: true }),
-    );
-  }
+  constructor() {}
 
   async getProfileByToken(
     loginDto: AuthGoogleLoginDto,
   ): Promise<SocialInterface> {
-    const ticket = await this.google.verifyIdToken({
-      idToken: loginDto.idToken,
-      audience: [
-        this.configService.getOrThrow('google.clientId', { infer: true }),
-      ],
-    });
-
-    const data = ticket.getPayload();
-
-    if (!data) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            user: 'wrongToken',
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
+    const userInfo = await axios
+      .get('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${loginDto.access_token}` },
+      })
+      .then((res) => res.data);
 
     return {
-      id: data.sub,
-      email: data.email,
-      firstName: data.given_name,
-      lastName: data.family_name,
+      id: userInfo.sub,
+      email: userInfo.email,
+      firstName: userInfo.familyName,
+      lastName: userInfo.givenName,
     };
   }
 }
