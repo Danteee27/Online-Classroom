@@ -14,7 +14,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import {Add, Logout} from "@mui/icons-material";
+import {Add, Height, Logout} from "@mui/icons-material";
 import {MenuItem} from "@mui/material";
 import AddClassButton from "./AddClassButton";
 
@@ -101,7 +101,7 @@ export default function PrimaryAppBar({onClick}) {
                     }}
                 >
                     <ListItemText
-                        primary={'Languages'}/>
+                        primary={'Options'}/>
                 </ListItemButton>
                 <ListItemButton
                     sx={{
@@ -148,6 +148,10 @@ export default function PrimaryAppBar({onClick}) {
                 >
                     <MenuIcon/>
                 </IconButton>
+                <img
+                    style={{height: '40px', marginRight: '1rem'}}
+                    src="https://www.gstatic.com/classroom/logo_square_rounded.svg"
+                />
                 <Typography variant="h5" component="div" sx={{flexGrow: 1, fontFamily: 'Google'}}>
                     Classroom
                 </Typography>
