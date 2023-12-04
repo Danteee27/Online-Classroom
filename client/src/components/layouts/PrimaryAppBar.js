@@ -148,13 +148,14 @@ export default function PrimaryAppBar({onClick}) {
                 >
                     <MenuIcon/>
                 </IconButton>
-                <img
-                    style={{height: '40px', marginRight: '1rem'}}
-                    src="https://www.gstatic.com/classroom/logo_square_rounded.svg"
-                />
-                <Typography variant="h5" component="div" sx={{flexGrow: 1, fontFamily: 'Google'}}>
-                    Classroom
-                </Typography>
+                    <img 
+                        onClick={() => navigate("/u/home")}
+                        style={{height: '40px', marginRight: '1rem'}}
+                        src="https://www.gstatic.com/classroom/logo_square_rounded.svg"
+                    />
+                    <Typography onClick={() => navigate("/u/home")} variant="h5" component="div" sx={{flexGrow: 1, fontFamily: 'Google'}}>
+                        Classroom
+                    </Typography>
                 <div>
                     <AddClassButton/>
                     <IconButton
