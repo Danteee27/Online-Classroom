@@ -32,8 +32,13 @@ export default function ResetPassword() {
       password: data.get("password"),
       confirmPassword: data.get("confirmPassword"),
     };
-    if (!isPasswordValid(formData.password) || formData.password !== formData.confirmPassword) {
-      toast.error("Please check your password. It should be between 8 and 16 characters and match the confirm password.");
+    if (
+      !isPasswordValid(formData.password) ||
+      formData.password !== formData.confirmPassword
+    ) {
+      toast.error(
+        "Please check your password. It should be between 8 and 16 characters and match the confirm password."
+      );
       return;
     }
     try {
@@ -46,8 +51,9 @@ export default function ResetPassword() {
         hash: searchParams.get("hash"),
         password: formData.password,
       });
+      toast("Password reset successfully.");
 
-      console.log("Password reset: ", response.data);
+      navigate("/login");
     } catch (error) {
       toast.error(error.message);
     }
