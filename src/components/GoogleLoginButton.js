@@ -17,14 +17,18 @@ const GoogleLoginButton = () => {
 
   async function onResponseSuccess(response) {
     console.log(response.access_token);
-    const userInfo = await axios.post(baseUrl + "api/v1/auth/google/login", {
-      access_token: response.access_token,
-    });
-    console.log(userInfo.data);
-    // // navigate("/home");
-    // localStorage.setItem("isAuthenticated", "1");
-    // localStorage.setItem("name", userInfo.name);
-    // localStorage.setItem("email", userInfo.email);
+    try {
+      const userInfo = await axios.post(baseUrl + "api/v1/auth/google/login", {
+        access_token: response.access_token,
+      });
+      navigate("/u/home");
+      localStorage.setItem("isAuthenticated", "1");
+      localStorage.setItem("name", userInfo.name);
+      localStorage.setItem("email", userInfo.email);
+    } catch (error) {
+      toast.error(error.message);
+      return;
+    }
     return;
   }
 
