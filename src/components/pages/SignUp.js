@@ -60,7 +60,7 @@ export default function SignUp() {
       return;
     }
 
-    if (data.get(confirmPassword) !== formData.password) {
+    if (confirmPassword !== formData.password) {
       toast.error("Your confirm password does not match.");
       return;
     }
