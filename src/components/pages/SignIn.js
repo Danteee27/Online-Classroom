@@ -38,7 +38,7 @@ export default function SignIn() {
       }
 
       console.log("Log in successfully", response.data);
-      navigate("/home");
+      navigate("/u/home");
       localStorage.setItem("isAuthenticated", "1");
       localStorage.setItem("firstName", response.data.user.firstName);
       localStorage.setItem("lastName", response.data.user.lastName);
