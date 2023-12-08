@@ -6,6 +6,7 @@ import {
     ArrowRight,
     AssignmentOutlined,
     CalendarToday,
+    ManageAccountsOutlined,
     SchoolOutlined,
     SourceOutlined
 } from "@mui/icons-material";
@@ -105,7 +106,7 @@ export default function AppDrawer({open}) {
     const theme = useTheme();
     const navigate = useNavigate();
 
-    const role = 'teacher';
+    const role = 'admin';
     const classes = [{
         className: '2310-CLC-AWP-20KTPM2',
         classSubject: 'Advanced Web Programming',
@@ -202,6 +203,15 @@ export default function AppDrawer({open}) {
                         ))}
                     </List>
                 </Collapse>
+                <Divider/>
+            </>}
+        {
+            role === 'admin' && <>
+                <DrawerItem key={'Manage Accounts'}
+                            title={'Manage Accounts'}
+                            icon={(<ManageAccountsOutlined/>)}
+                            open={open}
+                            onClick={() => navigate('manage')}/>
                 <Divider/>
             </>}
         <DrawerItem key={'Archived'}

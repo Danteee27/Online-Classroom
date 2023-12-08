@@ -14,6 +14,7 @@ import HomePage from "./components/pages/HomePage";
 import VerificationConfirm from "./components/pages/VerificationConfirm.js";
 import ForgotPassword from "./components/pages/ForgotPassword.js";
 import ResetPassword from "./components/pages/ResetPassword.js";
+import ManagePage from "./components/pages/ManagePage";
 
 const theme = createTheme({
   palette: {
@@ -78,6 +79,7 @@ function App() {
           <Route path="toreview" element={<div />} />
           <Route path="archivedClasses" element={<div />} />
           <Route path="settings" element={<div />} />
+          <Route path="manage" element={<ManagePage />} />
         </Route>
       </Routes>
     </ThemeProvider>
