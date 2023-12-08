@@ -2,14 +2,15 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import {
     DataGrid,
+    GridActionsCellItem,
     GridToolbarColumnsButton,
-    GridToolbarContainer, GridToolbarDensitySelector,
+    GridToolbarContainer,
     GridToolbarExport,
     GridToolbarFilterButton
 } from '@mui/x-data-grid';
 import {Chip, LinearProgress, Tooltip} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import {Assignment, Block, Close, Edit, Person, Shield} from "@mui/icons-material";
+import {Assignment, Block, Edit, Person} from "@mui/icons-material";
 import './AccountTable.css';
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
@@ -179,16 +180,31 @@ const columns = [
     {
         field: 'actions',
         type: 'actions',
-        headerName: 'Actions',
         headerClassName: 'app-table-header',
         align: 'center',
         hideable: false,
         flex: 1,
-        renderCell: (cell) =>
-            <>
-                {cell.row.role !== 'admin' && <IconButton><Edit sx={{width: 20, height: 20}}/> </IconButton>}
-            </>
-    }
+        getActions: (cell) => {
+            if (cell.row.isBlocked) {
+                return [<GridActionsCellItem
+                    icon={<Block sx={{fill: '#18a84f'}}/>}
+                    label={'Unban User'}
+                    onClick={() => {
+                    }}
+                    showInMenu
+                    sx={{color: '#18a84f'}}
+                />]
+            } else {
+                return [<GridActionsCellItem
+                    icon={<Block sx={{fill: '#e33327'}}/>}
+                    label={'Ban User'}
+                    onClick={() => {
+                    }}
+                    showInMenu
+                    sx={{color: '#e33327'}}
+                />]
+            }
+    }}
 ];
 
 const rows = [
@@ -258,6 +274,7 @@ export default function AccountTable() {
                         </GridToolbarContainer>
                     ),
                     loadingOverlay: LinearProgress,
+                    moreActionsIcon: () => <IconButton><Edit sx={{width: 20, height: 20}}/></IconButton>
                 }}
             />
         </Box>
