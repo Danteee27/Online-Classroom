@@ -23,7 +23,7 @@ import Settings from "../misc/Settings";
 import Avatar from "@mui/material/Avatar";
 import {useNavigate} from "react-router-dom";
 
-const drawerWidth = 240;
+const drawerWidth = 300;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -106,7 +106,7 @@ export default function AppDrawer({open}) {
     const theme = useTheme();
     const navigate = useNavigate();
 
-    const role = 'admin';
+    const role = 'teacher';
     const classes = [{
         className: '2310-CLC-AWP-20KTPM2',
         classSubject: 'Advanced Web Programming',
@@ -182,7 +182,7 @@ export default function AppDrawer({open}) {
                                     title={'To-review'}
                                     icon={(<SourceOutlined/>)}
                                     open={open}
-                                    onClick={() => navigate('toreview')}/>
+                                    onClick={() => navigate('toReview')}/>
                         {open && classes.map((item) => (
                             <DrawerItem key={item.className}
                                         title={item.className}

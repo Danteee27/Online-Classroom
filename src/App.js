@@ -1,20 +1,21 @@
 import "./App.css";
 import SignIn from "./components/pages/SignIn.js";
-import { Navigate, Route, Routes } from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import SignUp from "./components/pages/SignUp";
 import AppLayout from "./components/pages/AppLayout";
-import { ToastContainer } from "react-toastify";
+import {ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { baseUrl } from "./apis/api.config";
+import {baseUrl} from "./apis/api.config";
 import VerificationSent from "./components/pages/VerificationSent";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
 import ClassPage from "./components/pages/ClassPage/ClassPage";
 import HomePage from "./components/pages/HomePage";
 import VerificationConfirm from "./components/pages/VerificationConfirm.js";
 import ForgotPassword from "./components/pages/ForgotPassword.js";
 import ResetPassword from "./components/pages/ResetPassword.js";
 import ManagePage from "./components/pages/ManagePage";
+import ReviewPage from "./components/pages/ReviewPage/ReviewPage";
 
 const theme = createTheme({
   palette: {
@@ -76,7 +77,7 @@ function App() {
           <Route path="home" element={<HomePage />} />
           <Route path="class" element={<ClassPage />} />
           <Route path="calendar" element={<div />} />
-          <Route path="toreview" element={<div />} />
+          <Route path="toReview" element={<ReviewPage />} />
           <Route path="archivedClasses" element={<div />} />
           <Route path="settings" element={<div />} />
           <Route path="manage" element={<ManagePage />} />
