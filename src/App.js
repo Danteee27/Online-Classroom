@@ -14,7 +14,7 @@ import HomePage from "./components/pages/HomePage";
 import VerificationConfirm from "./components/pages/VerificationConfirm.js";
 import ForgotPassword from "./components/pages/ForgotPassword.js";
 import ResetPassword from "./components/pages/ResetPassword.js";
-import ManagePage from "./components/pages/ManagePage";
+import ManagePage from "./components/pages/ManagePage/ManagePage";
 import ReviewPage from "./components/pages/ReviewPage/ReviewPage";
 
 const theme = createTheme({

@@ -11,7 +11,7 @@ import {
 import {Chip, LinearProgress, Tooltip} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import {Assignment, Block, Edit, Person} from "@mui/icons-material";
-import './AccountTable.css';
+import './ManageAccountsPage.css';
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -73,109 +73,23 @@ const columns = [
         hideable: false
     },
     {
-        field: 'username',
-        headerName: 'Name',
+        field: 'className',
+        headerName: 'Class',
         headerClassName: 'app-table-header',
         flex: 3,
         renderCell: ({row}) => {
             return (<Box sx={{display: 'flex'}}>
-                <Avatar src={row.avatar}/>
                 <Box sx={{ml: '.5rem'}}>
-                    <Typography sx={{fontFamily: 'Google', fontWeight: 500, mb: '-.35rem'}}>{row.username}</Typography>
-                    <Typography component={'a'} href={"mailto:" + row.email} sx={{
+                    <Typography sx={{fontFamily: 'Google', fontWeight: 500, mb: '-.35rem'}}>{row.className}</Typography>
+                    <Typography component={'a'} sx={{
                         fontFamily: 'Google',
                         fontSize: '.8rem',
                         mt: '-.35rem',
                         color: '#9c9c9c'
-                    }}>{row.email}</Typography>
+                    }}>{row.classSubject}</Typography>
                 </Box>
             </Box>)
         }
-    },
-    {
-        field: 'role',
-        headerName: 'Role',
-        headerClassName: 'app-table-header',
-        flex: 1,
-        sortComparator: (role1, role2) => {
-            if (role1 === 'admin') return 1;
-            if (role2 === 'admin') return -1;
-
-            if (role1 === 'teacher') return 1;
-            if (role2 === 'teacher') return -1;
-        },
-        renderCell: renderRole
-    },
-    {
-        field: 'studentId',
-        headerName: 'Student ID',
-        headerClassName: 'app-table-header',
-        flex: 1,
-        renderCell: ({row}) => {
-            return (
-                <>
-                    {row.role !== 'student' &&
-                        <Tooltip title={'Not Student'}>
-                            <Container sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                margin: 0,
-                                padding: 0,
-                                justifyContent: 'center',
-                                width: '100%',
-                                height: '100%',
-                                fontFamily: 'Google',
-                                fontWeight: '500',
-                                fontSize: 15
-                            }}></Container>
-                        </Tooltip>
-                    }
-                    {row.role === 'student' &&
-                        <TextField
-                            placeholder={'Unassigned'}
-                            inputProps={{
-                                style: {
-                                    padding: '0.1rem 0 0 0',
-                                    fontFamily: 'Google',
-                                    fontWeight: '500',
-                                    fontSize: 15,
-                                    textAlign: 'center'
-                                }
-                            }}
-                            sx={{
-                                padding: 0,
-                                margin: 0,
-                                borderColor: 'transparent',
-                                '& label.Mui-focused': {
-                                    color: 'transparent',
-                                },
-                                '& .MuiInput-underline:after': {
-                                    borderBottomColor: 'transparent',
-                                },
-                                '& .MuiOutlinedInput-root': {
-                                    '& fieldset': {
-                                        borderColor: 'transparent',
-                                    },
-                                    '&:hover fieldset': {
-                                        borderColor: 'transparent',
-                                    },
-                                    '&.Mui-focused fieldset': {
-                                        borderColor: 'transparent',
-                                    },
-                                },
-                            }}
-                        />
-                    }
-                </>
-            );
-        }
-    },
-    {
-        field: 'createdAt',
-        headerName: 'Created At',
-        headerClassName: 'app-table-header',
-        type: 'dateTime',
-        flex: 2,
     },
     {
         field: 'actions',
@@ -185,10 +99,10 @@ const columns = [
         hideable: false,
         flex: 1,
         getActions: (cell) => {
-            if (cell.row.isBanned) {
+            if (cell.row.isActive) {
                 return [<GridActionsCellItem
                     icon={<Block/>}
-                    label={'Unban User'}
+                    label={'Activate Class'}
                     onClick={() => { // TODO SET UNBAN USER HERE
                     }}
                     showInMenu
@@ -196,7 +110,7 @@ const columns = [
             } else {
                 return [<GridActionsCellItem
                     icon={<Block sx={{fill: '#e33327'}}/>}
-                    label={'Ban User'}
+                    label={'Deactivate Class'}
                     onClick={() => { // TODO SET BAN USER HERE
                     }}
                     showInMenu
@@ -206,31 +120,26 @@ const columns = [
     }}
 ];
 
-const rows = [
-    {
-        id: 1, username: 'Snow', email: 'Jon@gmail.com', role: 'admin',
-        avatar: 'https://i.natgeofe.com/n/4f5aaece-3300-41a4-b2a8-ed2708a0a27c/domestic-dog_thumb_square.jpg'
-    },
-    {id: 2, username: 'Lannister', email: 'Cersei@gmail.com', role: 'teacher'},
-    {id: 3, username: 'Lannister', email: 'Jaime@gmail.com', role: 'admin'},
-    {id: 4, username: 'Stark', email: 'Arya@gmail.com', role: 'teacher'},
-    {id: 5, username: 'Targaryen', email: 'Daenerys@gmail.com', role: 'student'},
-    {id: 6, username: 'Melisandre', email: null, age: 150, role: 'student'},
-    {id: 7, username: 'Clifford', email: 'Ferrara@gmail.com', role: 'student'},
-    {id: 8, username: 'Frances', email: 'Rossini@gmail.com', role: 'student'},
-    {id: 9, username: 'Roxie', email: 'Harvey@gmail.com', role: 'student'},
-    {id: 10, username: 'Snow', email: 'Jon@gmail.com', role: 'admin'},
-    {id: 12, username: 'Lannister', email: 'Cersei@gmail.com', role: 'teacher'},
-    {id: 13, username: 'Lannister', email: 'Jaime@gmail.com', role: 'admin'},
-    {id: 14, username: 'Stark', email: 'Arya@gmail.com', role: 'teacher'},
-    {id: 15, username: 'Targaryen', email: 'Daenerys@gmail.com', role: 'student'},
-    {id: 16, username: 'Melisandre', email: null, age: 150, role: 'student'},
-    {id: 17, username: 'Clifford', email: 'Ferrara@gmail.com', role: 'student'},
-    {id: 18, username: 'Frances', email: 'Rossini@gmail.com', role: 'student'},
-    {id: 11, username: 'Roxie', email: 'Harvey@gmail.com', role: 'student'},
-];
+const rows = [{
+    id: 1,
+    className: '2310-CLC-AWP-20KTPM2',
+    classSubject: 'Advanced Web Programming',
+    teacher: 'Michael',
+    isActive: true
+}, {
+    id: 2,
+    className: '2310-CLC-DSA-20KTPM1',
+    classSubject: 'Data Structure and Algorithm',
+    teacher: 'Jack',
+    isActive: false
+}, {
+    id: 3,
+    className: '2310-CLC-ML-20KTPM2',
+    classSubject: 'Machine Learning',
+    teacher: 'Son'
+}];
 
-export default function AccountTable() {
+export default function ManageClassesPage() {
     return (
         <Box sx={{
             alignItems: "top",
