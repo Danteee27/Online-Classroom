@@ -185,20 +185,19 @@ const columns = [
         hideable: false,
         flex: 1,
         getActions: (cell) => {
-            if (cell.row.isBlocked) {
+            if (cell.row.isBanned) {
                 return [<GridActionsCellItem
-                    icon={<Block sx={{fill: '#18a84f'}}/>}
+                    icon={<Block/>}
                     label={'Unban User'}
-                    onClick={() => {
+                    onClick={() => { // TODO SET UNBAN USER HERE
                     }}
                     showInMenu
-                    sx={{color: '#18a84f'}}
                 />]
             } else {
                 return [<GridActionsCellItem
                     icon={<Block sx={{fill: '#e33327'}}/>}
                     label={'Ban User'}
-                    onClick={() => {
+                    onClick={() => { // TODO SET BAN USER HERE
                     }}
                     showInMenu
                     sx={{color: '#e33327'}}
