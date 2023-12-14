@@ -21,7 +21,8 @@ import {styled} from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import Settings from "../misc/Settings";
 import Avatar from "@mui/material/Avatar";
-import {useNavigate} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
+import './AppDrawer.css';
 
 const drawerWidth = 300;
 
@@ -65,14 +66,19 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
 );
 
 function DrawerItem(props) {
-    return <ListItem key={props.key} disablePadding sx={{display: "block"}}>
+    return <ListItem
+        component={props.to && NavLink}
+        key={props.key}
+        disablePadding
+        sx={{display: "block", color: "#3c4043 !important"}}
+        to={props.to}
+    >
         <ListItemButton
             sx={{
                 minHeight: 48,
                 justifyContent: props.open ? "initial" : "center",
                 px: 2.5,
             }}
-            onClick={props.onClick}
         >
             <ListItemIcon sx={{minWidth: '1.25rem', margin: '0 0 0 -1.25rem', padding: 0}}>{props.left}</ListItemIcon>
             <ListItemIcon
@@ -135,12 +141,12 @@ export default function AppDrawer({open}) {
                         <path fill='#5f6368' d="M12 3L4 9v12h16V9l-8-6zm6 16h-3v-6H9v6H6v-9l6-4.5 6 4.5v9z"></path>
                     </svg>)}
                     open={open}
-                    onClick={() => navigate('home')}/>
+                    to={'home'}/>
         <DrawerItem key={'Calendar'}
                     title={'Calendar'}
                     icon={(<CalendarToday/>)}
                     open={open}
-                    onClick={() => navigate('calendar')}/>
+                    to={'calendar'}/>
         <Divider/>
         {
             role === 'student' &&
@@ -157,7 +163,7 @@ export default function AppDrawer({open}) {
                                     title={'To-do'}
                                     icon={(<AssignmentOutlined/>)}
                                     open={open}
-                                    onClick={() => navigate('todo')}/>
+                                    to={'todo'}/>
                     </List>
                 </Collapse>
                 <Divider/></>
@@ -182,7 +188,7 @@ export default function AppDrawer({open}) {
                                     title={'To-review'}
                                     icon={(<SourceOutlined/>)}
                                     open={open}
-                                    onClick={() => navigate('toReview')}/>
+                                    to={'toReview'}/>
                         {open && classes.map((item) => (
                             <DrawerItem key={item.className}
                                         title={item.className}
@@ -196,7 +202,7 @@ export default function AppDrawer({open}) {
                                             background: theme.palette.primary.main
                                         }}> {item.className[0]}</Avatar>)}
                                         open={open}
-                                        onClick={() => navigate('class')}
+                                        to={'class'}
                                         subtitle={item.classSubject}
                             />
 
@@ -211,20 +217,20 @@ export default function AppDrawer({open}) {
                             title={'Manage Accounts'}
                             icon={(<ManageAccountsOutlined/>)}
                             open={open}
-                            onClick={() => navigate('manage')}/>
+                            to={'manage'}/>
                 <Divider/>
             </>}
         <DrawerItem key={'Archived'}
                     title={'Archived Class'}
                     icon={(<ArchiveOutlined/>)}
                     open={open}
-                    onClick={() => navigate('archivedClasses')}/>
+                    to={'archivedClasses'}/>
 
         <DrawerItem key={'Settings'}
                     title={'Settings'}
                     icon={(<Settings/>)}
                     open={open}
-                    onClick={() => navigate('settings')}/>
+                    to={'settings'}/>
     </List>);
 
     return (<Drawer variant="permanent" open={open}>

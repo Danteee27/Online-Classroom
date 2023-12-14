@@ -1,0 +1,5 @@
+.active {
+    background-color: rgba(26, 115, 232, .12) !important;
+    border-bottom-right-radius: 100px;
+    border-top-right-radius: 100px;
+}
