@@ -43,6 +43,9 @@ export default function SignIn() {
       localStorage.setItem("firstName", response.data.user.firstName);
       localStorage.setItem("lastName", response.data.user.lastName);
       localStorage.setItem("email", response.data.email);
+      localStorage.setItem("userId", response.data.user.id);
+      localStorage.setItem("role", response.data.user.role.name);
+      localStorage.setItem("token", response.data.token);
     } catch (error) {
       toast.error(error.message);
     }
