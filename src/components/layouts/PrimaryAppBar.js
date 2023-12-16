@@ -39,6 +39,7 @@ export default function PrimaryAppBar({onClick}) {
             localStorage.removeItem("firstName");
             localStorage.removeItem("lastName");
             localStorage.removeItem("email");
+            localStorage.removeItem("userId");
             navigate("/");
             // Add any additional logic or redirection after successful logout
         } catch (error) {
