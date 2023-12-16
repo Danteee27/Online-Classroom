@@ -52,7 +52,7 @@ export default function VerificationSent({ hash }) {
             <Button
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, color:'white' }}
               onClick={() => navigate("/login")}
             >
               Back to Login
