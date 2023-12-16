@@ -31,11 +31,14 @@ export default function PrimaryAppBar({onClick}) {
 
         try {
             const response = await axios.post(
-                "api/auth/logout",
-                {}
+                "api/v1/auth/logout"
             );
             console.log("Log out successfully", response.data);
-            localStorage.setItem("isAuthenticated", "0");
+            localStorage.removeItem("isAuthenticated");
+            localStorage.removeItem("firstName");
+            localStorage.removeItem("lastName");
+            localStorage.removeItem("email");
+            localStorage.removeItem("userId");
             navigate("/");
             // Add any additional logic or redirection after successful logout
         } catch (error) {

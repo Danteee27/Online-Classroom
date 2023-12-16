@@ -23,6 +23,8 @@ import Settings from "../misc/Settings";
 import Avatar from "@mui/material/Avatar";
 import {NavLink, useNavigate} from "react-router-dom";
 import './AppDrawer.css';
+import axios from "axios";
+import {useQuery} from "@tanstack/react-query";
 
 const drawerWidth = 300;
 
@@ -111,28 +113,22 @@ function DrawerItem(props) {
 
 export default function AppDrawer({open}) {
     const theme = useTheme();
-    const navigate = useNavigate();
 
     const role = 'teacher';
-    const classes = [{
-        className: '2310-CLC-AWP-20KTPM2',
-        classSubject: 'Advanced Web Programming',
-        teacher: 'Michael'
-    }, {
-        className: '2310-CLC-DSA-20KTPM1',
-        classSubject: 'Data Structure and Algorithm',
-        teacher: 'Jack'
-    }, {
-        className: '2310-CLC-ML-20KTPM2',
-        classSubject: 'Machine Learning',
-        teacher: 'Son'
-    }];
 
     const [openEnrolled, setOpenEnrolled] = React.useState(true);
-
     const handleEnrolledClick = () => {
         setOpenEnrolled(!openEnrolled);
     };
+
+    const {data: classes} = useQuery(
+        {
+            queryKey: ["classes"],
+            queryFn: async () => {
+                const response = await axios.get(`api/v1/users/${localStorage.getItem('userId')}`);
+                return response.data.classMemberships
+            }
+        });
 
     const drawerList = (<List sx={{paddingTop: '4rem'}}>
 
@@ -165,9 +161,9 @@ export default function AppDrawer({open}) {
                                     icon={(<AssignmentOutlined/>)}
                                     open={open}
                                     to={'todo'}/>
-                        {open && classes.map((item) => (
-                            <DrawerItem key={item.className}
-                                        title={item.className}
+                        {open && classes != null && classes.map((item) => (
+                            <DrawerItem key={item.class.className}
+                                        title={item.class.className}
                                         icon={(<Avatar sx={{
                                             width: 32,
                                             height: 32,
@@ -176,10 +172,10 @@ export default function AppDrawer({open}) {
                                             ml: '-.3rem',
                                             fontWeight: 500,
                                             background: theme.palette.primary.main
-                                        }}> {item.className[0]}</Avatar>)}
+                                        }}> {item.class.className[0]}</Avatar>)}
                                         open={open}
                                         to={'c'}
-                                        subtitle={item.classSubject}
+                                        subtitle={item.class.description}
                             />
                         ))}
                     </List>
@@ -207,9 +203,9 @@ export default function AppDrawer({open}) {
                                     icon={(<SourceOutlined/>)}
                                     open={open}
                                     to={'toReview'}/>
-                        {open && classes.map((item) => (
-                            <DrawerItem key={item.className}
-                                        title={item.className}
+                        {open && classes != null && classes.map((item) => (
+                            <DrawerItem key={item.class.className}
+                                        title={item.class.className}
                                         icon={(<Avatar sx={{
                                             width: 32,
                                             height: 32,
@@ -218,10 +214,10 @@ export default function AppDrawer({open}) {
                                             ml: '-.3rem',
                                             fontWeight: 500,
                                             background: theme.palette.primary.main
-                                        }}> {item.className[0]}</Avatar>)}
+                                        }}> {item.class.className[0]}</Avatar>)}
                                         open={open}
                                         to={'c'}
-                                        subtitle={item.classSubject}
+                                        subtitle={item.class.description}
                             />
                         ))}
                     </List>
@@ -249,7 +245,6 @@ export default function AppDrawer({open}) {
                     open={open}
                     to={'settings'}/>
     </List>);
-
     return (<Drawer variant="permanent" open={open}>
         {drawerList}
     </Drawer>);

@@ -7,6 +7,8 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import axios from "axios";
+import {baseUrl} from "../../apis/api.config";
 
 export default function AddClassButton() {
     const [anchorElMenu, setAnchorElMenu] = React.useState(null);
@@ -43,7 +45,7 @@ export default function AddClassButton() {
         setAnchorElJoinClass(null);
     }
 
-    const handleCreateClass = (event) => {
+    const handleCreateClass = async (event) => {
         event.preventDefault();
 
         setClassNameError(false);
@@ -54,14 +56,13 @@ export default function AddClassButton() {
         }
 
         const data = {
+            userId: localStorage.getItem('userId').toString(),
             className: className,
-            section: section,
-            subject: subject,
-            room: room
+            description: subject,
         }
 
-        // TODO: HANDLE CREATE CLASSROOM HERE
-
+        const response = await axios.post( 'api/v1/classes', data);
+        console.log(response)
         // on complete
         setAnchorElCreateClass(null);
     }
@@ -114,15 +115,9 @@ export default function AddClassButton() {
                                onChange={e => setClassName(e.target.value)}
                                value={className}
                                error={classNameError}/>
-                    <TextField label="Section" variant="filled"
-                               onChange={e => setSection(e.target.value)}
-                               value={section}/>
                     <TextField label="Subject" variant="filled"
                                onChange={e => setSubject(e.target.value)}
                                value={subject}/>
-                    <TextField label="Room" variant="filled"
-                               onChange={e => setRoom(e.target.value)}
-                               value={room}/>
                     <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                         <Button onClick={() => setAnchorElCreateClass(null)} color={'inherit'}
                                 sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>

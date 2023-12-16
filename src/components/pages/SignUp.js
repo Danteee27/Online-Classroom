@@ -73,10 +73,6 @@ export default function SignUp() {
 
       console.log("Created account successfully", response.data);
       navigate("/verificationSent");
-      localStorage.setItem("isAuthenticated", "1");
-      localStorage.setItem("firstName", response.data.firstname);
-      localStorage.setItem("lastName", response.data.lastname);
-      localStorage.setItem("email", response.data.email);
     } catch (error) {
       toast.error(error.message);
     }
@@ -184,7 +180,7 @@ export default function SignUp() {
               type="submit"
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, color:'white' }}
             >
               Sign Up
             </Button>

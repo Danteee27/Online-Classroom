@@ -66,7 +66,7 @@ export default function VerificationConfirm() {
             <Button
               fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, color: 'white' }}
               onClick={confirm}
             >
               Confirm registration
