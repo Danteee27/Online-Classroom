@@ -72,6 +72,7 @@ function DrawerItem(props) {
         disablePadding
         sx={{display: "block", color: "#3c4043 !important"}}
         to={props.to}
+        onClick={props.onClick}
     >
         <ListItemButton
             sx={{
@@ -164,6 +165,23 @@ export default function AppDrawer({open}) {
                                     icon={(<AssignmentOutlined/>)}
                                     open={open}
                                     to={'todo'}/>
+                        {open && classes.map((item) => (
+                            <DrawerItem key={item.className}
+                                        title={item.className}
+                                        icon={(<Avatar sx={{
+                                            width: 32,
+                                            height: 32,
+                                            fontSize: 16,
+                                            fontFamily: 'Google',
+                                            ml: '-.3rem',
+                                            fontWeight: 500,
+                                            background: theme.palette.primary.main
+                                        }}> {item.className[0]}</Avatar>)}
+                                        open={open}
+                                        to={'c'}
+                                        subtitle={item.classSubject}
+                            />
+                        ))}
                     </List>
                 </Collapse>
                 <Divider/></>
@@ -202,10 +220,9 @@ export default function AppDrawer({open}) {
                                             background: theme.palette.primary.main
                                         }}> {item.className[0]}</Avatar>)}
                                         open={open}
-                                        to={'class'}
+                                        to={'c'}
                                         subtitle={item.classSubject}
                             />
-
                         ))}
                     </List>
                 </Collapse>
