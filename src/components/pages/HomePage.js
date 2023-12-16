@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import {FolderOpenOutlined, MoreVert, TrendingUp} from "@mui/icons-material";
 import Avatar from "@mui/material/Avatar";
 import {useNavigate} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+import axios from "axios";
 
 
 function ClassItem({className, classSubject, teacherName, avatar}) {
@@ -15,7 +17,7 @@ function ClassItem({className, classSubject, teacherName, avatar}) {
         boxShadow: 0,
         border: '0.0625rem solid rgb(218,220,224)'
     }}>
-        <CardActionArea onClick={()=> navigate('/u/class')}>
+        <CardActionArea onClick={()=> navigate('/u/c')}>
             <CardMedia
                 component="img"
                 height="100"
@@ -49,19 +51,14 @@ function ClassItem({className, classSubject, teacherName, avatar}) {
 
 export default function HomePage() {
 
-    const classes = [{
-        className: '2310-CLC-AWP-20KTPM2',
-        classSubject: 'Advanced Web Programming',
-        teacher: 'Michael'
-    }, {
-        className: '2310-CLC-DSA-20KTPM1',
-        classSubject: 'Data Structure and Algorithm',
-        teacher: 'Jack'
-    }, {
-        className: '2310-CLC-ML-20KTPM2',
-        classSubject: 'Machine Learning',
-        teacher: 'Son'
-    }];
+    const {data: classes} = useQuery(
+        {
+            queryKey: ["classes"],
+            queryFn: async () => {
+                const response = await axios.get(`api/v1/users/${localStorage.getItem('userId')}`);
+                return response.data.classMemberships
+            }
+        });
 
     return (
         <div style={{
@@ -73,9 +70,9 @@ export default function HomePage() {
         }}>
             {classes.map((item) => (
                 <ClassItem
-                    className={item.className}
-                    classSubject={item.classSubject}
-                    teacherName={item.teacher}
+                    className={item.class.className}
+                    classSubject={item.class.description}
+                    teacherName={item.user.lastName + ' ' + item.user.firstName}
                 />
             ))}
         </div>
