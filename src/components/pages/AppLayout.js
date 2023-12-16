@@ -18,7 +18,7 @@ const DrawerHeader = styled('div')(({theme}) => ({
 }));
 
 export default function AppLayout() {
-    const [openDrawer, setOpenDrawer] = React.useState(false);
+    const [openDrawer, setOpenDrawer] = React.useState(true);
 
     return (
         <div>

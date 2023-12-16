@@ -31,8 +31,7 @@ export default function PrimaryAppBar({onClick}) {
 
         try {
             const response = await axios.post(
-                "api/v1/auth/logout",
-                {}
+                "api/v1/auth/logout"
             );
             console.log("Log out successfully", response.data);
             localStorage.removeItem("isAuthenticated");
