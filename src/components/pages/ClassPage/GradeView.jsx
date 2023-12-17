@@ -1,12 +1,25 @@
 import React from 'react';
-import { Paper, Table, TableBody, Button, TextField, Dialog, TableCell, TableContainer, TableHead, TableRow, Typography, Box, IconButton } from '@mui/material';
-import {NoteAdd, Edit, DeleteForever} from "@mui/icons-material";
+import { Paper, Table, TableBody, Button, TextField, Dialog, TableCell, TableContainer, TableHead, TableRow, Typography, Box, IconButton, Icon } from '@mui/material';
+import {NoteAdd, Edit, DeleteForever, DocumentScanner, Book} from "@mui/icons-material";
 import { useTheme } from '@emotion/react';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 const GradeView = () => {
     const theme = useTheme();
     const [openModal, setOpenModal] = useState(false);
+    const {classId} = useParams();
+    const {data: classDetails} = useQuery(
+        {
+            queryKey: ["class", classId],
+            queryFn: async () => {
+                const response = await axios.get(`api/v1/classes/${classId}`);
+                return response.data
+            }
+        });
+  const assignments = classDetails?.assignments;
 
   const [newAssignment, setNewAssignment] = useState({
     title: '',
@@ -16,6 +29,7 @@ const GradeView = () => {
   });
 
   const handleOpenModal = () => {
+    console.log(assignments);
     setOpenModal(true);
   };
 
@@ -26,20 +40,14 @@ const GradeView = () => {
     console.log('Creating a new assignment', newAssignment);
 
     setNewAssignment({
-      title: '',
+      name: '',
       dueDate: '',
-      percentage: '',
+      maxGrade: '',
       description: '',
     });
 
     handleCloseModal();
   };
-    const assignmentData = [
-        { id: 1, title: 'Essay on World History', dueDate: '2023-12-15', subject: 'History', percentage: 80, description: 'Write an essay on significant events in world history.' },
-        { id: 2, title: 'Mathematics Quiz', dueDate: '2023-12-10', subject: 'Mathematics', percentage: 90, description: 'Solve math problems and submit your answers.' },
-        { id: 3, title: 'Programming Project', dueDate: '2023-12-20', subject: 'Computer Science', percentage: 75, description: 'Develop a small programming project using a language of your choice.' },
-        { id: 4, title: 'Literature Book Review', dueDate: '2023-12-18', subject: 'Literature', percentage: 85, description: 'Read a book and write a review summarizing your thoughts.' },
-      ];
 
   return (
     <Box spacing={3} maxWidth="1000px" marginX="auto">
@@ -61,11 +69,8 @@ const GradeView = () => {
         <TableHead>
           <TableRow>
             <TableCell width="50px" >
-                <Typography variant="subtitle1" fontWeight="bold" sx={{ fontSize: '1rem' }}>
-                    ID
-                </Typography>
             </TableCell>
-            <TableCell width="200px">
+            <TableCell width="200px" >
                 <Typography variant="subtitle1" fontWeight="bold" sx={{ fontSize: '1rem' }}>
                     Title
                 </Typography>
@@ -89,12 +94,12 @@ const GradeView = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {assignmentData.map((assignment) => (
+          {assignments.map((assignment) => (
             <TableRow key={assignment.id}>
-              <TableCell>{assignment.id}</TableCell>
-              <TableCell>{assignment.title}</TableCell>
+              <TableCell><Icon style={{ color: theme.palette.primary.main }}><Book/></Icon></TableCell>
+              <TableCell>{assignment.name}</TableCell>
               <TableCell>{assignment.dueDate}</TableCell>
-              <TableCell align='center'>{assignment.percentage}%</TableCell>
+              <TableCell align='center'>{assignment.maxGrade}%</TableCell>
               <TableCell>{assignment.description}</TableCell>
               <TableCell align='center'>
                 <Box
@@ -105,14 +110,14 @@ const GradeView = () => {
                 >
                   <IconButton
                     size="large"
-                    onClick={() => console.log(`Edit ${assignment.title}`)}
+                    onClick={() => console.log(`Edit ${assignment.name}`)}
                     style={{ color: theme.palette.success.main }}
                   >
                     <Edit />
                   </IconButton>
                   <IconButton
                     size="large"
-                    onClick={() => console.log(`Delete ${assignment.title}`)}
+                    onClick={() => console.log(`Delete ${assignment.name}`)}
                     style={{ color: theme.palette.error.main }}
                   >
                     <DeleteForever />
@@ -133,16 +138,16 @@ const GradeView = () => {
             <TextField
               label="Title"
               fullWidth
-              value={newAssignment.title}
-              onChange={(e) => setNewAssignment({ ...newAssignment, title: e.target.value })}
+              value={newAssignment.name}
+              onChange={(e) => setNewAssignment({ ...newAssignment, name: e.target.value })}
               margin="normal"
             />
             <TextField
               label="Percentage"
               type="number"
               fullWidth
-              value={newAssignment.percentage}
-              onChange={(e) => setNewAssignment({ ...newAssignment, percentage: e.target.value })}
+              value={newAssignment.maxGrade}
+              onChange={(e) => setNewAssignment({ ...newAssignment, maxGrade: e.target.value })}
               margin="normal"
             />
             <TextField

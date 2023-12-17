@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper, Table, TableBody, Button, TextField, Dialog, TableCell, TableContainer, TableHead, TableRow, Typography, Box, IconButton } from '@mui/material';
-import {NoteAdd, Edit, DeleteForever} from "@mui/icons-material";
+import {NoteAdd, Edit, DeleteForever, Download} from "@mui/icons-material";
 import { useTheme } from '@emotion/react';
 import { useState } from 'react';
 
@@ -74,6 +74,9 @@ const students = [
 
 const GradeTable = () => {
     const theme = useTheme();
+    const csvExport = () => {
+
+    }
   return (
     <Box spacing={3} maxWidth="1000px" marginX="auto" overflowX="auto">
 
@@ -86,6 +89,9 @@ const GradeTable = () => {
         marginBottom="1rem"
       >
         <Typography variant="h4" sx={{ fontFamily: 'Google' }}>Grade</Typography>
+        <IconButton size={'large'}
+                        onClick={csvExport()}
+                        sx={{color: theme.palette.primary.main}}><Download/></IconButton>
       </Box>
       <StudentGradesTable assignments={assignments} students={students} />
     </Box>
