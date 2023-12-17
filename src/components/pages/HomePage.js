@@ -7,7 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 
-function ClassItem({ className, classSubject, teacherName, avatar }) {
+function ClassItem({ className, classSubject, teacherName, avatar, classId }) {
     const navigate = useNavigate();
   
     return (
@@ -19,7 +19,7 @@ function ClassItem({ className, classSubject, teacherName, avatar }) {
           border: '0.0625rem solid rgb(218,220,224)',
         }}
       >
-        <CardActionArea onClick={() => navigate('/u/c')}>
+        <CardActionArea onClick={() => navigate('/u/c/' + classId)}>
           <CardMedia
             component="img"
             height="100"
@@ -116,6 +116,7 @@ function ClassItem({ className, classSubject, teacherName, avatar }) {
               className={item.class.className}
               classSubject={item.class.description}
               teacherName={item.user.lastName + ' ' + item.user.firstName}
+              classId={item.class.id}
             />
           ))}
       </div>

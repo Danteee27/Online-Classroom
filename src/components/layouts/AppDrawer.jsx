@@ -174,7 +174,7 @@ export default function AppDrawer({open}) {
                                             background: theme.palette.primary.main
                                         }}> {item.class.className[0]}</Avatar>)}
                                         open={open}
-                                        to={'c'}
+                                        to={'c/'+ item.class.id}
                                         subtitle={item.class.description}
                             />
                         ))}
@@ -216,7 +216,7 @@ export default function AppDrawer({open}) {
                                             background: theme.palette.primary.main
                                         }}> {item.class.className[0]}</Avatar>)}
                                         open={open}
-                                        to={'c'}
+                                        to={'c/'+ item.class.id}
                                         subtitle={item.class.description}
                             />
                         ))}

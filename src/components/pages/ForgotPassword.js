@@ -42,6 +42,7 @@ export default function ForgotPassword() {
       );
 
       console.log("Sent forgot password email", response.data);
+      navigate('/verificationSent')
     } catch (error) {
       toast.error(error.message);
     }

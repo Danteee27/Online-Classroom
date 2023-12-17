@@ -9,50 +9,70 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import {ReactMultiEmail} from 'react-multi-email';
 import 'react-multi-email/dist/style.css';
-import {toast, useToast} from "react-toastify";
+import {toast} from "react-toastify";
+import {useParams} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+import axios from "axios";
 
 export default function ClassPagePeopleTab() {
+
+    const {classId} = useParams();
+    const {data: classDetails} = useQuery(
+        {
+            queryKey: ["class", classId],
+            queryFn: async () => {
+                const response = await axios.get(`api/v1/classes/${classId}`);
+                return response.data
+            }
+        });
+
+    const teachers = classDetails?.classMemberships.filter(member => member.role === "teacher");
+    const students = classDetails?.classMemberships.filter(member => member.role === "student");
     const inviteStudentLink = 'https://a.b.com';
 
-    const teachers = [
-        {
-            name: 'Michael',
-            avatar: 'https://www.princeton.edu/sites/default/files/styles/1x_full_2x_half_crop/public/images/2022/02/KOA_Nassau_2697x1517.jpg?itok=Bg2K7j7J'
-        },
-        {
-            name: 'Jackson',
-            status: 'invited'
-        },
-    ]
-
-    const students = [
-        {
-            name: 'Phat',
-            avatar: 'https://i.natgeofe.com/n/4f5aaece-3300-41a4-b2a8-ed2708a0a27c/domestic-dog_thumb_square.jpg'
-        },
-        {
-            name: 'Anh',
-        },
-        {
-            name: 'Nhat'
-        }
-    ]
-
-    const inviteTeachers = (event) => {
+    const inviteTeachers = async (event) => {
         event.preventDefault();
         const emails = teacherEmails;
 
-        // TODO: HANDLE SEND INVITE LINK TO TEACHERS
+        for (let i = 0; i < emails.length; i++) {
+            const data = {
+                inviterId: localStorage.getItem('userId'),
+                classId: classId,
+                email: emails[i],
+                role: 'teacher'
+            }
+
+            try {
+                const response = await axios.post('api/v1/classes/inviteClassMembership', data)
+                toast.success(`Invited ${emails[i]} successfully!`);
+            } catch (e) {
+                toast.error(e.message)
+            }
+        }
 
         // on complete
         setInviteTeacherAnchorEl(null)
     }
 
-    const inviteStudents = (event) => {
+    const inviteStudents = async (event) => {
         event.preventDefault();
         const emails = studentEmails;
 
-        // TODO: HANDLE SEND INVITE LINK TO TEACHERS
+        for (let i = 0; i < emails.length; i++) {
+            const data = {
+                inviterId: localStorage.getItem('userId'),
+                classId: classId,
+                email: emails[i],
+                role: 'student'
+            }
+
+            try {
+                const response = await axios.post('api/v1/classes/inviteClassMembership', data)
+                toast.success(`Invited ${emails[i]} successfully!`);
+            } catch (e) {
+                toast.error(e.message)
+            }
+        }
 
         // on complete
         setInviteStudentAnchorEl(null)
@@ -235,18 +255,30 @@ export default function ClassPagePeopleTab() {
         >
             <Grid item xs={12}>
                 <TeachersHeader/>
-                {teachers[0] &&
-                    <Person name={teachers[0].name} status={teachers[0].status} avatar={teachers[0].avatar}/>}
-                {teachers.slice(1).map(teacher => {
+                {teachers &&
+                    <Person name={teachers[0]?.user?.firstName + ' ' + teachers[0]?.user?.lastName }
+                            // status={teachers[0].status}
+                            // avatar={teachers[0].avatar}
+                    />}
+                {teachers && teachers.slice(1).map(teacher => {
                     return <div style={{borderTop: '0.0625rem solid rgb(218,220,224)',}}>
-                        <Person name={teacher.name} status={teacher.status} avatar={teacher.avatar}/></div>
+                        <Person name={teacher?.user?.firstName + ' ' + teacher?.user?.lastName }
+                                // status={teacher.status}
+                                // avatar={teacher.avatar}
+                        /></div>
                 })}
                 <StudentsHeader/>
-                {students[0] &&
-                    <Person name={students[0].name} status={students[0].status} avatar={students[0].avatar}/>}
-                {students.slice(1).map(teacher => {
+                {students != null && students.length > 0 &&
+                    <Person name={students[0]?.user?.firstName + ' ' + students[0]?.user?.lastName }
+                            // status={students[0].status}
+                            // avatar={students[0].avatar}
+                    />}
+                {students && students.slice(1).map(student => {
                     return <div style={{borderTop: '0.0625rem solid rgb(218,220,224)',}}>
-                        <Person name={teacher.name} status={teacher.status} avatar={teacher.avatar}/></div>
+                        <Person name={student?.user?.firstName + ' ' + student?.user?.lastName}
+                                // status={teacher.status}
+                                // avatar={teacher.avatar}
+                        /></div>
                 })}
             </Grid>
         </Grid>

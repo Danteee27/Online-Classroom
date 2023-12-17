@@ -8,11 +8,22 @@ import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import EmptyConversation from "../../misc/EmptyConversation";
 import Settings from "../../misc/Settings";
+import {useParams} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+import axios from "axios";
+import {toast} from "react-toastify";
 
 export default function ClassPageStreamTab() {
-    const classCode = "cl75z6n";
-    const className = "2310-CLC-AWP-20KTPM2"
-    const classSubject = "Advanced Web Programming"
+
+    const classId = useParams().classId;
+    const {data: classDetails} = useQuery(
+        {
+            queryKey: ["class", classId],
+            queryFn: async () => {
+                const response = await axios.get(`api/v1/classes/${classId}`);
+                return response.data
+            }
+        });
 
     const theme = useTheme();
     const classCover = (
@@ -26,9 +37,9 @@ export default function ClassPageStreamTab() {
         }}>
             <Box sx={{position: 'absolute', left: '2.5rem', bottom: '1rem'}}>
                 <Typography variant='h4'
-                            sx={{fontFamily: 'Google', fontWeight: 500, color: 'white'}}>{className}</Typography>
+                            sx={{fontFamily: 'Google', fontWeight: 500, color: 'white'}}>{classDetails && classDetails.className}</Typography>
                 <Typography variant='h6'
-                            sx={{fontFamily: 'Google', fontWeight: 500, color: 'white'}}>{classSubject}</Typography>
+                            sx={{fontFamily: 'Google', fontWeight: 500, color: 'white'}}>{classDetails && classDetails.description}</Typography>
             </Box>
             <IconButton sx={{color: 'white', position: 'absolute', right: '.5rem', bottom: '.5rem'}}>
                 <InfoOutlined/>
@@ -40,7 +51,7 @@ export default function ClassPageStreamTab() {
         <Box sx={{border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, padding: '1ch 2ch'}}>
             <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 < Typography variant={'subtitle2'} sx={{fontFamily: 'Google', justifyContent: 'space-between'}}>
-                    Class invite link
+                    Class code
                 </Typography>
                 <IconButton><MoreVert/></IconButton>
             </Box>
@@ -49,10 +60,19 @@ export default function ClassPageStreamTab() {
                             sx={{
                                 fontFamily: 'Google',
                                 color: theme.palette.primary.main,
-                                alignContent: 'end'
-                            }}>{classCode}
+                                alignContent: 'end',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                            }}>{classDetails && classDetails.classCode}
                 </Typography>
-                <Tooltip title={'copy'}><IconButton><ContentCopy sx={{color: theme.palette.primary.main}}/></IconButton></Tooltip>
+                <Tooltip title={'copy'}>
+                    <IconButton onClick={() => {
+                        navigator.clipboard.writeText(classDetails.classCode);
+                        toast.success('Copied successfully!');
+                    }}><ContentCopy sx={{color: theme.palette.primary.main}}/>
+                    </IconButton>
+                </Tooltip>
             </Box>
         </Box>
         <Box sx={{border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, padding: 2, mt: 3}}>

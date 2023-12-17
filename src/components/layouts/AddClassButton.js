@@ -9,6 +9,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import {baseUrl} from "../../apis/api.config";
+import {toast} from "react-toastify";
 
 export default function AddClassButton() {
     const [anchorElMenu, setAnchorElMenu] = React.useState(null);
@@ -25,7 +26,7 @@ export default function AddClassButton() {
     const [classInviteLink, setClassInviteLink] = React.useState("");
     const [classInviteLinkError, setClassInviteLinkError] = React.useState(false);
 
-    const handleJoinClass = (event) => {
+    const handleJoinClass = async (event) => {
         event.preventDefault();
 
         setClassInviteLinkError(false);
@@ -35,11 +36,20 @@ export default function AddClassButton() {
             return;
         }
 
-        const data = {
-            classInviteLink: classInviteLink,
-        }
+        try {
+            const getClassResponse = await axios.get(`api/v1/classes/byClasscode/${classInviteLink}`);
 
-        // TODO: HANDLE JOIN CLASSROOM HERE
+            const classId = getClassResponse.data.id;
+            const data = {
+                userId: localStorage.getItem('userId'),
+                role: 'student'
+            }
+
+            const addClassResponse = await axios.post(`api/v1/classes/${classId}/classMemberships`, data);
+            toast.success(`You have been added to ${getClassResponse.data.className + ' - ' + getClassResponse.data.description}. Welcome to the class!`);
+        } catch (e) {
+            toast.error(e.message)
+        }
 
         // on complete
         setAnchorElJoinClass(null);
@@ -80,7 +90,7 @@ export default function AddClassButton() {
                         margin: '1.25rem',
                     }}
                 ><Typography variant={'h6'} sx={{fontFamily: 'Google', fontSize: 16}}>Join class</Typography>
-                    <TextField label="Class invite link"
+                    <TextField label="Class code"
                                required variant="filled"
                                onChange={e => setClassInviteLink(e.target.value)}
                                value={classInviteLink}
