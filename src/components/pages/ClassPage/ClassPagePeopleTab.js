@@ -16,7 +16,7 @@ import axios from "axios";
 
 export default function ClassPagePeopleTab() {
 
-    const classId = useParams().classId;
+    const {classId} = useParams();
     const {data: classDetails} = useQuery(
         {
             queryKey: ["class", classId],
@@ -54,11 +54,25 @@ export default function ClassPagePeopleTab() {
         setInviteTeacherAnchorEl(null)
     }
 
-    const inviteStudents = (event) => {
+    const inviteStudents = async (event) => {
         event.preventDefault();
         const emails = studentEmails;
 
-        // TODO: HANDLE SEND INVITE LINK TO TEACHERS
+        for (let i = 0; i < emails.length; i++) {
+            const data = {
+                inviterId: localStorage.getItem('userId'),
+                classId: classId,
+                email: emails[i],
+                role: 'student'
+            }
+
+            try {
+                const response = await axios.post('api/v1/classes/inviteClassMembership', data)
+                toast.success(`Invited ${emails[i]} successfully!`);
+            } catch (e) {
+                toast.error(e.message)
+            }
+        }
 
         // on complete
         setInviteStudentAnchorEl(null)
@@ -242,26 +256,26 @@ export default function ClassPagePeopleTab() {
             <Grid item xs={12}>
                 <TeachersHeader/>
                 {teachers &&
-                    <Person name={teachers[0]?.user?.firstName + teachers[0]?.user?.lastName }
+                    <Person name={teachers[0]?.user?.firstName + ' ' + teachers[0]?.user?.lastName }
                             // status={teachers[0].status}
                             // avatar={teachers[0].avatar}
                     />}
                 {teachers && teachers.slice(1).map(teacher => {
                     return <div style={{borderTop: '0.0625rem solid rgb(218,220,224)',}}>
-                        <Person name={teacher?.user?.firstName + teacher?.user?.lastName }
+                        <Person name={teacher?.user?.firstName + ' ' + teacher?.user?.lastName }
                                 // status={teacher.status}
                                 // avatar={teacher.avatar}
                         /></div>
                 })}
                 <StudentsHeader/>
                 {students != null && students.length > 0 &&
-                    <Person name={students[0]?.user?.firstName + students[0]?.user?.lastName }
+                    <Person name={students[0]?.user?.firstName + ' ' + students[0]?.user?.lastName }
                             // status={students[0].status}
                             // avatar={students[0].avatar}
                     />}
                 {students && students.slice(1).map(student => {
                     return <div style={{borderTop: '0.0625rem solid rgb(218,220,224)',}}>
-                        <Person name={student?.user?.firstName + student?.user?.lastName}
+                        <Person name={student?.user?.firstName + ' ' + student?.user?.lastName}
                                 // status={teacher.status}
                                 // avatar={teacher.avatar}
                         /></div>

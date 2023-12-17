@@ -17,6 +17,7 @@ import ResetPassword from "./components/pages/ResetPassword.js";
 import ManagePage from "./components/pages/ManagePage/ManagePage";
 import ReviewPage from "./components/pages/ReviewPage/ReviewPage";
 import AssignmentPage from "./components/pages/AssignmentPage/AssignmentPage";
+import ClassInvitation from "./components/pages/ClassInvitation";
 
 const theme = createTheme({
   palette: {
@@ -74,6 +75,7 @@ function App() {
         <Route path="/verificationConfirm" element={<VerificationConfirm />} />
         <Route path="forgotPassword" element={<ForgotPassword />} />
         <Route path="resetPassword" element={<ResetPassword />} />
+        <Route path="classinvitation" element={<ClassInvitation />} />
         <Route path="/u" element={<AppLayout />}>
           <Route path="home" element={<HomePage />} />
           <Route path="c/:classId" element={<ClassPage />} />
