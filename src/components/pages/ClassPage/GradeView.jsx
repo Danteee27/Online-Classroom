@@ -1,11 +1,42 @@
 import React from 'react';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Box, IconButton } from '@mui/material';
+import { Paper, Table, TableBody, Button, TextField, Dialog, TableCell, TableContainer, TableHead, TableRow, Typography, Box, IconButton } from '@mui/material';
 import {NoteAdd, Edit, DeleteForever} from "@mui/icons-material";
 import { useTheme } from '@emotion/react';
+import { useState } from 'react';
 
 const GradeView = () => {
     const theme = useTheme();
-  // Sample data for the table
+    const [openModal, setOpenModal] = useState(false);
+
+  // Your modal state variables
+  const [newAssignment, setNewAssignment] = useState({
+    title: '',
+    dueDate: '',
+    percentage: '',
+    description: '',
+  });
+
+  // Function to handle opening the modal
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  // Function to handle closing the modal
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+  const handleCreateAssignment = () => {
+    console.log('Creating a new assignment', newAssignment);
+
+    // Reset the state and close the modal
+    setNewAssignment({
+      title: '',
+      dueDate: '',
+      percentage: '',
+      description: '',
+    });
+    handleCloseModal();
+  };
     const assignmentData = [
         { id: 1, title: 'Essay on World History', dueDate: '2023-12-15', subject: 'History', percentage: 80, description: 'Write an essay on significant events in world history.' },
         { id: 2, title: 'Mathematics Quiz', dueDate: '2023-12-10', subject: 'Mathematics', percentage: 90, description: 'Solve math problems and submit your answers.' },
@@ -25,7 +56,7 @@ const GradeView = () => {
       >
         <Typography variant="h4" sx={{ fontFamily: 'Google' }}>Assignments</Typography>
         <IconButton size={'large'}
-                        onClick={(e) => (null)}
+                        onClick={(e) => handleOpenModal()}
                         sx={{color: theme.palette.primary.main}}><NoteAdd/></IconButton>
       </Box>
       <TableContainer component={Paper}>
@@ -96,6 +127,54 @@ const GradeView = () => {
         </TableBody>
       </Table>
     </TableContainer>
+
+    <Dialog open={openModal} onClose={handleCloseModal}>
+        <Box p={2} sx={{ maxWidth: '400px' }}>
+          <Typography variant="h6" gutterBottom>
+            Create New Assignment
+          </Typography>
+          <TextField
+            label="Title"
+            fullWidth
+            value={newAssignment.title}
+            onChange={(e) => setNewAssignment({ ...newAssignment, title: e.target.value })}
+            margin="normal"
+          />
+          <TextField
+            label="Due Date"
+            type="date"
+            fullWidth
+            value={newAssignment.dueDate}
+            onChange={(e) => setNewAssignment({ ...newAssignment, dueDate: e.target.value })}
+            margin="normal"
+          />
+          <TextField
+            label="Percentage"
+            type="number"
+            fullWidth
+            value={newAssignment.percentage}
+            onChange={(e) => setNewAssignment({ ...newAssignment, percentage: e.target.value })}
+            margin="normal"
+          />
+          <TextField
+            label="Description"
+            multiline
+            rows={4}
+            fullWidth
+            value={newAssignment.description}
+            onChange={(e) => setNewAssignment({ ...newAssignment, description: e.target.value })}
+            margin="normal"
+          />
+          <Box mt={2} display="flex" justifyContent="flex-end">
+            <Button onClick={handleCloseModal} color="inherit">
+              Cancel
+            </Button>
+            <Button onClick={handleCreateAssignment} color="primary" variant="contained">
+              Create
+            </Button>
+          </Box>
+        </Box>
+      </Dialog>
     </Box>
   );
 };
