@@ -76,7 +76,7 @@ function App() {
         <Route path="resetPassword" element={<ResetPassword />} />
         <Route path="/u" element={<AppLayout />}>
           <Route path="home" element={<HomePage />} />
-          <Route path="c" element={<ClassPage />} />
+          <Route path="c/:classId" element={<ClassPage />} />
           <Route path="a" element={<AssignmentPage />} />
           <Route path="calendar" element={<div />} />
           <Route path="toReview" element={<ReviewPage />} />
