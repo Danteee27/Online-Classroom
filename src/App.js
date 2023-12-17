@@ -18,6 +18,7 @@ import ManagePage from "./components/pages/ManagePage/ManagePage";
 import ReviewPage from "./components/pages/ReviewPage/ReviewPage";
 import AssignmentPage from "./components/pages/AssignmentPage/AssignmentPage";
 import ClassInvitation from "./components/pages/ClassInvitation";
+import SettingsPage from "./components/pages/SettingsPage";
 
 const theme = createTheme({
   palette: {
@@ -84,7 +85,7 @@ function App() {
           <Route path="toReview" element={<ReviewPage />} />
           <Route path="toDo" element={<div />} />
           <Route path="archivedClasses" element={<div />} />
-          <Route path="settings" element={<div />} />
+          <Route path="settings" element={<SettingsPage />} />
           <Route path="manage" element={<ManagePage />} />
         </Route>
       </Routes>
