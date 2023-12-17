@@ -8,7 +8,6 @@ const GradeView = () => {
     const theme = useTheme();
     const [openModal, setOpenModal] = useState(false);
 
-  // Your modal state variables
   const [newAssignment, setNewAssignment] = useState({
     title: '',
     dueDate: '',
@@ -16,25 +15,23 @@ const GradeView = () => {
     description: '',
   });
 
-  // Function to handle opening the modal
   const handleOpenModal = () => {
     setOpenModal(true);
   };
 
-  // Function to handle closing the modal
   const handleCloseModal = () => {
     setOpenModal(false);
   };
   const handleCreateAssignment = () => {
     console.log('Creating a new assignment', newAssignment);
 
-    // Reset the state and close the modal
     setNewAssignment({
       title: '',
       dueDate: '',
       percentage: '',
       description: '',
     });
+
     handleCloseModal();
   };
     const assignmentData = [
@@ -45,7 +42,7 @@ const GradeView = () => {
       ];
 
   return (
-    <Box maxWidth="1000px" marginX="auto">
+    <Box spacing={3} maxWidth="1000px" marginX="auto">
       <Box
         display="flex"
         alignItems="center"
@@ -130,48 +127,48 @@ const GradeView = () => {
 
     <Dialog open={openModal} onClose={handleCloseModal}>
         <Box p={2} sx={{ maxWidth: '400px' }}>
-          <Typography variant="h6" gutterBottom>
-            Create New Assignment
-          </Typography>
-          <TextField
-            label="Title"
-            fullWidth
-            value={newAssignment.title}
-            onChange={(e) => setNewAssignment({ ...newAssignment, title: e.target.value })}
-            margin="normal"
-          />
-          <TextField
-            label="Due Date"
-            type="date"
-            fullWidth
-            value={newAssignment.dueDate}
-            onChange={(e) => setNewAssignment({ ...newAssignment, dueDate: e.target.value })}
-            margin="normal"
-          />
-          <TextField
-            label="Percentage"
-            type="number"
-            fullWidth
-            value={newAssignment.percentage}
-            onChange={(e) => setNewAssignment({ ...newAssignment, percentage: e.target.value })}
-            margin="normal"
-          />
-          <TextField
-            label="Description"
-            multiline
-            rows={4}
-            fullWidth
-            value={newAssignment.description}
-            onChange={(e) => setNewAssignment({ ...newAssignment, description: e.target.value })}
-            margin="normal"
-          />
+            <Typography variant="h6" gutterBottom>
+              Create New Assignment
+            </Typography>
+            <TextField
+              label="Title"
+              fullWidth
+              value={newAssignment.title}
+              onChange={(e) => setNewAssignment({ ...newAssignment, title: e.target.value })}
+              margin="normal"
+            />
+            <TextField
+              label="Percentage"
+              type="number"
+              fullWidth
+              value={newAssignment.percentage}
+              onChange={(e) => setNewAssignment({ ...newAssignment, percentage: e.target.value })}
+              margin="normal"
+            />
+            <TextField
+              label="Description"
+              multiline
+              rows={4}
+              fullWidth
+              value={newAssignment.description}
+              onChange={(e) => setNewAssignment({ ...newAssignment, description: e.target.value })}
+              margin="normal"
+            />
+
+            <TextField
+              label="Due Date"
+              type="date"
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              value={newAssignment.dueDate}
+              onChange={(e) => setNewAssignment({ ...newAssignment, dueDate: e.target.value })}
+              margin="normal"
+            />
           <Box mt={2} display="flex" justifyContent="flex-end">
-            <Button onClick={handleCloseModal} color="inherit">
-              Cancel
-            </Button>
-            <Button onClick={handleCreateAssignment} color="primary" variant="contained">
-              Create
-            </Button>
+          <Button onClick={handleCloseModal} color={'inherit'}
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>
+                        <Button type={"submit"} onClick={handleCreateAssignment}
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Create</Button>
           </Box>
         </Box>
       </Dialog>

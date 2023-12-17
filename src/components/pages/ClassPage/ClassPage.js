@@ -6,6 +6,7 @@ import ClassPageStreamTab from "./ClassPageStreamTab";
 import Settings from "../../misc/Settings";
 import ClassPagePeopleTab from "./ClassPagePeopleTab";
 import GradeView from './GradeView';
+import GradeTable from './GradeTable';
 
 
 export default function ClassPage() {
@@ -50,7 +51,7 @@ export default function ClassPage() {
                 <ClassPagePeopleTab/>
             </TabPanel>
             <TabPanel value={value} index={3}>
-                Item Four
+                <GradeTable/>
             </TabPanel></div>
     );
 }
