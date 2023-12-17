@@ -69,7 +69,7 @@ export default function ClassPageStreamTab() {
                 <Tooltip title={'copy'}>
                     <IconButton onClick={() => {
                         navigator.clipboard.writeText(classDetails.classCode);
-                        toast.info('Copied successfully!');
+                        toast.success('Copied successfully!');
                     }}><ContentCopy sx={{color: theme.palette.primary.main}}/>
                     </IconButton>
                 </Tooltip>

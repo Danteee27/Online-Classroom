@@ -30,11 +30,25 @@ export default function ClassPagePeopleTab() {
     const students = classDetails?.classMemberships.filter(member => member.role === "student");
     const inviteStudentLink = 'https://a.b.com';
 
-    const inviteTeachers = (event) => {
+    const inviteTeachers = async (event) => {
         event.preventDefault();
         const emails = teacherEmails;
 
-        // TODO: HANDLE SEND INVITE LINK TO TEACHERS
+        for (let i = 0; i < emails.length; i++) {
+            const data = {
+                inviterId: localStorage.getItem('userId'),
+                classId: classId,
+                email: emails[i],
+                role: 'teacher'
+            }
+
+            try {
+                const response = await axios.post('api/v1/classes/inviteClassMembership', data)
+                toast.success(`Invited ${emails[i]} successfully!`);
+            } catch (e) {
+                toast.error(e.message)
+            }
+        }
 
         // on complete
         setInviteTeacherAnchorEl(null)
