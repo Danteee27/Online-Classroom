@@ -14,15 +14,8 @@ import axios from "axios";
 import {toast} from "react-toastify";
 
 export default function ClassPageStreamTab() {
-    const classCode = "cl75z6n";
-    const className = "2310-CLC-AWP-20KTPM2"
-    const classSubject = "Advanced Web Programming"
 
-
-
-    const params = useParams()
-    const classId = params.classId;
-
+    const classId = useParams().classId;
     const {data: classDetails} = useQuery(
         {
             queryKey: ["class", classId],
