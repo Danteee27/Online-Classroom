@@ -10,11 +10,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import {toast} from "react-toastify";
 
 const GradeView = () => {
-    const theme = useTheme();
-    const userId = localStorage.getItem("userId").toString();
-    const [openModal, setOpenModal] = useState(false);
-    const {classId} = useParams();
-    const {data: classDetails} = useQuery(
+  const theme = useTheme();
+  const userId = localStorage.getItem("userId").toString();
+  const [openModal, setOpenModal] = useState(false);
+  const {classId} = useParams();
+  const {data: classDetails} = useQuery(
         {
             queryKey: ["class", classId],
             queryFn: async () => {
@@ -22,6 +22,11 @@ const GradeView = () => {
                 return response.data
             }
         });
+  const formatDate = (dateString) => {
+          const date = new Date(dateString);
+          const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+          return new Intl.DateTimeFormat('en-GB', options).format(date);
+        };
   const assignments = classDetails?.assignments;
   const queryClient = useQueryClient();
   const [newAssignment, setNewAssignment] = useState({
@@ -110,7 +115,7 @@ const GradeView = () => {
             <TableRow key={assignment.id}>
               <TableCell><Icon style={{ color: theme.palette.primary.main }}><Book/></Icon></TableCell>
               <TableCell>{assignment.name}</TableCell>
-              <TableCell>{assignment.dueDate}</TableCell>
+              <TableCell>{formatDate(assignment.dueDate)}</TableCell>
               <TableCell align='center'>{assignment.maxGrade}%</TableCell>
               <TableCell>{assignment.description}</TableCell>
               <TableCell align='center'>
