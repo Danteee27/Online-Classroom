@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Paper, Table, TableBody, Button, TextField, Dialog, TableCell, TableContainer, TableHead, TableRow, Typography, Box, IconButton, Icon } from '@mui/material';
 import {NoteAdd, Edit, DeleteForever, DocumentScanner, Book} from "@mui/icons-material";
 import { useTheme } from '@emotion/react';
@@ -6,9 +6,12 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import {toast} from "react-toastify";
 
 const GradeView = () => {
     const theme = useTheme();
+    const userId = localStorage.getItem("userId").toString();
     const [openModal, setOpenModal] = useState(false);
     const {classId} = useParams();
     const {data: classDetails} = useQuery(
@@ -20,11 +23,12 @@ const GradeView = () => {
             }
         });
   const assignments = classDetails?.assignments;
-
+  const queryClient = useQueryClient();
   const [newAssignment, setNewAssignment] = useState({
-    title: '',
+    name: '',
+    creatorId:'',
     dueDate: '',
-    percentage: '',
+    maxGrade: '',
     description: '',
   });
 
@@ -36,16 +40,24 @@ const GradeView = () => {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
-  const handleCreateAssignment = () => {
+  const handleCreateAssignment = async () => {
     console.log('Creating a new assignment', newAssignment);
 
     setNewAssignment({
+      creatorId: userId ,
       name: '',
       dueDate: '',
       maxGrade: '',
       description: '',
     });
-
+    try{
+      const response = await axios.post( `api/v1/classes/${classId}/assignments`, newAssignment);
+      console.log(response)
+    }
+    catch (e) {
+      toast.error(e.message)
+    }
+    await queryClient.refetchQueries(["class", classId]);
     handleCloseModal();
   };
 
@@ -94,7 +106,7 @@ const GradeView = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {assignments.map((assignment) => (
+          {assignments?.map((assignment) => (
             <TableRow key={assignment.id}>
               <TableCell><Icon style={{ color: theme.palette.primary.main }}><Book/></Icon></TableCell>
               <TableCell>{assignment.name}</TableCell>
@@ -136,14 +148,14 @@ const GradeView = () => {
               Create New Assignment
             </Typography>
             <TextField
-              label="Title"
+              label="Name"
               fullWidth
               value={newAssignment.name}
               onChange={(e) => setNewAssignment({ ...newAssignment, name: e.target.value })}
               margin="normal"
             />
             <TextField
-              label="Percentage"
+              label="MaxGrade"
               type="number"
               fullWidth
               value={newAssignment.maxGrade}
