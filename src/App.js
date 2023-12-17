@@ -79,7 +79,7 @@ function App() {
         <Route path="/u" element={<AppLayout />}>
           <Route path="home" element={<HomePage />} />
           <Route path="c/:classId" element={<ClassPage />} />
-          <Route path="a" element={<AssignmentPage />} />
+          <Route path="c/:classId/a/:assignmentId" element={<AssignmentPage/>}/>
           <Route path="calendar" element={<div />} />
           <Route path="toReview" element={<ReviewPage />} />
           <Route path="toDo" element={<div />} />
