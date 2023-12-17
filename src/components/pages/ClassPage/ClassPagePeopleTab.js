@@ -26,8 +26,8 @@ export default function ClassPagePeopleTab() {
             }
         });
 
-    const teachers = classDetails.classMemberships.filter(member => member.role === "teacher");
-    const students = classDetails.classMemberships.filter(member => member.role === "student");
+    const teachers = classDetails?.classMemberships.filter(member => member.role === "teacher");
+    const students = classDetails?.classMemberships.filter(member => member.role === "student");
     const inviteStudentLink = 'https://a.b.com';
 
     const inviteTeachers = (event) => {
@@ -228,23 +228,26 @@ export default function ClassPagePeopleTab() {
             <Grid item xs={12}>
                 <TeachersHeader/>
                 {teachers &&
-                    <Person name={teachers[0].user.firstName + teachers[0].user.lastName }
+                    <Person name={teachers[0]?.user?.firstName + teachers[0]?.user?.lastName }
                             // status={teachers[0].status}
                             // avatar={teachers[0].avatar}
                     />}
                 {teachers && teachers.slice(1).map(teacher => {
                     return <div style={{borderTop: '0.0625rem solid rgb(218,220,224)',}}>
-                        <Person name={teacher.user.firstName + teacher.user.lastName }
+                        <Person name={teacher?.user?.firstName + teacher?.user?.lastName }
                                 // status={teacher.status}
                                 // avatar={teacher.avatar}
                         /></div>
                 })}
                 <StudentsHeader/>
-                {students[0] &&
-                    <Person name={students[0].name} status={students[0].status} avatar={students[0].avatar}/>}
-                {students.slice(1).map(student => {
+                {students != null && students.length > 0 &&
+                    <Person name={students[0]?.user?.firstName + students[0]?.user?.lastName }
+                            // status={students[0].status}
+                            // avatar={students[0].avatar}
+                    />}
+                {students && students.slice(1).map(student => {
                     return <div style={{borderTop: '0.0625rem solid rgb(218,220,224)',}}>
-                        <Person name={student.user.firstName + student.user.lastName}
+                        <Person name={student?.user?.firstName + student?.user?.lastName}
                                 // status={teacher.status}
                                 // avatar={teacher.avatar}
                         /></div>
