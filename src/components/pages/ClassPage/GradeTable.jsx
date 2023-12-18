@@ -160,7 +160,7 @@ const GradeTable = () => {
                 return response.data
             }
         });
-    const assignments = classDetails?.assignments;
+    const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted);
     return (
         <Box spacing={3} maxWidth="1000px" marginX="auto" overflowX="auto">
 

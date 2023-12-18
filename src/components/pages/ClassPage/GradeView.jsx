@@ -13,7 +13,10 @@ const GradeView = () => {
   const theme = useTheme();
   const userId = localStorage.getItem("userId").toString();
   const [openModal, setOpenModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  
   const {classId} = useParams();
+
   const {data: classDetails} = useQuery(
         {
             queryKey: ["class", classId],
@@ -27,20 +30,36 @@ const GradeView = () => {
           const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
           return new Intl.DateTimeFormat('en-GB', options).format(date);
         };
-  const assignments = classDetails?.assignments;
+  const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted);
   const queryClient = useQueryClient();
   const [newAssignment, setNewAssignment] = useState({
     name: '',
-    creatorId:'',
+    creatorId:userId,
     dueDate: '',
     maxGrade: '',
     description: '',
   });
+  const [selectedAssignment, setSelectedAssignment] = useState({
+    name: '',
+    dueDate: '',
+    maxGrade: '',
+    description: '',
+    deleted: false
+  });
+  
+  const handleOpenEditModal = (assignment) => {
+    setSelectedAssignment({ ...assignment });
+    setOpenEditModal(true);
+  };
 
+  const handleCloseEditModal = () => {
+    setSelectedAssignment(null);
+    setOpenEditModal(false);
+  };
   const handleOpenModal = () => {
     console.log(assignments);
     setOpenModal(true);
-  };
+  };  
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -64,6 +83,37 @@ const GradeView = () => {
     }
     await queryClient.refetchQueries(["class", classId]);
     handleCloseModal();
+  };
+
+  const handleEditAssignment = async (assignment) => {
+    try {
+      const response = await axios.put( `api/v1/classes/${classId}/assignments/${assignment.id}`, assignment);
+      console.log(response)
+      // Refetch the data after deletion
+      await queryClient.refetchQueries(["class", classId]);
+      toast.success("Assignment updated successfully!");
+    } catch (e) {
+      toast.error(e.message);
+    }
+    handleCloseEditModal();
+  };
+  const handleDeleteAssignment = async (assignment) => {
+    try {
+      // Set the "deleted" field to true
+      const updatedAssignment = {
+        ...assignment,
+        deleted: true,
+      };
+  
+      // Perform the API call to update the assignment
+      const response = await axios.put(`api/v1/classes/${classId}/assignments/${assignment.id}`, updatedAssignment);
+      console.log(response);
+      // Refetch the data after updating
+      await queryClient.refetchQueries(["class", classId]);
+      toast.success("Assignment deleted successfully!");
+    } catch (e) {
+      toast.error(e.message);
+    }
   };
 
   return (
@@ -127,14 +177,14 @@ const GradeView = () => {
                 >
                   <IconButton
                     size="large"
-                    onClick={() => console.log(`Edit ${assignment.name}`)}
+                    onClick={() => handleOpenEditModal(assignment)}
                     style={{ color: theme.palette.success.main }}
                   >
-                    <Edit />
+                    <Edit/>
                   </IconButton>
                   <IconButton
                     size="large"
-                    onClick={() => console.log(`Delete ${assignment.name}`)}
+                    onClick={() => handleDeleteAssignment(assignment)}
                     style={{ color: theme.palette.error.main }}
                   >
                     <DeleteForever />
@@ -187,13 +237,63 @@ const GradeView = () => {
               margin="normal"
             />
           <Box mt={2} display="flex" justifyContent="flex-end">
-          <Button onClick={handleCloseModal} color={'inherit'}
+          <Button onClick={()=>handleCloseModal} color={'inherit'}
                                 sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>
-                        <Button type={"submit"} onClick={handleCreateAssignment}
+                        <Button type={"submit"} onClick={()=>handleCreateAssignment}
                                 sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Create</Button>
           </Box>
         </Box>
       </Dialog>
+
+      <Dialog open={openEditModal} onClose={handleCloseEditModal}>
+        <Box p={2} sx={{ maxWidth: '400px' }}>
+          <Typography variant="h6" gutterBottom>
+            Edit Assignment
+          </Typography>
+          <TextField
+            label="Name"
+            fullWidth
+            value={selectedAssignment?.name || ''}
+            onChange={(e) => setSelectedAssignment({ ...selectedAssignment, name: e.target.value })}
+            margin="normal"
+          />
+          <TextField
+            label="Percentage"
+            fullWidth
+            type="number"
+            value={selectedAssignment?.maxGrade || ''}
+            onChange={(e) => setSelectedAssignment({ ...selectedAssignment, maxGrade: e.target.value })}
+            margin="normal"
+          />
+          <TextField
+            label="Description"
+            fullWidth
+            multiline
+            value={selectedAssignment?.description || ''}
+            onChange={(e) => setSelectedAssignment({ ...selectedAssignment, description: e.target.value })}
+            margin="normal"
+          />
+          <TextField
+            label="Deadline"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            type="date"
+            value={selectedAssignment?.dueDate}
+            onChange={(e) => setSelectedAssignment({ ...selectedAssignment, dueDate: e.target.value })}
+            margin="normal"
+          />
+
+          <Box mt={2} display="flex" justifyContent="flex-end">
+            <Button onClick={()=>handleCloseEditModal()} color="inherit" sx={{ textTransform: 'none', fontFamily: 'Google', fontSize: 14 }}>
+              Cancel
+            </Button>
+            <Button type="submit" onClick={()=>handleEditAssignment(selectedAssignment)} sx={{ textTransform: 'none', fontFamily: 'Google', fontSize: 14 }}>
+              Save
+            </Button>
+          </Box>
+        </Box>
+      </Dialog>
+
     </Box>
   );
 };
