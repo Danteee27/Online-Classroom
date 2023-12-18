@@ -9,7 +9,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import {Language, Lock} from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
 import {Dialog, MenuItem, Select, useTheme} from "@mui/material";
-import "/node_modules/flag-icons/css/flag-icons.min.css";
+//import "/node_modules/flag-icons/css/flag-icons.min.css";
 import TextField from "@mui/material/TextField";
 import {toast} from "react-toastify";
 import axios from "axios";

@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
 import {toast} from "react-toastify";
+import * as XLSX from 'xlsx';
 
 const StudentGradesTable = ({ assignments, students }) => {
     const theme = useTheme();
@@ -45,7 +46,7 @@ const StudentGradesTable = ({ assignments, students }) => {
                 {assignments.map((assignment) => (
                     <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd' }}>
                         {student.grades[assignment.id]?.grade !== undefined
-                        ? `${student.grades[assignment.id]?.grade}/${assignment?.maxGrade}`
+                        ? `${student.grades[assignment.id]?.grade}/100`
                         : '-'}
                     </TableCell>
                     ))}
@@ -71,8 +72,38 @@ const GradeTable = () => {
 
     const theme = useTheme();
     const csvExport = () => {
-
-    }
+        // Calculate total maxGrade
+        const totalMaxGrade = assignments.reduce((sum, assignment) => sum + (assignment.maxGrade || 0), 0);
+      
+        const data = [
+          // Headers
+          ['Student ID', 'Student Name', ...assignments.map((assignment) => assignment.name), 'Total'],
+          // Data
+          ...students.map((student) => [
+            student.id,
+            student.name,
+            ...assignments.map(
+              (assignment) =>
+                student.grades[assignment.id]?.grade !== undefined
+                  ? `${student.grades[assignment.id]?.grade}/100`
+                  : '-'
+            ),
+            // Calculate Total
+            assignments.reduce(
+              (sum, assignment) =>
+                sum +
+                ((student.grades[assignment.id]?.grade || 0) / (student.grades[assignment.id]?.maxGrade || 1)) *
+                  (assignment.maxGrade || 0),
+              0
+            ) / totalMaxGrade / 10,
+          ]),
+        ];
+      
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'student_grades.xlsx');
+    };
     const {classId} = useParams();
     const {data: classDetails} = useQuery(
         {
@@ -82,7 +113,7 @@ const GradeTable = () => {
                 return response.data
             }
         });
-        const assignments = classDetails?.assignments;
+    const assignments = classDetails?.assignments;
     return (
         <Box spacing={3} maxWidth="1000px" marginX="auto" overflowX="auto">
 
@@ -96,7 +127,7 @@ const GradeTable = () => {
         >
             <Typography variant="h4" sx={{ fontFamily: 'Google' }}>Grade</Typography>
             <IconButton size={'large'}
-                            onClick={csvExport()}
+                        onClick={csvExport}
                             sx={{color: theme.palette.primary.main}}><Download/></IconButton>
         </Box>
         <StudentGradesTable assignments={assignments} students={students} />
