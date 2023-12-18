@@ -1,9 +1,10 @@
 import React from 'react';
-import { Paper, Table, TableBody, Button, TextField, Dialog, TableCell, TableContainer, TableHead, TableRow, Typography, Box, IconButton } from '@mui/material';
+import { Paper, Table, TableBody, Button, TextField, Dialog, Menu, MenuItem, TableCell, TableContainer, TableHead, TableRow, Typography, Box, IconButton } from '@mui/material';
 import {NoteAdd, Edit, DeleteForever, Download} from "@mui/icons-material";
 import { useTheme } from '@emotion/react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import {Language, Lock} from "@mui/icons-material";
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
@@ -68,42 +69,83 @@ const students = [
   // ... (add more students)
 ];
 
-const GradeTable = () => {
 
+const GradeTable = () => {
     const theme = useTheme();
-    const csvExport = () => {
-        // Calculate total maxGrade
-        const totalMaxGrade = assignments.reduce((sum, assignment) => sum + (assignment.maxGrade || 0), 0);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    const csvExport = (mode, assignmentName) => {
+        let data;
       
-        const data = [
-          // Headers
-          ['Student ID', 'Student Name', ...assignments.map((assignment) => assignment.name), 'Total'],
-          // Data
-          ...students.map((student) => [
-            student.id,
-            student.name,
-            ...assignments.map(
-              (assignment) =>
-                student.grades[assignment.id]?.grade !== undefined
-                  ? `${student.grades[assignment.id]?.grade}/100`
-                  : '-'
-            ),
-            // Calculate Total
-            assignments.reduce(
-              (sum, assignment) =>
-                sum +
-                ((student.grades[assignment.id]?.grade || 0) / (student.grades[assignment.id]?.maxGrade || 1)) *
-                  (assignment.maxGrade || 0),
-              0
-            ) / totalMaxGrade / 10,
-          ]),
-        ];
+        switch (mode) {
+          case 'whole-table':
+            // Calculate total maxGrade
+            const totalMaxGrade = assignments.reduce((sum, assignment) => sum + (assignment.maxGrade || 0), 0);
+            data = [
+              // Headers
+              ['Student ID', 'Student Name', ...assignments.map((assignment) => assignment.name), 'Total'],
+              // Data
+              ...students.map((student) => [
+                student.id,
+                student.name,
+                ...assignments.map(
+                  (assignment) =>
+                    student.grades[assignment.id]?.grade !== undefined
+                      ? `${student.grades[assignment.id]?.grade}/100`
+                      : '-'
+                ),
+                // Calculate Total
+                assignments.reduce(
+                  (sum, assignment) =>
+                    sum +
+                    ((student.grades[assignment.id]?.grade || 0) / (student.grades[assignment.id]?.maxGrade || 1)) *
+                      (assignment.maxGrade || 0),
+                  0
+                ) / totalMaxGrade / 10,
+              ]),
+            ];
+            break;
+      
+          case 'only':
+            // Extract the assignment name from mode
+            const assignment = assignments.find((a) => a.name === assignmentName);
+      
+            if (!assignment) {
+              console.error(`Assignment not found: ${assignmentName}`);
+              return;
+            }
+      
+            data = [
+                // Headers
+                ['Student ID', 'Student Name', assignmentName],
+                // Data
+                ...students.map((student) => [
+                  student.id,
+                  student.name,
+                  student.grades[assignment.id]?.grade !== undefined
+                    ? `${student.grades[assignment.id]?.grade}/100`
+                    : '-',
+                ]),
+            ];
+            break;
+      
+          default:
+            // Handle unknown mode
+            console.error(`Unknown download mode: ${mode}`);
+            return;
+        }
       
         const ws = XLSX.utils.aoa_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
         XLSX.writeFile(wb, 'student_grades.xlsx');
-    };
+      };
+      
     const {classId} = useParams();
     const {data: classDetails} = useQuery(
         {
@@ -129,6 +171,56 @@ const GradeTable = () => {
             <IconButton size={'large'}
                         onClick={csvExport}
                             sx={{color: theme.palette.primary.main}}><Download/></IconButton>
+        </Box>
+        <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            color={theme.palette.primary.main}
+            marginBottom="1rem"
+        >
+            <Button
+                    variant="outlined"
+                    onClick={handleClick}
+                    sx={{
+                        color: theme.palette.primary.main,
+                        mr: 0,
+                        fontFamily: 'Google',
+                        textTransform: 'none'
+                    }}
+                    // onClick={(e) => setAnchorElChangePassword(e.currentTarget)}
+                >
+                    <Download sx={{width: 20, height: 20, fill: theme.palette.primary.main}}/> &nbsp;&nbsp;Download 
+            </Button>
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left',
+                }}
+                >
+                    <MenuItem
+                        sx={{ fontSize: 'small' }}
+                        onClick={() => csvExport('whole-table')}
+                        >
+                        Grade Table
+                        </MenuItem>
+                        {assignments.map((assignment) => (
+                        <MenuItem
+                            sx={{ fontSize: 'small' }}
+                            key={assignment.id}
+                            onClick={() => csvExport(`only`,`${assignment.name}`)}
+                        >
+                            Only {assignment.name} grade
+                        </MenuItem>
+                    ))}
+            </Menu>
         </Box>
         <StudentGradesTable assignments={assignments} students={students} />
         </Box>
