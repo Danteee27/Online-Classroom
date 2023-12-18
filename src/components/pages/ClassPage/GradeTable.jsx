@@ -42,18 +42,23 @@ const StudentGradesTable = ({ assignments, students }) => {
             <TableBody>
             {students.map((student) => (
                 <TableRow key={student.id}>
-                <TableCell align="center" style={{border: '1px solid #ddd'  }}>{student.id}</TableCell>
-                <TableCell align="center" style={{border: '1px solid #ddd'  }}>{student.name}</TableCell>
-                {assignments.map((assignment) => (
+                    <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.id}</TableCell>
+                    <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.name}</TableCell>
+                    {assignments.map((assignment) => (
                     <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd' }}>
                         {student.grades[assignment.id]?.grade !== undefined
                         ? `${student.grades[assignment.id]?.grade}/100`
                         : '-'}
                     </TableCell>
                     ))}
-                <TableCell align="center"style={{ fontWeight: 'bold', border: '1px solid #ddd'  }}>
-                10.0
-                </TableCell>
+                    <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid #ddd' }}>
+                    {(assignments.reduce(
+                        (sum, assignment) =>
+                            sum +
+                            ((student.grades[assignment.id]?.grade || 0) / (student.grades[assignment.id]?.maxGrade || 1)) *
+                            (assignment.maxGrade || 0),0
+                        ) / assignments.reduce((sum, assignment) => sum + (assignment.maxGrade || 0), 0) / 10 ).toFixed(2)}
+                    </TableCell>
                 </TableRow>
             ))}
             </TableBody>
@@ -63,8 +68,8 @@ const StudentGradesTable = ({ assignments, students }) => {
 };
 
 const students = [
-  { id: 1, name: 'Sarah', grades: { 14: { grade: 90 }, 2: { grade: 85, maxGrade: 100 } } },
-  { id: 2, name: 'Max', grades: { 14: { grade: 95 }, 2: { grade: 92, maxGrade: 100 } } },
+  { id: 1, name: 'Sarah', grades: { 14: { grade: 90 }, 13: { grade: 85 }, 15: { grade: 85 } } },
+  { id: 2, name: 'Max', grades: { 14: { grade: 95 }, 13: { grade: 92 },15: { grade: 85 } } },
   // Add more students as needed
   // ... (add more students)
 ];
