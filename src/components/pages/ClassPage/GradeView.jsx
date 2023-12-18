@@ -66,24 +66,26 @@ const GradeView = () => {
   };
   const handleCreateAssignment = async () => {
     console.log('Creating a new assignment', newAssignment);
-
+  
+    try {
+      const response = await axios.post(`api/v1/classes/${classId}/assignments`, newAssignment);
+      console.log(response);
+    } catch (e) {
+      toast.error(e.message);
+    }
+  
     setNewAssignment({
-      creatorId: userId ,
+      creatorId: userId,
       name: '',
       dueDate: '',
       maxGrade: '',
       description: '',
     });
-    try{
-      const response = await axios.post( `api/v1/classes/${classId}/assignments`, newAssignment);
-      console.log(response)
-    }
-    catch (e) {
-      toast.error(e.message)
-    }
+  
     await queryClient.refetchQueries(["class", classId]);
     handleCloseModal();
   };
+  
 
   const handleEditAssignment = async (assignment) => {
     try {
@@ -239,7 +241,7 @@ const GradeView = () => {
           <Box mt={2} display="flex" justifyContent="flex-end">
           <Button onClick={()=>handleCloseModal} color={'inherit'}
                                 sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>
-                        <Button type={"submit"} onClick={()=>handleCreateAssignment}
+                        <Button type={"submit"} onClick={()=>handleCreateAssignment()}
                                 sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Create</Button>
           </Box>
         </Box>

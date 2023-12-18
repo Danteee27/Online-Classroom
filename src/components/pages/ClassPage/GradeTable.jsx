@@ -67,6 +67,8 @@ const StudentGradesTable = ({ assignments, students }) => {
     );
 };
 
+
+
 const students = [
   { id: 1, name: 'Sarah', grades: { 14: { grade: 90 }, 13: { grade: 85 }, 15: { grade: 85 } } },
   { id: 2, name: 'Max', grades: { 14: { grade: 95 }, 13: { grade: 92 },15: { grade: 85 } } },
@@ -161,6 +163,8 @@ const GradeTable = () => {
             }
         });
     const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted);
+    const studentsList = classDetails?.classMemberships?.filter(member => member.role === "student");
+    console.log(classDetails);
     return (
         <Box spacing={3} maxWidth="1000px" marginX="auto" overflowX="auto">
 
@@ -173,9 +177,6 @@ const GradeTable = () => {
             marginBottom="1rem"
         >
             <Typography variant="h4" sx={{ fontFamily: 'Google' }}>Grade</Typography>
-            <IconButton size={'large'}
-                        onClick={csvExport}
-                            sx={{color: theme.palette.primary.main}}><Download/></IconButton>
         </Box>
         <Box
             display="flex"
