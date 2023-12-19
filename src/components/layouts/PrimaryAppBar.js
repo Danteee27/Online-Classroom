@@ -104,6 +104,10 @@ export default function PrimaryAppBar({onClick}) {
                         background: '#f8fafd',
                         margin: "3px",
                     }}
+                    onClick={() => {
+                        navigate('/u/settings');
+                        setAnchorEl(null);
+                    }}
                 >
                     <ListItemText
                         primary={i18n.t('Settings')}/>
