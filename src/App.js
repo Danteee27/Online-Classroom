@@ -19,6 +19,7 @@ import ReviewPage from "./components/pages/ReviewPage/ReviewPage";
 import AssignmentPage from "./components/pages/AssignmentPage/AssignmentPage";
 import ClassInvitation from "./components/pages/ClassInvitation";
 import SettingsPage from "./components/pages/SettingsPage";
+import { withTranslation } from 'react-i18next';
 
 const theme = createTheme({
   palette: {
@@ -93,4 +94,4 @@ function App() {
   );
 }
 
-export default App;
+export default withTranslation()(App);

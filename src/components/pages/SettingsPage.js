@@ -17,10 +17,19 @@ import {baseUrl} from "../../apis/api.config";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
+import i18n from "../../i18n";
 
 export default function SettingsPage() {
     const theme = useTheme();
     const [language, setLanguage] = useState(0);
+
+    const handleSetLanguage = async (e) => {
+        const isVietnamese = e.target.value === 1;
+        setLanguage(e.target.value)
+
+        await i18n.changeLanguage(isVietnamese ? 'vi' : 'en');
+        toast.success(`Changed languaged to ${isVietnamese ? 'Vietnamese' : 'English'}`)
+    }
 
     const userId = localStorage.getItem('userId');
     const {data: user} = useQuery(
@@ -243,7 +252,7 @@ export default function SettingsPage() {
                 <Select
                     value={language}
                     sx={{width: '200px'}}
-                    onChange={e => setLanguage(e.target.value)}>
+                    onChange={handleSetLanguage}>
                     <MenuItem value={0}><span className="fi fi-us"/>&nbsp;English (US)</MenuItem>
                     <MenuItem value={1}><span className="fi fi-vn"/>&nbsp;Vietnamese</MenuItem>
                 </Select>

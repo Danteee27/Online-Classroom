@@ -16,6 +16,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import {Logout} from "@mui/icons-material";
 import AddClassButton from "./AddClassButton";
+import i18n from "i18next";
 
 export default function PrimaryAppBar({onClick}) {
 
@@ -158,7 +159,7 @@ export default function PrimaryAppBar({onClick}) {
                         src="https://www.gstatic.com/classroom/logo_square_rounded.svg"
                     />
                     <Typography onClick={() => navigate("/u/home")} variant="h5" component="div" sx={{flexGrow: 1, fontFamily: 'Google'}}>
-                        Classroom
+                        {i18n.t('Classroom')}
                     </Typography>
                 <div>
                     <AddClassButton/>
