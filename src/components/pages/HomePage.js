@@ -1,11 +1,12 @@
 import * as React from 'react';
-import {Card, CardActionArea, CardActions, CardContent, CardMedia, IconButton} from "@mui/material";
+import {Card, CardActionArea, CardActions, CardContent, CardMedia, IconButton, useTheme} from "@mui/material";
 import Typography from "@mui/material/Typography";
-import {FolderOpenOutlined, MoreVert, TrendingUp} from "@mui/icons-material";
+import {Block, FolderOpenOutlined, MoreVert, TrendingUp} from "@mui/icons-material";
 import Avatar from "@mui/material/Avatar";
 import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
+import Box from "@mui/material/Box";
 
 function ClassItem({ className, classSubject, teacherName, avatar, classId }) {
     const navigate = useNavigate();
@@ -89,37 +90,42 @@ function ClassItem({ className, classSubject, teacherName, avatar, classId }) {
   }
   
   export default function HomePage() {
-    const { data: classes } = useQuery({
-      queryKey: ['classes'],
-      queryFn: async () => {
-        const response = await axios.get(
-          `api/v1/users/${localStorage.getItem('userId')}`
-        );
-        return response.data.classMemberships;
-      },
-    });
-  
-    return (
-      <div
-        style={{
-          display: 'grid',
-          flexWrap: 'nowrap',
-          gap: '1.25rem',
-          margin: '1.25rem',
-          gridTemplateColumns: 'repeat(4, minmax(100px, 1fr))',
-        }}
-      >
-        {classes &&
-          classes.map((item) => (
-            <ClassItem
-              key={item.class.id} // Add a unique key to each ClassItem
-              className={item.class.className}
-              classSubject={item.class.description}
-              teacherName={item.user.lastName + ' ' + item.user.firstName}
-              classId={item.class.id}
-            />
-          ))}
-      </div>
-    );
+      const {data} = useQuery(
+          {
+              queryKey: ["classes"],
+              queryFn: async () => {
+                  const response = await axios.get(`api/v1/users/${localStorage.getItem('userId')}`);
+                  return response.data
+              }
+          });
+      const classes = data?.classMemberships ?? null;
+      const isBanned = data?.isLocked ?? false;
+
+      const theme= useTheme();
+
+      return (<>{isBanned && <Box sx={{mx: 'auto', width: '100%', height: '50dvh', display: 'flex', justifyContent: 'center', flexDirection:'column', alignItems: 'center'}}>
+              <Block sx={{fill: theme.palette.error.main, width: '3rem', height: '3rem'}}></Block>
+              <Typography variant={'body1'} sx={{fontFamily:'Google', pt:1}}>You are banned from participating in any class activities at the moment. Please reach out to the administrators for assistance.</Typography>
+          </Box>}
+              {!isBanned && classes && <div
+                  style={{
+                      display: 'grid',
+                      flexWrap: 'nowrap',
+                      gap: '1.25rem',
+                      margin: '1.25rem',
+                      gridTemplateColumns: 'repeat(4, minmax(100px, 1fr))',
+                  }}
+              >
+                  {classes.map((item) => (
+                      <ClassItem
+                          key={item.class.id} // Add a unique key to each ClassItem
+                          className={item.class.className}
+                          classSubject={item.class.description}
+                          teacherName={item.user.lastName + ' ' + item.user.firstName}
+                          classId={item.class.id}
+                      />
+                  ))}
+              </div>}
+          </>);
   }
   

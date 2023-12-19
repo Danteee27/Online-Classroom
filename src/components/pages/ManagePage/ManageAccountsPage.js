@@ -51,7 +51,7 @@ const renderRole = (cell) => {
 export default function ManageAccountsPage() {
     const {data , refetch} = useQuery(
         {
-            queryKey: ["users"],
+            queryKey: ["accounts"],
             queryFn: async () => {
                 const response = await axios.get(`api/v1/users?limit=999`);
                 return response.data.data

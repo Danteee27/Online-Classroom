@@ -120,7 +120,7 @@ export default function AppDrawer({open}) {
         setOpenEnrolled(!openEnrolled);
     };
     const handleTeachingClick = () => {
-        setOpenEnrolled(!openEnrolled);
+        setOpenTeaching(!openEnrolled);
     };
     const {data} = useQuery(
         {
@@ -135,6 +135,7 @@ export default function AppDrawer({open}) {
     const isAdmin = data?.role?.name ?? null === "Admin";
     const isTeaching = data?.classMemberships?.some(membership => membership.role === "teacher" ) ?? false;
     const isStudying = data?.classMemberships?.some(membership => membership.role === "student" ) ?? false;
+    const isBanned = data?.isLocked ?? false;
 
     const drawerList = (<List sx={{paddingTop: '4rem'}}>
 
@@ -152,7 +153,7 @@ export default function AppDrawer({open}) {
                     to={'calendar'}/>
         <Divider/>
         {
-            isStudying &&
+            !isBanned && isStudying &&
             <>  <DrawerItem key={'Enrolled'}
                             title={'Enrolled'}
                             icon={(<SchoolOutlined/>)}
@@ -189,7 +190,7 @@ export default function AppDrawer({open}) {
                 <Divider/></>
         }
         {
-            isTeaching && <>
+            !isBanned && isTeaching && <>
                 <DrawerItem key={'Teaching'}
                             title={'Teaching'}
                             icon={(<svg fill={'#5f6368'} focusable="false" width="24" height="24" viewBox="0 0 24 24"
