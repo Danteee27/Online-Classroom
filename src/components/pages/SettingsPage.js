@@ -28,7 +28,6 @@ export default function SettingsPage() {
         setLanguage(e.target.value)
 
         await i18n.changeLanguage(isVietnamese ? 'vi' : 'en');
-        toast.success(`Changed languaged to ${isVietnamese ? 'Vietnamese' : 'English'}`)
     }
 
     const userId = localStorage.getItem('userId');
