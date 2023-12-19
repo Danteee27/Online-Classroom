@@ -14,13 +14,12 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import {Add, Height, Logout} from "@mui/icons-material";
-import {MenuItem} from "@mui/material";
+import {Logout} from "@mui/icons-material";
 import AddClassButton from "./AddClassButton";
 
 export default function PrimaryAppBar({onClick}) {
 
-    const username = localStorage.getItem("username");
+    const username = localStorage.getItem("firstName") + " " + localStorage.getItem("lastName");
     const email = localStorage.getItem("email");
 
     const [anchorEl, setAnchorEl] = React.useState(null);
