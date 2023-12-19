@@ -45,6 +45,6 @@
 
 @font-face {
   font-family: "Google";
-  src: local("Google"), url("../public/fonts/GoogleSans/ProductSans-Medium.ttf") format("truetype");
+  src: local("Google"), url("../public/fonts/GoogleSans/ProductSans-Bold.ttf") format("truetype");
   font-weight: 500;
 }

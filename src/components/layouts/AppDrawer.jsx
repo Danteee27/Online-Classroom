@@ -21,10 +21,11 @@ import {styled} from "@mui/material/styles";
 import MuiDrawer from "@mui/material/Drawer";
 import Settings from "../misc/Settings";
 import Avatar from "@mui/material/Avatar";
-import {NavLink, useNavigate} from "react-router-dom";
+import {NavLink} from "react-router-dom";
 import './AppDrawer.css';
 import axios from "axios";
 import {useQuery} from "@tanstack/react-query";
+import i18n from "i18next";
 
 const drawerWidth = 300;
 
@@ -140,14 +141,14 @@ export default function AppDrawer({open}) {
     const drawerList = (<List sx={{paddingTop: '4rem'}}>
 
         <DrawerItem key={'Home'}
-                    title={'Home'}
+                    title={i18n.t('Home')}
                     icon={(<svg focusable="false" width="24" height="24" viewBox="0 0 24 24">
                         <path fill='#5f6368' d="M12 3L4 9v12h16V9l-8-6zm6 16h-3v-6H9v6H6v-9l6-4.5 6 4.5v9z"></path>
                     </svg>)}
                     open={open}
                     to={'home'}/>
         <DrawerItem key={'Calendar'}
-                    title={'Calendar'}
+                    title={i18n.t('Calendar')}
                     icon={(<CalendarToday/>)}
                     open={open}
                     to={'calendar'}/>
@@ -155,7 +156,7 @@ export default function AppDrawer({open}) {
         {
             !isBanned && isStudying &&
             <>  <DrawerItem key={'Enrolled'}
-                            title={'Enrolled'}
+                            title={i18n.t('Enrolled')}
                             icon={(<SchoolOutlined/>)}
                             open={open}
                             left={openEnrolled ? <ArrowDropDown sx={{fontSize: 20}}/> :
@@ -164,7 +165,7 @@ export default function AppDrawer({open}) {
                 <Collapse in={openEnrolled} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         <DrawerItem key={'Todo'}
-                                    title={'To-do'}
+                                    title={i18n.t('To-do')}
                                     icon={(<AssignmentOutlined/>)}
                                     open={open}
                                     to={'todo'}/>
@@ -192,7 +193,7 @@ export default function AppDrawer({open}) {
         {
             !isBanned && isTeaching && <>
                 <DrawerItem key={'Teaching'}
-                            title={'Teaching'}
+                            title={i18n.t('Teaching')}
                             icon={(<svg fill={'#5f6368'} focusable="false" width="24" height="24" viewBox="0 0 24 24"
                                         className=" NMm5M">
                                 <circle cx="17" cy="12.5" r="2.5"></circle>
@@ -206,7 +207,7 @@ export default function AppDrawer({open}) {
                 <Collapse in={openTeaching} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         <DrawerItem key={'Toreview'}
-                                    title={'To-review'}
+                                    title={i18n.t('To-review')}
                                     icon={(<SourceOutlined/>)}
                                     open={open}
                                     to={'toReview'}/>
@@ -233,21 +234,21 @@ export default function AppDrawer({open}) {
             </>}
         {
             isAdmin && <>
-                <DrawerItem key={'Manage Accounts'}
-                            title={'Manage Accounts'}
+                <DrawerItem key={'Manage'}
+                            title={i18n.t('Manage')}
                             icon={(<ManageAccountsOutlined/>)}
                             open={open}
                             to={'manage'}/>
                 <Divider/>
             </>}
         <DrawerItem key={'Archived'}
-                    title={'Archived Class'}
+                    title={i18n.t('Archived Class')}
                     icon={(<ArchiveOutlined/>)}
                     open={open}
                     to={'archivedClasses'}/>
 
         <DrawerItem key={'Settings'}
-                    title={'Settings'}
+                    title={i18n.t('Settings')}
                     icon={(<Settings/>)}
                     open={open}
                     to={'settings'}/>
