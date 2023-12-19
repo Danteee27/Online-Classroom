@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import Box from "@mui/material/Box";
+import i18n from "i18next";
 
 function ClassItem({ className, classSubject, teacherName, avatar, classId }) {
     const navigate = useNavigate();
@@ -105,7 +106,7 @@ function ClassItem({ className, classSubject, teacherName, avatar, classId }) {
 
       return (<>{isBanned && <Box sx={{mx: 'auto', width: '100%', height: '50dvh', display: 'flex', justifyContent: 'center', flexDirection:'column', alignItems: 'center'}}>
               <Block sx={{fill: theme.palette.error.main, width: '3rem', height: '3rem'}}></Block>
-              <Typography variant={'body1'} sx={{fontFamily:'Google', pt:1}}>You are banned from participating in any class activities at the moment. Please reach out to the administrators for assistance.</Typography>
+              <Typography variant={'body1'} sx={{fontFamily:'Google', pt:1}}>{i18n.t('You are banned from participating in any class activities at the moment. Please reach out to the administrators for assistance.')}</Typography>
           </Box>}
               {!isBanned && classes && <div
                   style={{

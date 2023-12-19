@@ -12,6 +12,7 @@ import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import {toast} from "react-toastify";
+import i18n from "i18next";
 
 export default function ClassPageStreamTab() {
 
@@ -51,7 +52,7 @@ export default function ClassPageStreamTab() {
         <Box sx={{border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, padding: '1ch 2ch'}}>
             <Box sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 < Typography variant={'subtitle2'} sx={{fontFamily: 'Google', justifyContent: 'space-between'}}>
-                    Class code
+                    {i18n.t('Class code')}
                 </Typography>
                 <IconButton><MoreVert/></IconButton>
             </Box>
@@ -77,10 +78,10 @@ export default function ClassPageStreamTab() {
         </Box>
         <Box sx={{border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, padding: 2, mt: 3}}>
             < Typography variant={'subtitle2'} sx={{fontFamily: 'Google', justifyContent: 'space-between'}}>
-                Upcoming
+                {i18n.t('Upcoming')}
             </Typography>
             <Typography variant={'caption'}>
-                No work due soon
+                {i18n.t('No work due soon')}
             </Typography>
             <Button sx={{
                 textTransform: 'none',
@@ -92,7 +93,7 @@ export default function ClassPageStreamTab() {
             }}>
                 <Typography variant={'subtitle2'}
                             sx={{fontFamily: 'Google', fontWeight: 500, fontSize: '.875rem'}}>
-                    View all
+                    {i18n.t('View all')}
                 </Typography>
             </Button>
         </Box>
@@ -111,7 +112,7 @@ export default function ClassPageStreamTab() {
             <Box sx={{gap: 1, display: 'flex', alignItems: 'center'}}><Avatar/>
                 <Typography
                     sx={{fontSize: '.8125rem', fontColor: 'rgba(0,0,0,.549)'}}>
-                    Announce something to your class
+                    {i18n.t('Announce something to your class')}
                 </Typography></Box>
             <IconButton>
                 <svg fill='#5f6368' focusable="false" width="24" height="24" viewBox="0 0 24 24" className=" NMm5M">
@@ -125,11 +126,11 @@ export default function ClassPageStreamTab() {
             <EmptyConversation style={{width: '150px'}}/>
             <div style={{marginLeft: '4ch'}}><Typography variant={'h5'}
                                                          sx={{fontFamily: 'Google', color: theme.palette.primary.main}}>
-                This is where you can talk to your class
+                {i18n.t('This is where you can talk to your class')}
             </Typography>
                 <Typography variant={'subtitle2'}
                             sx={{fontFamily: 'Google'}}>
-                    Use the stream to share announcements, post assignments, and respond to student questions
+                    {i18n.t('Use the stream to share announcements, post assignments, and respond to student questions')}
                 </Typography>
                 <Button sx={{
                     textTransform: 'none', fontFamily: 'Google', border: '0.0625rem solid rgb(218,220,224)',
@@ -139,7 +140,7 @@ export default function ClassPageStreamTab() {
                     display: 'flex', alignItems: 'center'
                 }}>
                     <Settings fill={theme.palette.primary.main} style={{width: '20px', marginRight: '1ch'}}/>
-                    Stream settings
+                    {i18n.t('Stream settings')}
                 </Button>
             </div>
         </Box>

@@ -5,6 +5,7 @@ import {IconButton, Tab, Tabs} from "@mui/material";
 import Settings from "../../misc/Settings";
 import TabPanel from "../../TabPanel";
 import ManageClassesPage from "./ManageClassesPage";
+import i18n from "i18next";
 
 
 export default function ManagePage() {
@@ -29,8 +30,8 @@ export default function ManagePage() {
                               }
                           }}
                     >
-                        <Tab label="Accounts" sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
-                        <Tab label="Classes" sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
+                        <Tab label={i18n.t("Accounts")} sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
+                        <Tab label={i18n.t('Classes')} sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
                     </Tabs>
                     <IconButton>
                         <Settings/>

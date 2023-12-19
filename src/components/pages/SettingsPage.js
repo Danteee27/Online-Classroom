@@ -135,7 +135,7 @@ export default function SettingsPage() {
                         type="submit"
                         variant="contained"
                         sx={{mt: 3, mb: 2, color: 'white', mr: 0, fontFamily: 'Google'}}>
-                        Save
+                        {i18n.t('SAVE')}
                     </Button>
                 </div>
             </Box>
@@ -178,7 +178,7 @@ export default function SettingsPage() {
         </Box>)
     }
 
-    const profileSettings = (<GroupSettings header={'Profile'}>
+    const profileSettings = (<GroupSettings header={i18n.t('Profile')}>
         <Box
             component="form"
             noValidate
@@ -190,7 +190,7 @@ export default function SettingsPage() {
                     <TextField
                         fullWidth
                         id="email"
-                        label="Email Address"
+                        label={i18n.t("Email Address")}
                         name="email"
                         autoComplete="email"
                         defaultValue={user?.email}
@@ -202,7 +202,7 @@ export default function SettingsPage() {
                     <TextField
                         fullWidth
                         id="firstName"
-                        label="First Name"
+                        label={i18n.t("First Name")}
                         name="firstName"
                         defaultValue={user?.firstName}
                     />
@@ -211,7 +211,7 @@ export default function SettingsPage() {
                     <TextField
                         fullWidth
                         id="lastName"
-                        label="Last Name"
+                        label={i18n.t("Last Name")}
                         name="lastName"
                         defaultValue={user?.lastName}
                     />
@@ -230,24 +230,24 @@ export default function SettingsPage() {
                     }}
                     // onClick={(e) => setAnchorElChangePassword(e.currentTarget)}
                 >
-                    <Lock sx={{width: 20, height: 20, fill: theme.palette.primary.main}}/> &nbsp;&nbsp;Change Password
+                    <Lock sx={{width: 20, height: 20, fill: theme.palette.primary.main}}/> &nbsp;&nbsp;{i18n.t('Change Password')}
                 </Button>
                 <Button
                     type="submit"
                     variant="contained"
                     sx={{mt: 3, mb: 2, color: 'white', mr: 0, fontFamily: 'Google'}}>
-                    Save
+                    {i18n.t('SAVE')}
                 </Button>
             </div>
         </Box>
     </GroupSettings>);
 
 
-    const languages = (<GroupSettings header={'Other'}>
+    const languages = (<GroupSettings header={i18n.t('Other')}>
         <List>
             <ListItem>
                 <ListItemIcon> <Language/></ListItemIcon>
-                <ListItemText>Languages</ListItemText>
+                <ListItemText>{i18n.t('Languages')}</ListItemText>
                 <Select
                     value={language}
                     sx={{width: '200px'}}

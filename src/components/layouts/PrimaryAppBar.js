@@ -81,7 +81,7 @@ export default function PrimaryAppBar({onClick}) {
             <Avatar
                 sx={{width: 70, height: 70}}></Avatar>
             <Typography pt={2} component="h1" variant="h5">
-                Hi, {username ?? 'N/A'}!
+                {i18n.t('Hi')}, {username ?? 'N/A'}!
             </Typography>
             <ListItem disablePadding sx={{display: "block", margin: "1rem 0"}}>
                 <ListItemButton
@@ -95,7 +95,7 @@ export default function PrimaryAppBar({onClick}) {
                     }}
                 >
                     <ListItemText
-                        primary={'Manage your Account'}/>
+                        primary={i18n.t('Manage your Account')}/>
                 </ListItemButton>
                 <ListItemButton
                     sx={{
@@ -106,7 +106,7 @@ export default function PrimaryAppBar({onClick}) {
                     }}
                 >
                     <ListItemText
-                        primary={'Options'}/>
+                        primary={i18n.t('Settings')}/>
                 </ListItemButton>
                 <ListItemButton
                     sx={{
@@ -128,7 +128,7 @@ export default function PrimaryAppBar({onClick}) {
                         <Logout/>
                     </ListItemIcon>
                     <ListItemText
-                        primary={'Sign out'}/>
+                        primary={i18n.t('Sign out')}/>
                 </ListItemButton>
             </ListItem>
             <Copyright/>

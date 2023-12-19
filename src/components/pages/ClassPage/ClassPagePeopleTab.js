@@ -13,6 +13,7 @@ import {toast} from "react-toastify";
 import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
+import i18n from "i18next";
 
 export default function ClassPagePeopleTab() {
 
@@ -116,7 +117,7 @@ export default function ClassPagePeopleTab() {
             borderBottom: '0.0625rem solid ' + theme.palette.primary.main,
             marginBottom: '1rem'
         }}>
-            <Typography variant={'h4'} sx={{fontFamily: 'Google'}}>Teachers</Typography>
+            <Typography variant={'h4'} sx={{fontFamily: 'Google'}}>{i18n.t('Teachers')}</Typography>
             <IconButton size={'large'}
                         onClick={(e) => setInviteTeacherAnchorEl(e.currentTarget)}
                         sx={{color: theme.palette.primary.main}}><PersonAddAlt/></IconButton>
@@ -133,7 +134,7 @@ export default function ClassPagePeopleTab() {
                 borderBottom: '0.0625rem solid ' + theme.palette.primary.main,
                 margin: '1rem 0'
             }}>
-                <Typography variant={'h4'} sx={{fontFamily: 'Google'}}>Students</Typography>
+                <Typography variant={'h4'} sx={{fontFamily: 'Google'}}>{i18n.t('Students')}</Typography>
                 <IconButton size={'large'}
                             onClick={(e) => setInviteStudentAnchorEl(e.currentTarget)}
                             sx={{color: theme.palette.primary.main}}><PersonAddAlt/></IconButton>
@@ -153,8 +154,8 @@ export default function ClassPagePeopleTab() {
                         margin: '1.25rem',
                     }}
                 >
-                    <Typography variant={'h6'} sx={{fontFamily: 'Google', fontSize: 16}}>Invite students</Typography>
-                    <Typography variant={'h6'} sx={{fontSize: '0.875rem', fontWeight: 600}}>Invite link</Typography>
+                    <Typography variant={'h6'} sx={{fontFamily: 'Google', fontSize: 16}}>{i18n.t('Invite students')}</Typography>
+                    <Typography variant={'h6'} sx={{fontSize: '0.875rem', fontWeight: 600}}>{i18n.t('Invite link')}</Typography>
                     <div style={{
                         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                         marginTop: '-1.5rem',
@@ -168,7 +169,7 @@ export default function ClassPagePeopleTab() {
                         }}><ContentCopy sx={{width: 24, height: 24}}/></IconButton>
                     </div>
                     <ReactMultiEmail
-                        placeholder={'Input student emails'}
+                        placeholder={i18n.t('Input student emails')}
                         emails={studentEmails}
                         onChange={(_emails) => setStudentEmails(_emails)}
                         getLabel={(email, index, removeEmail) => {
@@ -189,9 +190,9 @@ export default function ClassPagePeopleTab() {
                     </ReactMultiEmail>
                     <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                         <Button onClick={() => setInviteStudentAnchorEl(null)} color={'inherit'}
-                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>{i18n.t('Cancel')}</Button>
                         <Button type={"submit"} disabled={studentEmails.length === 0}
-                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Invite</Button>
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>{i18n.t('Invite')}</Button>
                     </div>
                 </Box>
             </form>
@@ -210,9 +211,9 @@ export default function ClassPagePeopleTab() {
                         gap: '1.25rem',
                         margin: '1.25rem',
                     }}
-                ><Typography variant={'h6'} sx={{fontFamily: 'Google', fontSize: 16}}>Invite teachers</Typography>
+                ><Typography variant={'h6'} sx={{fontFamily: 'Google', fontSize: 16}}>{i18n.t('Invite teachers')}</Typography>
                     <ReactMultiEmail
-                        placeholder={'Input teacher emails'}
+                        placeholder={i18n.t('Input teacher emails')}
                         emails={teacherEmails}
                         onChange={(_emails) => setTeacherEmails(_emails)}
                         getLabel={(email, index, removeEmail) => {
@@ -232,13 +233,13 @@ export default function ClassPagePeopleTab() {
                         }}>
                     </ReactMultiEmail>
                     <Typography variant={'body2'}>
-                        Teachers you add can do everything you can, except delete the class.
+                        {i18n.t('Teachers you add can do everything you can, except delete the class.')}
                     </Typography>
                     <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                         <Button onClick={() => setInviteTeacherAnchorEl(null)} color={'inherit'}
-                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>{i18n.t('Cancel')}</Button>
                         <Button type={"submit"} disabled={teacherEmails.length === 0}
-                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Invite</Button>
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>{i18n.t('Invite')}</Button>
                     </div>
                 </Box>
             </form>

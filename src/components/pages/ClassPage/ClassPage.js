@@ -7,6 +7,7 @@ import Settings from "../../misc/Settings";
 import ClassPagePeopleTab from "./ClassPagePeopleTab";
 import GradeView from './GradeView';
 import GradeTable from './GradeTable';
+import i18n from "i18next";
 
 
 export default function ClassPage() {
@@ -31,10 +32,10 @@ export default function ClassPage() {
                               }
                           }}
                     >
-                        <Tab label="Stream" sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
-                        <Tab label="Classwork" sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
-                        <Tab label="People" sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
-                        <Tab label="Grades" sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
+                        <Tab label={i18n.t("Stream")} sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
+                        <Tab label={i18n.t("Classwork")} sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
+                        <Tab label={i18n.t("People")} sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
+                        <Tab label={i18n.t("Grades")} sx={{textTransform: 'none', fontWeight: 500, fontFamily: 'Google'}}/>
                     </Tabs>
                     <IconButton>
                         <Settings/>
