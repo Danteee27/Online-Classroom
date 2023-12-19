@@ -114,21 +114,27 @@ function DrawerItem(props) {
 export default function AppDrawer({open}) {
     const theme = useTheme();
 
-    const role = 'teacher';
-
     const [openEnrolled, setOpenEnrolled] = React.useState(true);
+    const [openTeaching, setOpenTeaching] = React.useState(true);
     const handleEnrolledClick = () => {
         setOpenEnrolled(!openEnrolled);
     };
-
-    const {data: classes} = useQuery(
+    const handleTeachingClick = () => {
+        setOpenEnrolled(!openEnrolled);
+    };
+    const {data} = useQuery(
         {
             queryKey: ["classes"],
             queryFn: async () => {
                 const response = await axios.get(`api/v1/users/${localStorage.getItem('userId')}`);
-                return response.data.classMemberships
+                return response.data
             }
         });
+
+    const classes = data?.classMemberships ?? null;
+    const isAdmin = data?.role?.name ?? null === "Admin";
+    const isTeaching = data?.classMemberships?.some(membership => membership.role === "teacher" ) ?? false;
+    const isStudying = data?.classMemberships?.some(membership => membership.role === "student" ) ?? false;
 
     const drawerList = (<List sx={{paddingTop: '4rem'}}>
 
@@ -146,7 +152,7 @@ export default function AppDrawer({open}) {
                     to={'calendar'}/>
         <Divider/>
         {
-            role === 'student' &&
+            isStudying &&
             <>  <DrawerItem key={'Enrolled'}
                             title={'Enrolled'}
                             icon={(<SchoolOutlined/>)}
@@ -183,7 +189,7 @@ export default function AppDrawer({open}) {
                 <Divider/></>
         }
         {
-            role === 'teacher' && <>
+            isTeaching && <>
                 <DrawerItem key={'Teaching'}
                             title={'Teaching'}
                             icon={(<svg fill={'#5f6368'} focusable="false" width="24" height="24" viewBox="0 0 24 24"
@@ -193,10 +199,10 @@ export default function AppDrawer({open}) {
                                     d="M17 15.62c-1.67 0-5 .84-5 2.5V20h10v-1.88c0-1.66-3.33-2.5-5-2.5zM10 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm1.82 9.17c.01 0 0 0 0 0zM10 13c-2.67 0-8 1.34-8 4v3h8v-2H4v-.99c.2-.72 3.3-2.01 6-2.01.6 0 1.22.07 1.82.17h.01l2.07-1.55c-1.39-.41-2.85-.62-3.9-.62z"></path>
                             </svg>)}
                             open={open}
-                            left={open && openEnrolled ? <ArrowDropDown sx={{fontSize: 20}}/> :
+                            left={open && openTeaching ? <ArrowDropDown sx={{fontSize: 20}}/> :
                                 <ArrowRight sx={{fontSize: 20}}/>}
-                            onClick={handleEnrolledClick}/>
-                <Collapse in={openEnrolled} timeout="auto" unmountOnExit>
+                            onClick={handleTeachingClick}/>
+                <Collapse in={openTeaching} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                         <DrawerItem key={'Toreview'}
                                     title={'To-review'}
@@ -225,7 +231,7 @@ export default function AppDrawer({open}) {
                 <Divider/>
             </>}
         {
-            role === 'admin' && <>
+            isAdmin && <>
                 <DrawerItem key={'Manage Accounts'}
                             title={'Manage Accounts'}
                             icon={(<ManageAccountsOutlined/>)}
