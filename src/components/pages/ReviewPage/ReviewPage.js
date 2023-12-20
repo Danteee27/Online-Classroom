@@ -3,10 +3,11 @@ import {useState, useEffect} from 'react';
 import { useTheme } from '@emotion/react';
 import {Dialog, Icon, IconButton} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {Typography, Select, MenuItem, Box} from '@mui/material';
-import { Assignment, Comment, MoreVert } from '@mui/icons-material'; 
+import {Typography, Select, MenuItem, Button, Box} from '@mui/material';
+import { Assignment, Comment, MoreVert, Settings } from '@mui/icons-material'; 
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import EmptyConversation from '../../misc/EmptyConversation';
 import { useNavigate } from 'react-router';
 
 export default function ReviewPage() {
@@ -125,7 +126,27 @@ const handleClassChange = async (event) => {
           
           // Only render the class header if there are assignments for the class
           if (selectedClassId !== "defaul" && classAssignments===0){
-            return ('No Assignment');
+            return (
+            <Box mt={3} sx={{px: 4, py: 4, border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex'}}>
+              <EmptyConversation style={{width: '150px'}}/>
+              <div style={{marginLeft: '4ch'}}>
+                <Typography variant={'h5'}sx={{fontFamily: 'Google', color: theme.palette.primary.main}}>
+                                                            sadasdasdsda
+                </Typography>
+                <Typography variant={'subtitle2'}
+                              sx={{fontFamily: 'Google'}}>asdsdads
+                </Typography>
+                  <Button sx={{
+                      textTransform: 'none', fontFamily: 'Google', border: '0.0625rem solid rgb(218,220,224)',
+                      mb: -1,
+                      mr: -1,
+                      ml: 'auto',
+                      display: 'flex', alignItems: 'center'
+                  }}>
+                      <Settings fill={theme.palette.primary.main} style={{width: '20px', marginRight: '1ch'}}/> Settings
+                  </Button>
+              </div>
+           </Box>);
           }
           else if (classAssignments.length > 0) {
             return (
