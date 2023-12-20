@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
+import i18n from "i18next";
 
 export default function NotificationButton() {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -83,8 +84,8 @@ export default function NotificationButton() {
                 <Typography variant="h6" sx={{
                     fontFamily: 'Google',
                     borderBottom: '0.0625rem solid rgb(218,220,224)'
-                }}>Notifications</Typography>
-                <Button variant={'text'} sx={{textTransform: 'none'}} onClick={handleMarkAllAsReadClick} startIcon={<DoneAll/>}>Mark all as read</Button>
+                }}>{i18n.t('Notifications')}</Typography>
+                <Button variant={'text'} sx={{textTransform: 'none'}} onClick={handleMarkAllAsReadClick} startIcon={<DoneAll/>}>{i18n.t('Mark all as read')}</Button>
                 {notifications.map(notification => <NotificationItem message={notification?.message ?? ''}
                                                                      seen={notification?.seen ?? false}/>)}
             </Box>

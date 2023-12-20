@@ -10,6 +10,7 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import {baseUrl} from "../../apis/api.config";
 import {toast} from "react-toastify";
+import i18n from "i18next";
 
 export default function AddClassButton() {
     const [anchorElMenu, setAnchorElMenu] = React.useState(null);
@@ -89,17 +90,17 @@ export default function AddClassButton() {
                         gap: '1.25rem',
                         margin: '1.25rem',
                     }}
-                ><Typography variant={'h6'} sx={{fontFamily: 'Google', fontSize: 16}}>Join class</Typography>
-                    <TextField label="Class code"
+                ><Typography variant={'h6'} sx={{fontFamily: 'Google', fontSize: 16}}>{i18n.t('Join class')}</Typography>
+                    <TextField label={i18n.t("Class code")}
                                required variant="filled"
                                onChange={e => setClassInviteLink(e.target.value)}
                                value={classInviteLink}
                                error={classInviteLinkError}/>
                     <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                         <Button onClick={() => setAnchorElJoinClass(null)} color={'inherit'}
-                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>{i18n.t('Cancel')}</Button>
                         <Button type={"submit"}
-                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Join</Button>
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>{i18n.t('Join')}</Button>
                     </div>
                 </Box>
             </form>
@@ -118,21 +119,21 @@ export default function AddClassButton() {
                         gap: '1.25rem',
                         margin: '1.25rem',
                     }}
-                ><Typography variant={'h6'} sx={{fontFamily: 'Google', fontSize: 16}}>Create class</Typography>
+                ><Typography variant={'h6'} sx={{fontFamily: 'Google', fontSize: 16}}>{i18n.t('Create class')}</Typography>
 
-                    <TextField label="Class name"
+                    <TextField label={i18n.t("Class name")}
                                required variant="filled"
                                onChange={e => setClassName(e.target.value)}
                                value={className}
                                error={classNameError}/>
-                    <TextField label="Subject" variant="filled"
+                    <TextField label={i18n.t("Subject")} variant="filled"
                                onChange={e => setSubject(e.target.value)}
                                value={subject}/>
                     <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                         <Button onClick={() => setAnchorElCreateClass(null)} color={'inherit'}
-                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Cancel</Button>
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>{i18n.t('Cancel')}</Button>
                         <Button type={"submit"}
-                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>Create</Button>
+                                sx={{textTransform: 'none', fontFamily: 'Google', fontSize: 14}}>{i18n.t('Create')}</Button>
                     </div>
                 </Box>
             </form>
@@ -152,10 +153,10 @@ export default function AddClassButton() {
             horizontal: 'right',
         }}>
         <MenuItem onClick={(e) => setAnchorElJoinClass(e.currentTarget)}>
-            Join Class
+            {i18n.t('Join Class')}
         </MenuItem>
         <MenuItem onClick={(e) => setAnchorElCreateClass(e.currentTarget)}>
-            Create Class
+            {i18n.t('Create Class')}
         </MenuItem>
     </Menu>);
 
