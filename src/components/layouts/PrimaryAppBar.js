@@ -17,6 +17,7 @@ import ListItemText from "@mui/material/ListItemText";
 import {Logout} from "@mui/icons-material";
 import AddClassButton from "./AddClassButton";
 import i18n from "i18next";
+import NotificationButton from "./NotificationButton";
 
 export default function PrimaryAppBar({onClick}) {
 
@@ -167,6 +168,7 @@ export default function PrimaryAppBar({onClick}) {
                     </Typography>
                 <div>
                     <AddClassButton/>
+                    <NotificationButton/>
                     <IconButton
                         size="small"
                         aria-label="account of current user"
