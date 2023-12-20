@@ -4,12 +4,13 @@ import { useTheme } from '@emotion/react';
 import {Dialog, Icon, IconButton} from "@mui/material";
 import Grid from "@mui/material/Grid";
 import {Typography, Select, MenuItem, Box, TextField, Button} from '@mui/material';
-import { Assignment, Comment, MoreVert, Today } from '@mui/icons-material'; 
+import { Assignment, Comment, MoreVert, Today, Settings } from '@mui/icons-material'; 
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
 import {toast} from "react-toastify";
 import { useNavigate } from 'react-router';
+import EmptyConversation from '../../misc/EmptyConversation';
 
 export default function ToDoPage() {
   const theme = useTheme();
@@ -185,9 +186,31 @@ export default function ToDoPage() {
       </Select>
       {classes.map((classItem) => {
           const classAssignments = assignments.filter(assignment => assignment.class.className === classItem.className);
-          
+          if (selectedClassId !== "defaul" && classAssignments===0){
+            return (
+            <Box mt={3} sx={{px: 4, py: 4, border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex'}}>
+              <EmptyConversation style={{width: '150px'}}/>
+              <div style={{marginLeft: '4ch'}}>
+                <Typography variant={'h5'}sx={{fontFamily: 'Google', color: theme.palette.primary.main}}>
+                                                            sadasdasdsda
+                </Typography>
+                <Typography variant={'subtitle2'}
+                              sx={{fontFamily: 'Google'}}>asdsdads
+                </Typography>
+                  <Button sx={{
+                      textTransform: 'none', fontFamily: 'Google', border: '0.0625rem solid rgb(218,220,224)',
+                      mb: -1,
+                      mr: -1,
+                      ml: 'auto',
+                      display: 'flex', alignItems: 'center'
+                  }}>
+                      <Settings fill={theme.palette.primary.main} style={{width: '20px', marginRight: '1ch'}}/> Settings
+                  </Button>
+              </div>
+           </Box>);
+          }
           // Only render the class header if there are assignments for the class
-          if (classAssignments.length > 0) {
+          else if (classAssignments.length > 0) {
             return (
               <Box key={classItem.id} marginTop={2}>
                 <Box
