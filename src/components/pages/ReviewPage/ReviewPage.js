@@ -124,7 +124,10 @@ const handleClassChange = async (event) => {
           const classAssignments = assignments.filter(assignment => assignment.class.className === classItem.className);
           
           // Only render the class header if there are assignments for the class
-          if (classAssignments.length > 0) {
+          if (selectedClassId !== "defaul" && classAssignments===0){
+            return ('No Assignment');
+          }
+          else if (classAssignments.length > 0) {
             return (
               <Box key={classItem.id} marginTop={2}>
                 <Box
