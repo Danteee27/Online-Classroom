@@ -7,9 +7,11 @@ import {Typography, Select, MenuItem, Box} from '@mui/material';
 import { Assignment, Comment, MoreVert } from '@mui/icons-material'; 
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 export default function ReviewPage() {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [selectedClassId, setSelectedClassId] = useState('default');
   const [className, setClassName] = useState('All Classes');
   const [assignments, setAssignments] = useState([]);
@@ -95,15 +97,17 @@ export default function ReviewPage() {
         >
           {assignments.map((assignment) => (
             <Box 
+            onClick={() => navigate('/u/a?=' + assignment.id)}
             display="flex"
             alignItems="center"
             justifyContent="space-between"
             color={theme.palette.primary.main}
             marginBottom="1rem"
-            sx={{ borderBottom: '0.5px solid',
+            sx={{ borderBottom: '0.3px solid',
                   ':hover': {
                     backgroundColor: '#e1f0fc', 
-                    borderRadius:'8px'
+                    borderRadius:'8px',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
                   }, }}>
               <Box display="flex" alignItems="center" padding='8px' >
                   <Box    bgcolor={theme.palette.primary.main} 
@@ -116,19 +120,19 @@ export default function ReviewPage() {
                           >
                     <Icon component={Assignment} fontSize="medium" />
                   </Box>
-                  <Box>
+                  <Box color='black'>
                     <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{assignment.name}</Typography>
-                    <Typography sx={{ fontFamily: 'Google', fontWeight:100, fontSize:12}}>Due {formatDate(assignment.dueDate)}</Typography>
+                    <Typography sx={{ fontFamily: 'Google', fontWeight:100, fontSize:12}}>{className} - Due {formatDate(assignment.dueDate)}</Typography>
                   </Box>
               </Box>
               <Box display="flex" alignItems="center" padding='8px' >
-                <Box display="flex" alignItems="center" >
+                <Box display="flex" alignItems="center" color='grey' >
                   <Box
                             alignContent='center'
                             paddingX="0.4rem" // Adjust padding as needed
                             paddingTop='6px'
                             borderRadius={50} // Adjust border radius as needed
-                            color={theme.palette.primary.main} 
+                            
                             >
                       <Icon component={Comment} fontSize="medium" />
                     </Box>

@@ -25,6 +25,7 @@ const GoogleLoginButton = () => {
       localStorage.setItem("isAuthenticated", "1");
       localStorage.setItem("name", userInfo.name);
       localStorage.setItem("email", userInfo.email);
+      console.log(userInfo);
     } catch (error) {
       toast.error(error.message);
       return;

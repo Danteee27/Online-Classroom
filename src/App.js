@@ -18,6 +18,7 @@ import ManagePage from "./components/pages/ManagePage/ManagePage";
 import ReviewPage from "./components/pages/ReviewPage/ReviewPage";
 import AssignmentPage from "./components/pages/AssignmentPage/AssignmentPage";
 import ClassInvitation from "./components/pages/ClassInvitation";
+import ToDoPage from "./components/pages/ToDoPage/ToDoPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import { withTranslation } from 'react-i18next';
 
@@ -82,9 +83,10 @@ function App() {
           <Route path="home" element={<HomePage />} />
           <Route path="c/:classId" element={<ClassPage />} />
           <Route path="c/:classId/a/:assignmentId" element={<AssignmentPage/>}/>
+          <Route path="c/:classId/a/list/:assignmentId" element={<div/>}/>
           <Route path="calendar" element={<div />} />
           <Route path="toReview" element={<ReviewPage />} />
-          <Route path="toDo" element={<div />} />
+          <Route path="toDo" element={<ToDoPage/>}/>
           <Route path="archivedClasses" element={<div />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="manage" element={<ManagePage />} />
