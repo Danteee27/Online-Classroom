@@ -43,7 +43,7 @@ const StudentGradesTable = ({ assignments, students }) => {
             {students.map((student) => (
                 <TableRow key={student.id}>
                     <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.id}</TableCell>
-                    <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.name}</TableCell>
+                    <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.user.firstName}</TableCell>
                     {assignments.map((assignment) => (
                     <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd' }}>
                         {student.grades[assignment.id]?.grade !== undefined
@@ -69,12 +69,7 @@ const StudentGradesTable = ({ assignments, students }) => {
 
 
 
-const students = [
-  { id: 1, name: 'Sarah', grades: { 14: { grade: 90 }, 13: { grade: 85 }, 15: { grade: 85 } } },
-  { id: 2, name: 'Max', grades: { 14: { grade: 95 }, 13: { grade: 92 },15: { grade: 85 } } },
-  // Add more students as needed
-  // ... (add more students)
-];
+const students = [];
 
 
 const GradeTable = () => {
@@ -164,7 +159,7 @@ const GradeTable = () => {
         });
     const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted);
     const studentsList = classDetails?.classMemberships?.filter(member => member.role === "student");
-    console.log(classDetails);
+    console.log(studentsList);
     return (
         <Box spacing={3} maxWidth="1000px" marginX="auto" overflowX="auto">
 
