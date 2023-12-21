@@ -1,14 +1,14 @@
 import "./App.css";
 import SignIn from "./components/pages/SignIn.js";
-import {Navigate, Route, Routes} from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import SignUp from "./components/pages/SignUp";
 import AppLayout from "./components/pages/AppLayout";
-import {ToastContainer} from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import {baseUrl} from "./apis/api.config";
+import { baseUrl } from "./apis/api.config";
 import VerificationSent from "./components/pages/VerificationSent";
-import {createTheme, ThemeProvider} from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ClassPage from "./components/pages/ClassPage/ClassPage";
 import HomePage from "./components/pages/HomePage";
 import VerificationConfirm from "./components/pages/VerificationConfirm.js";
@@ -19,7 +19,8 @@ import ReviewPage from "./components/pages/ReviewPage/ReviewPage";
 import AssignmentPage from "./components/pages/AssignmentPage/AssignmentPage";
 import ClassInvitation from "./components/pages/ClassInvitation";
 import SettingsPage from "./components/pages/SettingsPage";
-import { withTranslation } from 'react-i18next';
+import { withTranslation } from "react-i18next";
+import Notification from "./components/notification/Notification.js";
 
 const theme = createTheme({
   palette: {
@@ -81,13 +82,17 @@ function App() {
         <Route path="/u" element={<AppLayout />}>
           <Route path="home" element={<HomePage />} />
           <Route path="c/:classId" element={<ClassPage />} />
-          <Route path="c/:classId/a/:assignmentId" element={<AssignmentPage/>}/>
+          <Route
+            path="c/:classId/a/:assignmentId"
+            element={<AssignmentPage />}
+          />
           <Route path="calendar" element={<div />} />
           <Route path="toReview" element={<ReviewPage />} />
           <Route path="toDo" element={<div />} />
           <Route path="archivedClasses" element={<div />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="manage" element={<ManagePage />} />
+          <Route path="notification" element={<Notification />} />
         </Route>
       </Routes>
     </ThemeProvider>
