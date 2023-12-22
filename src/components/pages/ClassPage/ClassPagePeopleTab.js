@@ -14,6 +14,7 @@ import {useParams} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import i18n from "i18next";
+import {ImportStudentDialog} from "./ImportStudentDialog";
 
 export default function ClassPagePeopleTab() {
 
@@ -135,9 +136,11 @@ export default function ClassPagePeopleTab() {
                 margin: '1rem 0'
             }}>
                 <Typography variant={'h4'} sx={{fontFamily: 'Google'}}>{i18n.t('Students')}</Typography>
-                <IconButton size={'large'}
-                            onClick={(e) => setInviteStudentAnchorEl(e.currentTarget)}
-                            sx={{color: theme.palette.primary.main}}><PersonAddAlt/></IconButton>
+                <Box>
+                    <ImportStudentDialog/>
+                    <IconButton size={'large'}
+                                onClick={(e) => setInviteStudentAnchorEl(e.currentTarget)}
+                                sx={{color: theme.palette.primary.main}}><PersonAddAlt/></IconButton></Box>
             </div>)
     }
 
