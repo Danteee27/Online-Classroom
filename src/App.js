@@ -21,7 +21,7 @@ import ClassInvitation from "./components/pages/ClassInvitation";
 import ToDoPage from "./components/pages/ToDoPage/ToDoPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import { withTranslation } from "react-i18next";
-import Notification from "./components/notification/Notification.js";
+import { SocketContext, socket } from "./context/socket.js";
 
 const theme = createTheme({
   palette: {
@@ -66,38 +66,43 @@ const toast = (
 );
 
 function App() {
-  axios.defaults.baseURL = baseUrl;
+  // axios.defaults.baseURL = baseUrl;
+  axios.defaults.baseURL = "http://localhost:3000";
 
   return (
-    <ThemeProvider theme={theme}>
-      {toast}
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace={true} />} />
-        <Route path="/login" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/verificationSent" element={<VerificationSent />} />
-        <Route path="/verificationConfirm" element={<VerificationConfirm />} />
-        <Route path="forgotPassword" element={<ForgotPassword />} />
-        <Route path="resetPassword" element={<ResetPassword />} />
-        <Route path="classinvitation" element={<ClassInvitation />} />
-        <Route path="/u" element={<AppLayout />}>
-          <Route path="home" element={<HomePage />} />
-          <Route path="c/:classId" element={<ClassPage />} />
+    <SocketContext.Provider value={socket}>
+      <ThemeProvider theme={theme}>
+        {toast}
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace={true} />} />
+          <Route path="/login" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/verificationSent" element={<VerificationSent />} />
           <Route
-            path="c/:classId/a/:assignmentId"
-            element={<AssignmentPage />}
+            path="/verificationConfirm"
+            element={<VerificationConfirm />}
           />
-          <Route path="c/:classId/a/list/:assignmentId" element={<div />} />
-          <Route path="calendar" element={<div />} />
-          <Route path="toReview" element={<ReviewPage />} />
-          <Route path="toDo" element={<ToDoPage />} />
-          <Route path="archivedClasses" element={<div />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="manage" element={<ManagePage />} />
-          <Route path="notification" element={<Notification />} />
-        </Route>
-      </Routes>
-    </ThemeProvider>
+          <Route path="forgotPassword" element={<ForgotPassword />} />
+          <Route path="resetPassword" element={<ResetPassword />} />
+          <Route path="classinvitation" element={<ClassInvitation />} />
+          <Route path="/u" element={<AppLayout />}>
+            <Route path="home" element={<HomePage />} />
+            <Route path="c/:classId" element={<ClassPage />} />
+            <Route
+              path="c/:classId/a/:assignmentId"
+              element={<AssignmentPage />}
+            />
+            <Route path="c/:classId/a/list/:assignmentId" element={<div />} />
+            <Route path="calendar" element={<div />} />
+            <Route path="toReview" element={<ReviewPage />} />
+            <Route path="toDo" element={<ToDoPage />} />
+            <Route path="archivedClasses" element={<div />} />
+            <Route path="settings" element={<SettingsPage />} />
+            <Route path="manage" element={<ManagePage />} />
+          </Route>
+        </Routes>
+      </ThemeProvider>
+    </SocketContext.Provider>
   );
 }
 
