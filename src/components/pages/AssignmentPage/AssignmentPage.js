@@ -8,9 +8,13 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
-import Divider from "@mui/material/Divider";
+import {useParams} from "react-router-dom";
 
 export default function AssignmentPage() {
+    const classId = useParams().classId;
+    const assignmentId = useParams().assignmentId;
+    const membershipId = useParams().membershipId;
+
     const a = {
         name: 'Midterm - Authentication',
         createdAt: 'Nov 15',

@@ -82,7 +82,7 @@ const StudentGradesTable = ({ assignments, students }) => {
                     <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.id}</TableCell>
                     <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.name}</TableCell>
                     {assignments?.map((assignment) => (
-                    <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd'}} onClick={()=>{navigate('a/'+assignment.id)}}>
+                    <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd'}} onClick={()=>{navigate('a/'+assignment.id + '/m/' + student.id)}}>
                         {student.grades[assignment.id]?.grade !== undefined
                         ? `${student.grades[assignment.id]?.grade}/100`
                         : '-'}
