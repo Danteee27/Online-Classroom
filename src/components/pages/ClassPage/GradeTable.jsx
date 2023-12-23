@@ -235,7 +235,7 @@ const GradeTable = () => {
         try {
           // Map each student to a promise that fetches their grades
           const promises = students?.map(async (student) => {
-            const studentId = student.studentId ?? student.user?.id;
+            const studentId = student.id;
             const grades = {};
       
             try {

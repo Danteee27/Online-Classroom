@@ -13,38 +13,59 @@ import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 
 export default function AssignmentPage() {
-    const classId = useParams().classId;
-    const assignmentId = useParams().assignmentId;
-    const membershipId = useParams().membershipId;
+    const {classId, assignmentId, membershipId} = useParams();
+
+    const {data: classDetails} = useQuery(
+        {
+            queryKey: ["class", classId],
+            queryFn: async () => {
+                const response = await axios.get(`api/v1/classes/${classId}`);
+                return response.data
+            }
+        });
+
+    const { data: classMembershipAssignment } = useQuery({
+        queryKey: ["assignmentDetails", classId, membershipId, assignmentId],
+        queryFn: async () => {
+            const response = await axios.get(`api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`);
+            return response.data;
+        },
+    });
+
+    const assignment = classDetails?.assignments?.find(assignment => assignment.id.toString() === assignmentId);
+
+    const {data: creator} = useQuery(
+        {
+            queryKey: ["user", assignment?.creator?.id],
+            queryFn: async () => {
+                if(assignment?.creator?.id === null) return null;
+
+                const response = await axios.get(`api/v1/users/${assignment?.creator?.id}`);
+                return response.data
+            }
+        });
+
+    const studentName = classMembershipAssignment?.classMembership?.fullName ?? classMembershipAssignment?.classMembership?.user?.firstName + ' ' +classMembershipAssignment?.classMembership?.user?.lastName;
 
     const a = {
-        name: 'Midterm - Authentication',
-        createdAt: 'Nov 15',
-        maxGrade: 100,
+        name: assignment?.name,
+        createdAt: assignment?.createdDate && new Date(assignment?.createdDate).toDateString(),
+        maxGrade: assignment?.maxGrade,
         studentReview: {
             avatar: '',
-            name: 'abc',
+            name: studentName,
             reviewTime: 'Dec 3',
             reason: 'this work contains my ultimate effort. I cannot let it down this easily'
         },
         teacherReview: {
             avatar: '',
-            name: 'Michael',
+            name: creator?.firstName + ' ' + creator?.lastName,
             reviewTime: 'Dec 3',
             reason: 'your opnion is subjective'
         },
         studentGrade: 10,
-        description: 'use passport.js'
+        description: assignment?.description
     }
-
-    const { data: assignmentDetails } = useQuery({
-        queryKey: ["assignmentDetails", classId, membershipId, assignmentId],
-        queryFn: async () => {
-            const response = await axios.get(`api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`);
-            console.log(response.data)
-            return response.data;
-        },
-    });
 
     const sendReview = () => {
         // todo handle post review
