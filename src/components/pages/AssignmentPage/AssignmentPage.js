@@ -8,27 +8,61 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
-import Divider from "@mui/material/Divider";
+import {useParams} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+import axios from "axios";
 
 export default function AssignmentPage() {
+    const {classId, assignmentId, membershipId} = useParams();
+
+    const {data: classDetails} = useQuery(
+        {
+            queryKey: ["class", classId],
+            queryFn: async () => {
+                const response = await axios.get(`api/v1/classes/${classId}`);
+                return response.data
+            }
+        });
+
+    const { data: details } = useQuery({
+        queryKey: ["assignmentDetails", classId, membershipId, assignmentId],
+        queryFn: async () => {
+            const response = await axios.get(`api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`);
+            return response.data;
+        },
+    });
+
+    const assignment = classDetails?.assignments?.find(assignment => assignment.id.toString() === assignmentId);
+
+    const {data: creator} = useQuery(
+        {
+            queryKey: ["user", assignment?.creator?.id],
+            queryFn: async () => {
+                if(assignment?.creator?.id === null) return null;
+
+                const response = await axios.get(`api/v1/users/${assignment?.creator?.id}`);
+                return response.data
+            }
+        });
+
     const a = {
-        name: 'Midterm - Authentication',
-        createdAt: 'Nov 15',
-        maxGrade: 100,
-        studentReview: {
-            avatar: '',
-            name: 'abc',
-            reviewTime: 'Dec 3',
-            reason: 'this work contains my ultimate effort. I cannot let it down this easily'
-        },
-        teacherReview: {
-            avatar: '',
-            name: 'Michael',
-            reviewTime: 'Dec 3',
-            reason: 'your opnion is subjective'
-        },
-        studentGrade: 10,
-        description: 'use passport.js'
+        name: assignment?.name,
+        createdAt: assignment?.createdDate && new Date(assignment?.createdDate).toDateString(),
+        maxGrade: assignment?.maxGrade,
+        description: assignment?.description,
+        studentName: details?.classMembership?.fullName ?? details?.classMembership?.user?.firstName + ' ' +details?.classMembership?.user?.lastName,
+        teacherName: creator?.firstName + ' ' + creator?.lastName,
+        studentExplanation: details?.studentExplanation,
+        teacherComment: details?.teacherComment,
+        studentComment: details?.studentComment,
+        teacherFinalisedComment: details?.teacherFinalisedComment,
+        grade: details?.grade ?? 0,
+        currentGrade: details?.currentGrade ?? 0,
+        expectedGrade: details?.expectedGrade ?? 0,
+        isFinalised: details?.isFinalised,
+        isRequested: details?.isRequested,
+        isReviewed: details?.isReviewed,
+        isSubmitted: details?.isSubmitted,
     }
 
     const sendReview = () => {
@@ -60,7 +94,7 @@ export default function AssignmentPage() {
                                    fontFamily: 'Google',
                                    fontWeight: 500,
                                    fontSize: '.875rem'
-                               }}>{a.teacherReview.name}</Typography>
+                               }}>{a.teacherName}</Typography>
                     <Box sx={{mx: '.325rem'}}>•</Box>
                     <Typography variant={'subtitle2'}
                                 sx={{
@@ -76,7 +110,7 @@ export default function AssignmentPage() {
                                 mb: '1rem',
                                 pb: '1rem'
                             }}>
-                    <b>{a.studentGrade}</b>/{a.maxGrade}
+                    <b>{a.grade}</b>/{a.maxGrade}
                 </Typography>
                 <Typography variant={'body1'}
                             sx={{
@@ -97,10 +131,10 @@ export default function AssignmentPage() {
                         Student reviews
                     </Typography>
                 </Box>
-                <ChatDialog avatar={a.studentReview.avatar} name={a.studentReview.name} reason={a.studentReview.reason}
-                            time={a.studentReview.reviewTime}/>
-                <ChatDialog avatar={a.teacherReview.avatar} name={a.teacherReview.name} reason={a.teacherReview.reason}
-                            time={a.teacherReview.reviewTime}/>
+                {a.studentExplanation && <ChatDialog name={a.studentName} reason={a.studentExplanation}/>}
+                {a.teacherComment && <ChatDialog name={a.teacherName} reason={a.teacherComment}/>}
+                {a.studentComment && <ChatDialog name={a.studentName} reason={a.studentComment}/>}
+                {a.teacherFinalisedComment && <ChatDialog name={a.teacherName} reason={a.teacherFinalisedComment}/>}
                 <form autoComplete="off" style={{display: 'flex', paddingTop: '2ch'}} onSubmit={sendReview}>
                     <Box sx={{'& fieldset': {borderRadius: 100}, flexGrow: 1}}>
                         <TextField placeholder={'Add private comment...'}

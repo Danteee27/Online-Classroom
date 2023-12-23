@@ -273,13 +273,13 @@ export default function ClassPagePeopleTab() {
                 })}
                 <StudentsHeader/>
                 {students != null && students.length > 0 &&
-                    <Person name={students[0]?.user?.firstName + ' ' + students[0]?.user?.lastName }
+                    <Person name={students[0]?.fullName ?? students[0]?.user?.firstName + ' ' + students[0]?.user?.lastName}
                             // status={students[0].status}
                             // avatar={students[0].avatar}
                     />}
                 {students && students.slice(1).map(student => {
                     return <div style={{borderTop: '0.0625rem solid rgb(218,220,224)',}}>
-                        <Person name={student?.user?.firstName + ' ' + student?.user?.lastName}
+                        <Person name={student?.fullName ?? student?.user?.firstName + ' ' + student?.user?.lastName}
                                 // status={teacher.status}
                                 // avatar={teacher.avatar}
                         /></div>

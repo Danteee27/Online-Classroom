@@ -3,7 +3,7 @@ import { Paper, Table, TableBody, Button, TextField, Dialog, Menu, MenuItem, Tab
 import {NoteAdd, Edit, DeleteForever, Download} from "@mui/icons-material";
 import { useTheme } from '@emotion/react';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {Language, Lock} from "@mui/icons-material";
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
@@ -36,11 +36,45 @@ const DNDTableCell = ({ assignment, onDrop }) => {
     );
 };
 
-const StudentGradesTable = ({ assignments, students }) => {
-    const handleOnDrop = (draggedId, droppedId) => {
-        console.log(draggedId, droppedId)
+const StudentGradesTable = ({ assignments, students, refetch}) => {
+    const navigate = useNavigate();
+    const {classId} = useParams();
+    const handleOnDrop = async (draggedId, droppedId) => {
+        console.log(classId, draggedId, droppedId)
+        if(draggedId === droppedId) return;
 
-        // todo swap assignment order
+        const thisClass = await axios.get(`api/v1/classes/${classId}`);
+
+        const draggedAssignment = thisClass.data.assignments.find(assignment => assignment.id === draggedId);
+        const droppedAssignment = thisClass.data.assignments.find(assignment => assignment.id === droppedId);
+
+        if (draggedAssignment.order === null) {
+            draggedAssignment.order = draggedAssignment.id;
+        }
+
+        if (droppedAssignment.order === null) {
+            droppedAssignment.order = droppedAssignment.id;
+        }
+
+        if (draggedAssignment.order === droppedAssignment.order) {
+            if (droppedAssignment.id > draggedAssignment.id) {
+                droppedAssignment.order += 1;
+            } else {
+                draggedAssignment.id += 1;
+            }
+        }
+
+        const response1 = await axios.put(`api/v1/classes/${classId}/assignments/${draggedId}`, {
+            order: droppedAssignment.order
+        });
+
+        const response2 = await axios.put(`api/v1/classes/${classId}/assignments/${droppedId}`, {
+            order: draggedAssignment.order
+        });
+
+        await refetch();
+
+        toast.success(`Moved successfully`)
     };
 
     const theme = useTheme();
@@ -74,11 +108,14 @@ const StudentGradesTable = ({ assignments, students }) => {
             </TableHead>
             <TableBody>
             {students?.map((student) => (
-                <TableRow key={student.id}>
+                <TableRow key={student.id} sx={{"& .MuiTableCell-root:hover": {
+                        cursor:'pointer',
+                        background:'#fafafa'
+                    }}}>
                     <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.id}</TableCell>
                     <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.name}</TableCell>
                     {assignments?.map((assignment) => (
-                    <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd' }}>
+                    <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd'}} onClick={()=>{navigate('a/'+assignment.id + '/m/' + student.id)}}>
                         {student.grades[assignment.id]?.grade !== undefined
                         ? `${student.grades[assignment.id]?.grade}/100`
                         : '-'}
@@ -184,7 +221,7 @@ const GradeTable = () => {
     
     const [studentsWithGrades, setStudentsWithGrades] = useState([]);
     const {classId} = useParams();
-    const {data: classDetails} = useQuery(
+    const {data: classDetails, refetch} = useQuery(
         {
             queryKey: ["class", classId],
             queryFn: async () => {
@@ -192,14 +229,13 @@ const GradeTable = () => {
                 return response.data
             }
         });
-    const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted);
+    const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted).sort((a, b) => a.order - b.order);
     const studentsList = classDetails?.classMemberships?.filter(member => member.role === "student");
-    console.log(classDetails)
     const getStudentGrades = async (students, assignments, classId) => {
         try {
           // Map each student to a promise that fetches their grades
           const promises = students?.map(async (student) => {
-            const studentId = student.user.id;
+            const studentId = student.id;
             const grades = {};
       
             try {
@@ -219,7 +255,6 @@ const GradeTable = () => {
                         const foundAssignment = classMembership.classMembershipAssignments.find(
                           (classAssignment) => classAssignment.assignment.id === assignmentId
                         );
-                        console.log(foundAssignment)
                         const grade = foundAssignment ? foundAssignment.grade : null;
       
                         // Use the assignment id to get the maxGrade
@@ -242,7 +277,7 @@ const GradeTable = () => {
       
             return {
               id: studentId,
-              name: student.user.firstName,
+              name: student?.fullName ?? student?.user?.firstName + ' ' + student?.user?.lastName,
               grades: grades,
             };
           });
@@ -270,7 +305,6 @@ const GradeTable = () => {
           const grades = await fetchStudentGrades();
           setStudentsWithGrades(grades);
         };
-        console.log(studentsWithGrades)
         fetchData();
       }, []);
     return (
@@ -336,7 +370,7 @@ const GradeTable = () => {
                     ))}
             </Menu>
         </Box>
-        <StudentGradesTable assignments={assignments} students={studentsWithGrades} />
+        <StudentGradesTable assignments={assignments} students={studentsWithGrades} refetch={refetch}/>
         </Box>
   );
 };

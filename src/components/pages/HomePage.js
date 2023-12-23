@@ -8,20 +8,33 @@ import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import Box from "@mui/material/Box";
 import i18n from "i18next";
+import {toast} from "react-toastify";
 
-function ClassItem({ className, classSubject, teacherName, avatar, classId }) {
+function ClassItem({ className, classSubject, teacherName, avatar, classId, disabled }) {
     const navigate = useNavigate();
   
     return (
-      <Card
-        sx={{
-          position: 'relative',
-          borderRadius: 2,
-          boxShadow: 0,
-          border: '0.0625rem solid rgb(218,220,224)',
-        }}
-      >
-        <CardActionArea onClick={() => navigate('/u/c/' + classId)}>
+        <Card
+            sx={!disabled ? {
+                position: 'relative',
+                borderRadius: 2,
+                boxShadow: 0,
+                border: '0.0625rem solid rgb(218,220,224)',
+            } : {
+                position: 'relative',
+                borderRadius: 2,
+                boxShadow: 0,
+                border: '0.0625rem solid rgb(218,220,224)',
+                opacity: .5
+            }}
+        >
+            <CardActionArea onClick={() => {
+                if (disabled) {
+                    toast.error("Permission denied. Please contact Admin.")
+                } else {
+                    navigate('/u/c/' + classId)
+                }
+            }}>
           <CardMedia
             component="img"
             height="100"
@@ -123,6 +136,7 @@ function ClassItem({ className, classSubject, teacherName, avatar, classId }) {
                           classSubject={item.class.description}
                           teacherName={item.user.lastName + ' ' + item.user.firstName}
                           classId={item.class.id}
+                          disabled={!item.class.active}
                       />
                   ))}
               </div>}
