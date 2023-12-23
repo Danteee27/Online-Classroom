@@ -26,6 +26,7 @@ import './AppDrawer.css';
 import axios from "axios";
 import {useQuery} from "@tanstack/react-query";
 import i18n from "i18next";
+import {toast} from "react-toastify";
 
 const drawerWidth = 300;
 
@@ -70,14 +71,23 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
 
 function DrawerItem(props) {
     return <ListItem
-        component={props.to && NavLink}
+        component={props.to && !props.disabled && NavLink}
         key={props.key}
         disablePadding
         sx={{display: "block", color: "#3c4043 !important"}}
         to={props.to}
-        onClick={props.onClick}
+        onClick={() => {
+            if (props.disabled) {
+                toast.error("Permission denied. Please contact Admin.")
+            } else {
+                if(props.onClick) {
+                    props.onClick();
+                }
+            }
+        }}
     >
         <ListItemButton
+            disabled={props.disabled}
             sx={{
                 minHeight: 48,
                 justifyContent: props.open ? "initial" : "center",
@@ -121,7 +131,7 @@ export default function AppDrawer({open}) {
         setOpenEnrolled(!openEnrolled);
     };
     const handleTeachingClick = () => {
-        setOpenTeaching(!openEnrolled);
+        setOpenTeaching(!openTeaching);
     };
     const {data} = useQuery(
         {
@@ -184,6 +194,7 @@ export default function AppDrawer({open}) {
                                         open={open}
                                         to={'c/'+ item.class.id}
                                         subtitle={item.class.description}
+                                        active={item.class.active}
                             />
                         ))}
                     </List>
@@ -226,6 +237,7 @@ export default function AppDrawer({open}) {
                                         open={open}
                                         to={'c/'+ item.class.id}
                                         subtitle={item.class.description}
+                                        disabled={!item.class.active}
                             />
                         ))}
                     </List>
