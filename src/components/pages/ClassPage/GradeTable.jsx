@@ -36,12 +36,45 @@ const DNDTableCell = ({ assignment, onDrop }) => {
     );
 };
 
-const StudentGradesTable = ({ assignments, students }) => {
+const StudentGradesTable = ({ assignments, students, refetch}) => {
     const navigate = useNavigate();
-    const handleOnDrop = (draggedId, droppedId) => {
-        console.log(draggedId, droppedId)
+    const {classId} = useParams();
+    const handleOnDrop = async (draggedId, droppedId) => {
+        console.log(classId, draggedId, droppedId)
+        if(draggedId === droppedId) return;
 
-        // todo swap assignment order
+        const thisClass = await axios.get(`api/v1/classes/${classId}`);
+
+        const draggedAssignment = thisClass.data.assignments.find(assignment => assignment.id === draggedId);
+        const droppedAssignment = thisClass.data.assignments.find(assignment => assignment.id === droppedId);
+
+        if (draggedAssignment.order === null) {
+            draggedAssignment.order = draggedAssignment.id;
+        }
+
+        if (droppedAssignment.order === null) {
+            droppedAssignment.order = droppedAssignment.id;
+        }
+
+        if (draggedAssignment.order === droppedAssignment.order) {
+            if (droppedAssignment.id > draggedAssignment.id) {
+                droppedAssignment.order += 1;
+            } else {
+                draggedAssignment.id += 1;
+            }
+        }
+
+        const response1 = await axios.put(`api/v1/classes/${classId}/assignments/${draggedId}`, {
+            order: droppedAssignment.order
+        });
+
+        const response2 = await axios.put(`api/v1/classes/${classId}/assignments/${droppedId}`, {
+            order: draggedAssignment.order
+        });
+
+        await refetch();
+
+        toast.success(`Moved successfully`)
     };
 
     const theme = useTheme();
@@ -188,7 +221,7 @@ const GradeTable = () => {
     
     const [studentsWithGrades, setStudentsWithGrades] = useState([]);
     const {classId} = useParams();
-    const {data: classDetails} = useQuery(
+    const {data: classDetails, refetch} = useQuery(
         {
             queryKey: ["class", classId],
             queryFn: async () => {
@@ -196,9 +229,8 @@ const GradeTable = () => {
                 return response.data
             }
         });
-    const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted);
+    const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted).sort((a, b) => a.order - b.order);
     const studentsList = classDetails?.classMemberships?.filter(member => member.role === "student");
-    console.log(classDetails)
     const getStudentGrades = async (students, assignments, classId) => {
         try {
           // Map each student to a promise that fetches their grades
@@ -223,7 +255,6 @@ const GradeTable = () => {
                         const foundAssignment = classMembership.classMembershipAssignments.find(
                           (classAssignment) => classAssignment.assignment.id === assignmentId
                         );
-                        console.log(foundAssignment)
                         const grade = foundAssignment ? foundAssignment.grade : null;
       
                         // Use the assignment id to get the maxGrade
@@ -274,7 +305,6 @@ const GradeTable = () => {
           const grades = await fetchStudentGrades();
           setStudentsWithGrades(grades);
         };
-        console.log(studentsWithGrades)
         fetchData();
       }, []);
     return (
@@ -340,7 +370,7 @@ const GradeTable = () => {
                     ))}
             </Menu>
         </Box>
-        <StudentGradesTable assignments={assignments} students={studentsWithGrades} />
+        <StudentGradesTable assignments={assignments} students={studentsWithGrades} refetch={refetch}/>
         </Box>
   );
 };

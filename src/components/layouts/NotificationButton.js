@@ -26,11 +26,10 @@ export default function NotificationButton() {
       return response.data;
     },
   });
-  console.log(data);
+
   const socket = React.useContext(SocketContext);
 
   React.useEffect(() => {
-    setNotifications(data || []);
     socket.on(userId, (notification) => {
       console.log(notification);
       refetch();

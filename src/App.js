@@ -66,8 +66,8 @@ const toast = (
 );
 
 function App() {
-  // axios.defaults.baseURL = baseUrl;
-  axios.defaults.baseURL = "http://localhost:3000";
+  axios.defaults.baseURL = baseUrl;
+  // axios.defaults.baseURL = "http://localhost:3000";
 
   return (
     <SocketContext.Provider value={socket}>
