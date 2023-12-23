@@ -55,8 +55,7 @@ export default function ToDoPage() {
     const classMemberships = data?.classMemberships?.filter(member => member.role === "student") ?? [];
     const classes = classMemberships.map(member => member.class);
     
-    const submittedAssignments = classMemberships.map(member => member.classMembershipsAssignments);
-    //console.log(submittedAssignments);
+    //const submittedAssignments = classMemberships[0].classMembershipAssignments;
     //get assignments for selected class
     const getAssignmentsForClass = async (classId) => {
       try {
@@ -95,9 +94,40 @@ export default function ToDoPage() {
     return <div>Error fetching data</div>;
   }
 
-  const submittedCheck = (id) =>{
+  const submittedCheck = async (assignmentId) => {
+    let classMembershipWithAssignment = null;
+    for (let i = 0; i < classMemberships.length; i++) {
+      const member = classMemberships[i];
 
-  }
+      // Check if classMembershipAssignments is an array
+      if (Array.isArray(member.classMembershipAssignments)) {
+        let j = 0;
+        
+        // Use a while loop to traverse classMembershipAssignments
+        while (j < member.classMembershipAssignments.length) {
+          const assignment = member.classMembershipAssignments[j];
+
+          // Check if assignmentId matches
+          if (assignment.assignment.id === assignmentId) {
+            classMembershipWithAssignment = member;
+            break; // Exit the loop if assignment is found
+          }
+
+          j++;
+        }
+      }
+
+      if (classMembershipWithAssignment) {
+        const putRequest = await axios.get(`/api/v1/classes/${classMembershipWithAssignment.class.id}/classMemberships/${classMembershipWithAssignment.id}/assignment/${assignmentId}`);
+        return putRequest.data.isSubmitted;
+      }
+      else {
+        return false;
+      }
+    }
+    console.log(classMembershipWithAssignment)
+  };
+  
   
   const handleClassChange = async (event) => {
     const selectedId = event.target.value;
@@ -172,9 +202,10 @@ export default function ToDoPage() {
   
       console.log(id);
       console.log(selectedAssignment);
-      const response = await axios.post(`/api/v1/classes/${selectedClassId}/classMemberships/${id}/assignment/${assignmentId}`, selectedAssignment);
-  
+      const response = await axios.post(`/api/v1/classes/${selectedClassId}/classMemberships/${id}/assignment/${assignmentId}`);
+      const putRequest = await axios.put(`/api/v1/classes/${selectedClassId}/classMemberships/${id}/assignment/${assignmentId}`, selectedAssignment);
       console.log(response);
+      console.log(putRequest);
       toast.success("Successfully submitted!")
       handleCloseModal();
     } catch (e) {
@@ -270,7 +301,7 @@ export default function ToDoPage() {
             <Box display="flex" alignItems="center" padding='8px'>
               <Box display="flex" alignItems="center" color='grey'>
                 <Box>
-                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500 }}>{getDeadline(assignment.dueDate)}</Typography>
+                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500 }}>{submittedCheck(assignment.id) ? 'Assignment submitted!' : getDeadline(assignment.dueDate)}</Typography>
                 </Box>
                 <Box
                   alignContent='center'
