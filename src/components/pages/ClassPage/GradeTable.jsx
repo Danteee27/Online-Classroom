@@ -3,7 +3,7 @@ import { Paper, Table, TableBody, Button, TextField, Dialog, Menu, MenuItem, Tab
 import {NoteAdd, Edit, DeleteForever, Download} from "@mui/icons-material";
 import { useTheme } from '@emotion/react';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import {Language, Lock} from "@mui/icons-material";
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
@@ -37,6 +37,7 @@ const DNDTableCell = ({ assignment, onDrop }) => {
 };
 
 const StudentGradesTable = ({ assignments, students }) => {
+    const navigate = useNavigate();
     const handleOnDrop = (draggedId, droppedId) => {
         console.log(draggedId, droppedId)
 
@@ -74,11 +75,14 @@ const StudentGradesTable = ({ assignments, students }) => {
             </TableHead>
             <TableBody>
             {students?.map((student) => (
-                <TableRow key={student.id}>
+                <TableRow key={student.id} sx={{"& .MuiTableCell-root:hover": {
+                        cursor:'pointer',
+                        background:'#fafafa'
+                    }}}>
                     <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.id}</TableCell>
                     <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.name}</TableCell>
                     {assignments?.map((assignment) => (
-                    <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd' }}>
+                    <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd'}} onClick={()=>{navigate('a/'+assignment.id)}}>
                         {student.grades[assignment.id]?.grade !== undefined
                         ? `${student.grades[assignment.id]?.grade}/100`
                         : '-'}
