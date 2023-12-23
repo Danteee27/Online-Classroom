@@ -23,7 +23,7 @@ export default function ToDoPage() {
 
   const [selectedAssignment, setSelectedAssignment] = useState({
     currentGrade: null,
-    grade: null,
+    grade: 80,
     expectedGrade: 100,
     description: "...",
     studentReview: "",
@@ -32,7 +32,6 @@ export default function ToDoPage() {
     isRequested: false,
     isReviewed: false,
     isSubmitted: true
-    //isSubmitted: true
   });
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -172,11 +171,12 @@ export default function ToDoPage() {
       const id = filteredClassMemberships.length > 0 ? filteredClassMemberships[0].id : null;
   
       console.log(id);
-  
+      console.log(selectedAssignment);
       const response = await axios.post(`/api/v1/classes/${selectedClassId}/classMemberships/${id}/assignment/${assignmentId}`, selectedAssignment);
   
       console.log(response);
-      console.log("Assigned!");
+      toast.success("Successfully submitted!")
+      handleCloseModal();
     } catch (e) {
       toast.error(e.message);
     }

@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useQueryClient } from '@tanstack/react-query';
 import {toast} from "react-toastify";
+import { useEffect } from 'react';
 import * as XLSX from 'xlsx';
 
 const StudentGradesTable = ({ assignments, students }) => {
@@ -43,7 +44,7 @@ const StudentGradesTable = ({ assignments, students }) => {
             {students.map((student) => (
                 <TableRow key={student.id}>
                     <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.id}</TableCell>
-                    <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.user.firstName}</TableCell>
+                    <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.name}</TableCell>
                     {assignments.map((assignment) => (
                     <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd' }}>
                         {student.grades[assignment.id]?.grade !== undefined
@@ -147,7 +148,8 @@ const GradeTable = () => {
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
         XLSX.writeFile(wb, 'student_grades.xlsx');
       };
-      
+    
+    const [studentsWithGrades, setStudentsWithGrades] = useState([]);
     const {classId} = useParams();
     const {data: classDetails} = useQuery(
         {
@@ -159,7 +161,85 @@ const GradeTable = () => {
         });
     const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted);
     const studentsList = classDetails?.classMemberships?.filter(member => member.role === "student");
-    console.log(studentsList);
+    console.log(classDetails)
+    const getStudentGrades = async (students, assignments, classId) => {
+        try {
+          // Map each student to a promise that fetches their grades
+          const promises = students.map(async (student) => {
+            const studentId = student.user.id;
+            const grades = {};
+      
+            try {
+              // Fetch the user data with classMemberships
+              const response = await axios.get(`api/v1/users/${studentId}`);
+              const userWithDetails = response.data;
+      
+              // Check if classMemberships is an array before calling flatMap
+              if (Array.isArray(userWithDetails.classMemberships)) {
+                // Map each classMembershipAssignment to a promise that fetches the grade
+                await Promise.all(
+                  userWithDetails.classMemberships.flatMap((classMembership) =>
+                    classMembership.classMembershipAssignments.map(async (assignment) => {
+                      const assignmentId = assignment.assignment.id;
+      
+                      try {
+                        const foundAssignment = classMembership.classMembershipAssignments.find(
+                          (classAssignment) => classAssignment.assignment.id === assignmentId
+                        );
+                        console.log(foundAssignment)
+                        const grade = foundAssignment ? foundAssignment.grade : null;
+      
+                        // Use the assignment id to get the maxGrade
+                        const foundAssignmentDetails = assignments.find((a) => a.id === assignmentId);
+      
+                        grades[assignmentId] = {
+                          grade: grade,
+                          maxGrade: foundAssignmentDetails ? foundAssignmentDetails.maxGrade : null,
+                        };
+                      } catch (error) {
+                        console.error(`Error fetching grade for student ${studentId} and assignment ${assignmentId}: ${error.message}`);
+                      }
+                    })
+                  )
+                );
+              }
+            } catch (error) {
+              console.error(`Error fetching user details for student ${studentId}: ${error.message}`);
+            }
+      
+            return {
+              id: studentId,
+              name: student.user.firstName,
+              grades: grades,
+            };
+          });
+      
+          // Wait for all promises to be resolved and return the array
+          return Promise.all(promises);
+        } catch (error) {
+          console.error(`Error fetching student grades: ${error.message}`);
+          return []; // Return an empty array in case of an error
+        }
+      };      
+      
+      const fetchStudentGrades = async () => {
+        try {
+          const studentsWithGrades = await getStudentGrades(studentsList, assignments);
+          return studentsWithGrades;
+        } catch (error) {
+          console.error(`Error fetching student grades: ${error.message}`);
+          return [];
+        }
+      };
+      // Usage
+      useEffect(() => {
+        const fetchData = async () => {
+          const grades = await fetchStudentGrades();
+          setStudentsWithGrades(grades);
+        };
+        console.log(studentsWithGrades)
+        fetchData();
+      }, []);
     return (
         <Box spacing={3} maxWidth="1000px" marginX="auto" overflowX="auto">
 
@@ -223,7 +303,7 @@ const GradeTable = () => {
                     ))}
             </Menu>
         </Box>
-        <StudentGradesTable assignments={assignments} students={students} />
+        <StudentGradesTable assignments={assignments} students={studentsWithGrades} />
         </Box>
   );
 };

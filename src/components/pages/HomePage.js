@@ -101,7 +101,6 @@ function ClassItem({ className, classSubject, teacherName, avatar, classId }) {
           });
       const classes = data?.classMemberships ?? null;
       const isBanned = data?.isLocked ?? false;
-
       const theme= useTheme();
 
       return (<>{isBanned && <Box sx={{mx: 'auto', width: '100%', height: '50dvh', display: 'flex', justifyContent: 'center', flexDirection:'column', alignItems: 'center'}}>
