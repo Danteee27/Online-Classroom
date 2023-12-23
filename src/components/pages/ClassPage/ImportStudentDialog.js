@@ -9,18 +9,32 @@ import {useState} from "react";
 import {parse} from "csv-parse/browser/esm/sync";
 import {DataGrid, GridToolbarContainer, GridToolbarExport} from "@mui/x-data-grid";
 import {toast} from "react-toastify";
+import axios from "axios";
+import {useParams} from "react-router-dom";
 
 export function ImportStudentDialog(props) {
     const theme = useTheme();
+    const {classId} = useParams();
     const [importStudentAnchorEl, setImportStudentAnchorEl] = useState(null);
 
     const [csvData, setCsvData] = useState([]);
     const [filename, setFilename] = useState("");
 
-    const handleAddStudent = async () => {
+    const handleAddStudent = async (e) => {
+        e.preventDefault();
+
         try {
-            // TODO HANDLE ADD STUDENT HERE
+            for (let i = 0; i < csvData.length; i++) {
+                const data = {
+                    fullName: csvData[i].fullName,
+                    studentId: csvData[i].id,
+                    role: 'student'
+                }
+                await axios.post(`api/v1/classes/${classId}/classMemberships`, data)
+            }
+
             toast.success("Added students successfully!");
+            setImportStudentAnchorEl(null);
         } catch (e) {
             toast.error(e.message);
         }
