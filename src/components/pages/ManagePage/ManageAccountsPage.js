@@ -58,6 +58,29 @@ export default function ManageAccountsPage() {
             },
         });
 
+    const handleUpdateStudentId = async (e, row) => {
+
+        e.preventDefault();
+
+        const data = new FormData(e.currentTarget);
+        const id =row.id;
+
+        const formData = {
+            studentId: data.get("studentId")
+        };
+
+        try {
+            const response = await axios.patch(
+                `api/v1/users/${id}`,
+                formData
+            );
+            await refetch();
+            toast.success("Account updated successfully");
+        } catch (error) {
+            toast.error(error.message);
+        }
+    }
+
     const columns = [
         {
             field: 'id',
@@ -105,24 +128,18 @@ export default function ManageAccountsPage() {
             renderCell: ({row}) => {
                 return (
                     <>
-                        {row.role.name !== 'User' &&
-                            <Tooltip title={'Not Student'}>
-                                <Container sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    margin: 0,
-                                    padding: 0,
-                                    justifyContent: 'center',
-                                    width: '100%',
-                                    height: '100%',
-                                    fontFamily: 'Google',
-                                    fontWeight: '500',
-                                    fontSize: 15
-                                }}></Container>
-                            </Tooltip>
-                        }
-                        {row.role.name === 'User' &&
-                            <TextField
+                        {<TextField
+                            component="form"
+                            noValidate
+                            onSubmit={(e)=> handleUpdateStudentId(e, row)}
+                            id="studentId"
+                            name="studentId"
+                            // onKeyDown={async (ev) => {
+                            //     if (ev.key === 'Enter') {
+                            //         await handleUpdateStudentId(row);
+                            //     }
+                            // }}
+                                defaultValue={row.studentId}
                                 placeholder={'Unassigned'}
                                 inputProps={{
                                     style: {

@@ -8,9 +8,15 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
 import TextField from "@mui/material/TextField";
-import Divider from "@mui/material/Divider";
+import {useParams} from "react-router-dom";
+import {useQuery} from "@tanstack/react-query";
+import axios from "axios";
 
 export default function AssignmentPage() {
+    const classId = useParams().classId;
+    const assignmentId = useParams().assignmentId;
+    const membershipId = useParams().membershipId;
+
     const a = {
         name: 'Midterm - Authentication',
         createdAt: 'Nov 15',
@@ -30,6 +36,15 @@ export default function AssignmentPage() {
         studentGrade: 10,
         description: 'use passport.js'
     }
+
+    const { data: assignmentDetails } = useQuery({
+        queryKey: ["assignmentDetails", classId, membershipId, assignmentId],
+        queryFn: async () => {
+            const response = await axios.get(`api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`);
+            console.log(response.data)
+            return response.data;
+        },
+    });
 
     const sendReview = () => {
         // todo handle post review

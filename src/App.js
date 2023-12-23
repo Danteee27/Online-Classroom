@@ -79,8 +79,8 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/verificationSent" element={<VerificationSent />} />
           <Route
-            path="/verificationConfirm"
-            element={<VerificationConfirm />}
+            path="c/:classId/a/:assignmentId/m/:membershipId"
+            element={<AssignmentPage />}
           />
           <Route path="forgotPassword" element={<ForgotPassword />} />
           <Route path="resetPassword" element={<ResetPassword />} />

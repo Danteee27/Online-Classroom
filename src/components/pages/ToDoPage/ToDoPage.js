@@ -23,8 +23,8 @@ export default function ToDoPage() {
 
   const [selectedAssignment, setSelectedAssignment] = useState({
     currentGrade: null,
+    grade: 80,
     expectedGrade: 100,
-    grade: null,
     description: "...",
     studentReview: "",
     teacherComment: "",
@@ -54,6 +54,7 @@ export default function ToDoPage() {
         });
     const classMemberships = data?.classMemberships?.filter(member => member.role === "student") ?? [];
     const classes = classMemberships.map(member => member.class);
+    
     const submittedAssignments = classMemberships.map(member => member.classMembershipsAssignments);
     //console.log(submittedAssignments);
     //get assignments for selected class
@@ -142,14 +143,20 @@ export default function ToDoPage() {
       formattedString += `${differenceInDays} days `;
     }
   
-    formattedString += `${remainingHours} hours`;
+    if(remainingHours >= 0) {
+    formattedString += `${remainingHours} hours until deadline`;
+    }
+    else{
+      return "The assignment is overdue"
+    }
   
     return formattedString;
   };
 
 
-  const handleOpenModal = (id) => {
-    setAssignmentId(id);
+  const handleOpenModal = (assignment) => {
+    setAssignmentId(assignment.id);
+    setSelectedClassId(assignment.class.id);
     setOpenModal(true);
   };  
 
@@ -164,11 +171,12 @@ export default function ToDoPage() {
       const id = filteredClassMemberships.length > 0 ? filteredClassMemberships[0].id : null;
   
       console.log(id);
-  
+      console.log(selectedAssignment);
       const response = await axios.post(`/api/v1/classes/${selectedClassId}/classMemberships/${id}/assignment/${assignmentId}`, selectedAssignment);
   
       console.log(response);
-      console.log("Assigned!");
+      toast.success("Successfully submitted!")
+      handleCloseModal();
     } catch (e) {
       toast.error(e.message);
     }
@@ -227,7 +235,7 @@ export default function ToDoPage() {
                 .filter(assignment => assignment.class.className === classItem.className)
                 .map((assignment)=> (
           <Box
-            onClick={() => (handleOpenModal(assignment.id))}
+            onClick={() => (handleOpenModal(assignment))}
             display="flex"
             alignItems="center"
             justifyContent="space-between"
@@ -262,7 +270,7 @@ export default function ToDoPage() {
             <Box display="flex" alignItems="center" padding='8px'>
               <Box display="flex" alignItems="center" color='grey'>
                 <Box>
-                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500 }}>{getDeadline(assignment.dueDate)} until deadline</Typography>
+                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500 }}>{getDeadline(assignment.dueDate)}</Typography>
                 </Box>
                 <Box
                   alignContent='center'
@@ -295,7 +303,7 @@ export default function ToDoPage() {
             label="Expected Grade"
             fullWidth
             type="number"
-            value={''}
+            value={selectedAssignment.expectedGrade || ''}  // Bind to expectedGrade
             onChange={(e) => setSelectedAssignment({ ...selectedAssignment, expectedGrade: e.target.value })}
             margin="normal"
           />
@@ -303,7 +311,7 @@ export default function ToDoPage() {
             label="Description"
             fullWidth
             multiline
-            value={''}
+            value={selectedAssignment.description || ''}  // Bind to description
             onChange={(e) => setSelectedAssignment({ ...selectedAssignment, description: e.target.value })}
             margin="normal"
           />

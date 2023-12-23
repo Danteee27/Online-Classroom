@@ -151,6 +151,7 @@ export default function SettingsPage() {
             firstName: data.get("firstName"),
             lastName: data.get("lastName"),
             email: data.get("email"),
+            studentId: data.get("studentId")
         };
 
         try {
@@ -214,6 +215,15 @@ export default function SettingsPage() {
                         label={i18n.t("Last Name")}
                         name="lastName"
                         defaultValue={user?.lastName}
+                    />
+                </Grid>
+                <Grid item xs={16}>
+                    <TextField
+                        fullWidth
+                        id="studentId"
+                        label={i18n.t("Student Id")}
+                        name="studentId"
+                        defaultValue={user?.studentId}
                     />
                 </Grid>
             </Grid>
