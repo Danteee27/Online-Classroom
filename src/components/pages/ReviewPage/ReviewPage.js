@@ -203,7 +203,7 @@ if (isError) {
                 .filter(assignment => assignment.class.className === classItem.className)
                 .map((assignment)=> (
                 <Box 
-                onClick={() => null}
+                onClick={()=>{navigate('a/'+assignment.id + '/c/' + classItem.id)}}
                 display="flex"
                 alignItems="center"
                 justifyContent="space-between"

@@ -22,6 +22,7 @@ import ToDoPage from "./components/pages/ToDoPage/ToDoPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import { withTranslation } from "react-i18next";
 import { SocketContext, socket } from "./context/socket.js";
+import AllAssignmentsPage from "./components/pages/AssignmentPage/AllAssignmentPage";
 
 const theme = createTheme({
   palette: {
@@ -92,9 +93,9 @@ function App() {
               path="c/:classId/a/:assignmentId/m/:membershipId"
               element={<AssignmentPage />}
             />
-            <Route path="c/:classId/a/list/:assignmentId" element={<div />} />
             <Route path="calendar" element={<div />} />
             <Route path="toReview" element={<ReviewPage />} />
+            <Route path="toReview/a/:assignmentId/c/:classId" element={<AllAssignmentsPage/>} />
             <Route path="toDo" element={<ToDoPage />} />
             <Route path="archivedClasses" element={<div />} />
             <Route path="settings" element={<SettingsPage />} />
