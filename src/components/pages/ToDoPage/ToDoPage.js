@@ -23,7 +23,7 @@ export default function ToDoPage() {
 
   const [selectedAssignment, setSelectedAssignment] = useState({
     currentGrade: null,
-    grade: 80,
+    grade: null,
     expectedGrade: 100,
     description: "...",
     studentReview: "",
@@ -94,38 +94,7 @@ export default function ToDoPage() {
     return <div>Error fetching data</div>;
   }
 
-  const submittedCheck = async (assignmentId) => {
-    let classMembershipWithAssignment = null;
-    for (let i = 0; i < classMemberships.length; i++) {
-      const member = classMemberships[i];
-
-      // Check if classMembershipAssignments is an array
-      if (Array.isArray(member.classMembershipAssignments)) {
-        let j = 0;
-        
-        // Use a while loop to traverse classMembershipAssignments
-        while (j < member.classMembershipAssignments.length) {
-          const assignment = member.classMembershipAssignments[j];
-
-          // Check if assignmentId matches
-          if (assignment.assignment.id === assignmentId) {
-            classMembershipWithAssignment = member;
-            break; // Exit the loop if assignment is found
-          }
-
-          j++;
-        }
-      }
-
-      if (classMembershipWithAssignment) {
-        const putRequest = await axios.get(`/api/v1/classes/${classMembershipWithAssignment.class.id}/classMemberships/${classMembershipWithAssignment.id}/assignment/${assignmentId}`);
-        return putRequest.data.isSubmitted;
-      }
-      else {
-        return false;
-      }
-    }
-    console.log(classMembershipWithAssignment)
+  const submittedCheck = async (classId, assignmentId) => {
   };
   
   

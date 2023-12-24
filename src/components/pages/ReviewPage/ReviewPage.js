@@ -38,6 +38,31 @@ export default function ReviewPage() {
   const classMemberships = data?.classMemberships?.filter(member => member.role === "teacher") ?? [];
   const classes = classMemberships.map(member => member.class);
 
+  const getAllAssginmentsOfStudents = async (classId, assignmentId) =>{
+    try {
+      const response = await axios.get(`api/v1/classes/${classId}/assignments/${assignmentId}`);
+      console.log(response.data)
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching assignments: ${error.message}`);
+      return [];
+    }
+  };
+
+  const getToReviewNumbers = (assignmentList) =>{
+    console.log(assignmentList)
+    try {
+      const toReviewAssignments = assignmentList.filter(
+        (assignment) => assignment.isRequested === true || assignment.grade === null
+      );
+  
+      return toReviewAssignments;
+    } catch (error) {
+      console.error('Error while getting to review numbers:', error);
+      return [];
+    }
+  };
+
   //get assignments for selected class
   const getAssignmentsForClass = async (classId) => {
     try {
@@ -165,7 +190,7 @@ const handleClassChange = async (event) => {
                 .filter(assignment => assignment.class.className === classItem.className)
                 .map((assignment)=> (
                 <Box 
-                onClick={() => navigate('/u/a?=' + assignment.id)}
+                onClick={() => null}
                 display="flex"
                 alignItems="center"
                 justifyContent="space-between"
@@ -205,7 +230,7 @@ const handleClassChange = async (event) => {
                           <Icon component={Comment} fontSize="medium" />
                         </Box>
                         <Box>
-                          <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>3 to Review</Typography>
+                          <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{getToReviewNumbers(getAllAssginmentsOfStudents(classItem.id, assignment.id)).length} to review</Typography>
                         </Box>
                     </Box>
                     <Box>
