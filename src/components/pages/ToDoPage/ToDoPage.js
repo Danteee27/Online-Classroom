@@ -60,16 +60,39 @@ export default function ToDoPage() {
     const getAssignmentsForClass = async (classId) => {
       try {
         const response = await axios.get(`api/v1/classes/${classId}`);
-        const assignments = response.data.assignments;
-        return Array.isArray(assignments) ? assignments.filter((assignment) => !assignment.deleted) : [];
+        const assignments = response.data.assignments.filter(member => member.deleted !== true);
+        const assignmentsWithSubmittedCheck = await Promise.all(
+          assignments.map(async (assignment) => {
+            const isSubmitted = await SubmittedCheck(classId,assignment.id)
+            
+            // Add the reviewLeftCount to the assignment
+            return { ...assignment, isSubmitted: isSubmitted };
+          })
+        );
+        console.log(assignmentsWithSubmittedCheck)
+        return assignmentsWithSubmittedCheck;
       } catch (error) {
         console.error(`Error fetching assignments: ${error.message}`);
         return [];
       }
     };
+
+    const SubmittedCheck = async (classId, assignmentId) =>{
+      try {
+        const getClassMembership = classMemberships.filter(member => member.class.id === classId)
+        console.log(getClassMembership)
+        const response = await axios.get(`api/v1/classes/${classId}/classMemberships/${getClassMembership[0].id}/assignment/${assignmentId}`);
+        console.log(response.data)
+        return response.data.isSubmitted;
+      } catch (error) {
+        console.error(`Error fetching assignments: ${error.message}`);
+        return false;
+      }
+    };
     
     useEffect(() => {
       console.log(assignments);
+      console.log(classMemberships)
     }, [assignments]);
     useEffect(() => {
       const fetchData = async () => {
@@ -125,8 +148,12 @@ export default function ToDoPage() {
     }
   };
 
-  const getDeadline = (dateString) => {
-    const deadlineDate = new Date(dateString);
+  const getDeadline = (assignment) => {
+    console.log(assignment)
+    if(assignment.isSubmitted === true){
+      return "The assignment is submitted!"
+    }
+    const deadlineDate = new Date(assignment.dueDate);
     const currentDate = new Date();
   
     const differenceInMilliseconds = deadlineDate - currentDate;
@@ -144,12 +171,36 @@ export default function ToDoPage() {
     formattedString += `${remainingHours} hours until deadline`;
     }
     else{
-      return "The assignment is overdue"
+      return "The assignment is overdue!"
     }
   
     return formattedString;
   };
-
+  const getColorForAssignment = (assignment) => {
+    if(assignment.isSubmitted === true){
+      return "green"
+    }
+    const deadlineDate = new Date(assignment.dueDate);
+    const currentDate = new Date();
+  
+    const differenceInMilliseconds = deadlineDate - currentDate;
+    const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+    const remainingHours = Math.floor((differenceInMilliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  
+    // Format the result as a string
+    let formattedString = '';
+  
+    if (differenceInDays > 0) {
+      formattedString += `${differenceInDays} days `;
+    }
+  
+    if(remainingHours >= 0) {
+      return "orange";
+    }
+    else{
+      return "red"
+    }
+  };
 
   const handleOpenModal = (assignment) => {
     setAssignmentId(assignment.id);
@@ -268,7 +319,7 @@ export default function ToDoPage() {
             <Box display="flex" alignItems="center" padding='8px'>
               <Box display="flex" alignItems="center" color='grey'>
                 <Box>
-                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500 }}>{getDeadline(assignment.dueDate)}</Typography>
+                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500, color: getColorForAssignment(assignment) }}>{getDeadline(assignment)}</Typography>
                 </Box>
                 <Box
                   alignContent='center'
