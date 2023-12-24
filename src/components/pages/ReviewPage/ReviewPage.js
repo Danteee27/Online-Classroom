@@ -15,13 +15,6 @@ export default function ReviewPage() {
   const navigate = useNavigate();
   const [selectedClassId, setSelectedClassId] = useState('default');
   const [assignments, setAssignments] = useState([]);
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
-    return new Intl.DateTimeFormat('en-GB', options).format(date);
-  };
-
   //get classes
   const { data, isLoading, isError } = useQuery(
     {
@@ -38,6 +31,78 @@ export default function ReviewPage() {
   const classMemberships = data?.classMemberships?.filter(member => member.role === "teacher") ?? [];
   const classes = classMemberships.map(member => member.class);
 
+   //get assignments for selected class
+   const getAssignmentsWithReviewCount = async (classId) => {
+    try {
+      const response = await axios.get(`api/v1/classes/${classId}`);
+      const assignments = response.data.assignments.filter(member => member.deleted !== true);
+      const assignmentsWithReviewCount = await Promise.all(
+        assignments.map(async (assignment) => {
+          const reviews = await getAllAssginmentsOfStudents(classId, assignment.id);
+          console.log(reviews)
+          const reviewLeftCount = await getToReviewNumbers(reviews);
+          
+          // Add the reviewLeftCount to the assignment
+          return { ...assignment, reviewLeftCount: reviewLeftCount };
+        })
+      );
+      console.log(assignmentsWithReviewCount)
+      return assignmentsWithReviewCount;
+    } catch (error) {
+      console.error(`Error fetching assignments: ${error.message}`);
+      return [];
+    }
+  };
+
+  const handleClassChange = async (event) => {
+    const selectedId = event.target.value;
+    setSelectedClassId(selectedId);
+  
+    if (selectedId === 'default') {
+      try {
+        const assignmentsForAllClasses = await Promise.all(classes.map(classItem => getAssignmentsWithReviewCount(classItem.id)));
+        const allAssignments = assignmentsForAllClasses.flat();
+        setAssignments(allAssignments);
+      } catch (error) {
+        console.error(`Error fetching assignments: ${error.message}`);
+      }
+    } else {
+      try {
+        const assignmentsForSelectedClass = await getAssignmentsWithReviewCount(selectedId);
+        setAssignments(assignmentsForSelectedClass);
+      } catch (error) {
+        console.error(`Error fetching assignments: ${error.message}`);
+      }
+    }
+  };
+
+  useEffect(() => {
+    console.log(assignments);
+  }, [assignments]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const assignmentsForAllClasses = await Promise.all(classes.map(classItem => getAssignmentsWithReviewCount(classItem.id)));
+        const allAssignments = assignmentsForAllClasses.flat();
+        setAssignments(allAssignments);
+      } catch (error) {
+        console.error(`Error fetching assignments: ${error.message}`);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
+  };
+
+  
+
   const getAllAssginmentsOfStudents = async (classId, assignmentId) =>{
     try {
       const response = await axios.get(`api/v1/classes/${classId}/assignments/${assignmentId}`);
@@ -49,13 +114,20 @@ export default function ReviewPage() {
     }
   };
 
-  const getToReviewNumbers = (assignmentList) =>{
-    console.log(assignmentList)
+  const getToReviewNumbers = async (assignmentListPromise) => {
     try {
+      // Wait for the assignmentListPromise to resolve
+      const assignmentList = await assignmentListPromise;
+  
+      // Now you can work with the resolved value
+      console.log(assignmentList);
+      
+      // Assuming assignmentList is an array, filter and return the result
       const toReviewAssignments = assignmentList.filter(
         (assignment) => assignment.isRequested === true || assignment.grade === null
       );
-  
+
+      console.log(toReviewAssignments)
       return toReviewAssignments;
     } catch (error) {
       console.error('Error while getting to review numbers:', error);
@@ -63,35 +135,7 @@ export default function ReviewPage() {
     }
   };
 
-  //get assignments for selected class
-  const getAssignmentsForClass = async (classId) => {
-    try {
-      const response = await axios.get(`api/v1/classes/${classId}`);
-      const assignments = response.data.assignments;
-      return Array.isArray(assignments) ? assignments.filter((assignment) => !assignment.deleted) : [];
-    } catch (error) {
-      console.error(`Error fetching assignments: ${error.message}`);
-      return [];
-    }
-  };
-  
-  useEffect(() => {
-    console.log(assignments);
-  }, [assignments]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const assignmentsPromises = classes.map(classItem => getAssignmentsForClass(classItem.id));
-        const assignmentsForAllClasses = await Promise.all(assignmentsPromises);
-        const allAssignments = assignmentsForAllClasses.flat();
-        setAssignments(allAssignments);
-      } catch (error) {
-        console.error(`Error fetching assignments: ${error.message}`);
-      }
-    };
-
-    fetchData();
-  }, []); 
+ 
 
 if (isLoading) {
   return <div>Loading...</div>;
@@ -101,38 +145,7 @@ if (isError) {
   return <div>Error fetching data</div>;
 }
 
-const submittedCheck = (id) =>{
 
-}
-
-const handleClassChange = async (event) => {
-  const selectedId = event.target.value;
-  setSelectedClassId(selectedId);
-
-  if (selectedId === 'default') {
-    // If "All classes" is selected, fetch assignments for all classes
-    try {
-      const assignmentsPromises = classes.map(classItem => getAssignmentsForClass(classItem.id));
-      const assignmentsForAllClasses = await Promise.all(assignmentsPromises);
-      // Flatten the array of arrays into a single array
-      const allAssignments = assignmentsForAllClasses.flat();
-      setAssignments(allAssignments);
-    } catch (error) {
-      console.error(`Error fetching assignments: ${error.message}`);
-    }
-  } else {
-    // If a specific class is selected, fetch assignments for that class
-    try {
-      const assignmentsForSelectedClass = await getAssignmentsForClass(selectedId);
-      setAssignments(assignmentsForSelectedClass);
-
-      // Find the class name based on the selected ID
-      const selectedClass = classes.find(classItem => classItem.id === selectedId);
-    } catch (error) {
-      console.error(`Error fetching assignments: ${error.message}`);
-    }
-  }
-};
 
   
   return (
@@ -150,7 +163,7 @@ const handleClassChange = async (event) => {
           const classAssignments = assignments.filter(assignment => assignment.class.className === classItem.className);
           
           // Only render the class header if there are assignments for the class
-          if (selectedClassId !== "defaul" && classAssignments===0){
+          if (selectedClassId !== "default" && classAssignments===0){
             return (
             <Box mt={3} sx={{px: 4, py: 4, border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex'}}>
               <EmptyConversation style={{width: '150px'}}/>
@@ -230,7 +243,9 @@ const handleClassChange = async (event) => {
                           <Icon component={Comment} fontSize="medium" />
                         </Box>
                         <Box>
-                          <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{getToReviewNumbers(getAllAssginmentsOfStudents(classItem.id, assignment.id)).length} to review</Typography>
+                          <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>
+                            {assignment.reviewLeftCount.length} to review
+                          </Typography>
                         </Box>
                     </Box>
                     <Box>

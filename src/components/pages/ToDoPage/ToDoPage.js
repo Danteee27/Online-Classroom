@@ -94,8 +94,6 @@ export default function ToDoPage() {
     return <div>Error fetching data</div>;
   }
 
-  const submittedCheck = async (classId, assignmentId) => {
-  };
   
   
   const handleClassChange = async (event) => {
@@ -270,7 +268,7 @@ export default function ToDoPage() {
             <Box display="flex" alignItems="center" padding='8px'>
               <Box display="flex" alignItems="center" color='grey'>
                 <Box>
-                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500 }}>{submittedCheck(assignment.id) ? 'Assignment submitted!' : getDeadline(assignment.dueDate)}</Typography>
+                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500 }}>{getDeadline(assignment.dueDate)}</Typography>
                 </Box>
                 <Box
                   alignContent='center'
