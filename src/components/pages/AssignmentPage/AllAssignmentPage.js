@@ -175,12 +175,14 @@ export default function AllAssignmentsPage() {
                   <Icon component={Person} fontSize="large" />
                 </Box>
                 <Box color='black'>
-                  {student.student.fullname!== undefined ? (
-                    <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{student?.student?.fullName}</Typography>
-                  ):<Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{student?.student?.user.firstName}</Typography>}
+                {student.student.fullName != null ? (
+                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500 }}>{student?.student?.fullName}</Typography>
+                ) : (
+                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500 }}>{student?.student?.user.firstName}</Typography>
+                )}
                   {student.assignment ? (
                     <Typography sx={{ fontFamily: 'Google', fontWeight: 100, fontSize: 12 }}>
-                      Submitted on {formatDate(student.assignment.createdAt)}
+                      Submitted on {formatDate(student.assignment?.createdAt)}
                     </Typography>
                   ) : (
                     <Typography sx={{ fontFamily: 'Google', fontWeight: 100, fontSize: 12 }}>
@@ -204,13 +206,13 @@ export default function AllAssignmentsPage() {
               </Box>
                <Box alignContent='center' paddingLeft='1rem'>
                     <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>
-                        {student.assignment.grade === null
+                        {student.assignment?.grade === null
                         ? 'Request for grade'
-                        : student.assignment.isRequested
+                        : student.assignment?.isRequested
                         ? 'Request for review'
-                        : student.assignment.isReviewed
+                        : student.assignment?.isReviewed
                         ? 'Reviewed'
-                        : student.assignment.isFinalised
+                        : student.assignment?.isFinalised
                         ? 'Finalised'
                         : 'No request'}
                     </Typography>
