@@ -11,6 +11,7 @@ import axios from "axios";
 import {baseUrl} from "../../apis/api.config";
 import {toast} from "react-toastify";
 import i18n from "i18next";
+import {useQuery} from "@tanstack/react-query";
 
 export default function AddClassButton() {
     const [anchorElMenu, setAnchorElMenu] = React.useState(null);
@@ -27,6 +28,15 @@ export default function AddClassButton() {
     const [classInviteLink, setClassInviteLink] = React.useState("");
     const [classInviteLinkError, setClassInviteLinkError] = React.useState(false);
 
+    const userId = localStorage.getItem('userId');
+    const { data: user } = useQuery({
+        queryKey: ["user", userId],
+        queryFn: async () => {
+            const response = await axios.get(`api/v1/users/${userId}`);
+            return response.data;
+        },
+    });
+
     const handleJoinClass = async (event) => {
         event.preventDefault();
 
@@ -42,8 +52,9 @@ export default function AddClassButton() {
 
             const classId = getClassResponse.data.id;
             const data = {
-                userId: localStorage.getItem('userId'),
-                role: 'student'
+                fullName: user?.firstName + ' ' + user?.lastName ?? '',
+                role: 'student',
+                studentId: (user?.studentId).toString()
             }
 
             const addClassResponse = await axios.post(`api/v1/classes/${classId}/classMemberships`, data);
