@@ -2,7 +2,7 @@ import * as React from 'react';
 import {useState} from 'react';
 import {IconButton, useTheme} from "@mui/material";
 import Grid from "@mui/material/Grid";
-import {Add, AssignmentOutlined, MoreVert, PersonOutlined, Send} from "@mui/icons-material";
+import {Add, AssignmentOutlined, MoreVert, PersonOutlined, Send, Star} from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -17,6 +17,7 @@ import { useEffect } from 'react';
 
 export default function AssignmentPage() {
     const {classId, assignmentId, membershipId} = useParams();
+    const [flag, setFlag] = useState(0)
     const {data: classDetails} = useQuery(
         {
             queryKey: ["class", classId],
@@ -61,6 +62,7 @@ export default function AssignmentPage() {
             const membership = userDetails?.classMemberships?.find(member => member.class.id === Number(classId));
             setClassMembership(membership);
           }, [userDetails, classId]); 
+         
     const a = {
         name: assignment?.name,
         createdAt: details?.createdAt && new Date(details?.createdAt).toDateString(),
@@ -72,7 +74,7 @@ export default function AssignmentPage() {
         teacherComment: details?.teacherComment,
         studentComment: details?.studentComment,
         teacherFinalisedComment: details?.teacherFinalisedComment,
-        grade: details?.grade ?? 0,
+        grade: details?.grade ?? null,
         currentGrade: details?.currentGrade ?? 0,
         expectedGrade: details?.expectedGrade ?? 0,
         isFinalised: details?.isFinalised,
@@ -106,31 +108,67 @@ export default function AssignmentPage() {
     const queryClient = useQueryClient();
     const theme = useTheme();
     const [review, setReview] = useState("");
+    const handleFinalised = async () => {
+        try {
+            console.log(reviewData)
+            const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, 
+            {
+                ...reviewData,
+                isFinalised: true,
+            });
+            console.log(response);
+            toast.success("Successfully finalised!")
+        }
+        catch(e){
+            toast.error(e);
+            return;
+        }
+    }
     const handleEditAssignment = async () => {
+        console.log(details)
         try {
           if (!['student', 'teacher'].includes(classMembership.role)) {
             throw new Error('Invalid role specified.');
           }
           if (classMembership.role === 'student') {
-            if (reviewData.isRequested === false) {
+            if (a.isRequested === false) {
                 setReviewData((prevReviewData) => ({
                     ...prevReviewData,
                     isRequested: true,
                   }));
             } else {
-              toast.error("You have already requested a review!");
-              return;
+                if(flag === 1) {
+                    setReviewData((prevReviewData) => ({
+                        ...prevReviewData,
+                        isRequested: false,
+                      }));
+                    toast.error("The teachers haven't graded  your work!");
+                    return
+                }
+                else{
+                    toast.error("You have already requested a review!");
+                    return;
+                }
             }
           } else if (classMembership.role === 'teacher') {
-            console.log(reviewData.isRequested)
-            if (reviewData.isRequested === true) {
+            console.log(a.isRequested)
+            if (a.isRequested === true) {
                 setReviewData((prevReviewData) => ({
                     ...prevReviewData,
                     isRequested: false,
                   }));
-            } else {
-              toast.error("You have already reviewed this assignment!");
-              return;
+            } else if(details.isRequested !== true) {
+                if(flag === 1) {
+                    console.log("grading");
+                    setReviewData((prevReviewData) => ({
+                        ...prevReviewData,
+                        isRequested: false,
+                      }));
+                }
+                else{
+                    toast.error("You have already reviewed this assignment!");
+                    return;
+                }
             }
           }
           const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, reviewData);
@@ -139,14 +177,20 @@ export default function AssignmentPage() {
           await queryClient.refetchQueries();
           
           if (classMembership.role === 'student') {
-            toast.success("Review request sent successfully!");
+            toast.success("Request sent successfully!");
           } else if (classMembership.role=== 'teacher') {
-            toast.success("Review updated successfully!");
+            toast.success("Updated successfully!");
           }
         } catch (e) {
           toast.error(e.message || "An error occurred while updating the assignment.");
         }
       };
+      useEffect(() => {
+        if (a.grade === null) {
+          setFlag(1);
+        }
+        else {setFlag(0)}
+      }, [a.grade]); 
       
     const leftColumn = (
         <Box sx={{display: 'flex'}}>
@@ -163,7 +207,19 @@ export default function AssignmentPage() {
             <Box sx={{flexGrow: 1}}>
                 <Box sx={{display:'flex', justifyContent:'space-between'}}>
                     <Typography variant='h4' sx={{fontFamily:'Google'}}>{a.name}</Typography>
-                    <IconButton><MoreVert/></IconButton>
+                    <Button
+                    variant="outlined"
+                    onClick={handleFinalised}
+                    sx={{
+                        color: theme.palette.primary.main,
+                        mr: 0,
+                        fontFamily: 'Google',
+                        textTransform: 'none'
+                    }}
+                    // onClick={(e) => setAnchorElChangePassword(e.currentTarget)}
+                >
+                    <Star sx={{width: 20, height: 20, fill: theme.palette.primary.main}}/> &nbsp;&nbsp;Finalised 
+                </Button>
                 </Box>
                 <Box sx={{display:'flex'}}><Typography variant={'subtitle2'}
                                sx={{
@@ -266,7 +322,6 @@ export default function AssignmentPage() {
         const role = classMembership?.role;   
         const isTeacher = role === 'teacher';
         const isStudent = role === 'student';
-        
         return ( <Box>
         {isTeacher &&  (<Box>
         <Box sx={{
@@ -284,30 +339,40 @@ export default function AssignmentPage() {
                 sx={{fontColor: 'rgba(0,0,0,.549)', fontFamily: 'Google', fontWeight: 500}}>
                 Review
                  </Typography>
+                
                 </Box>
-                <TextField
-                label="Adjusted Grade"
+                {a.grade !== null ?(
+                    <TextField
+                    label="Adjusted Grade"
+                    fullWidth
+                    type="number"
+                    value={reviewData.grade}
+                    onChange={(e) => setReviewData({ ...reviewData, grade: Number(e.target.value) })}
+                    margin="normal"
+                    />
+                ) : <TextField
+                label="Initial Grade"
                 fullWidth
                 type="number"
                 value={reviewData.grade}
                 onChange={(e) => setReviewData({ ...reviewData, grade: Number(e.target.value) })}
                 margin="normal"
-                />
-                {a.teacherComment === null ? (
+                />}
+                {a.teacherComment === null && a.grade !== null ? (
                     <TextField
                     label="Comment"
                     fullWidth
                     onChange={(e) => setReviewData({ ...reviewData, teacherComment: e.target.value })}
                     margin="normal"
                     />
-                ) : (
+                ) : a.teacherComment !== null && a.grade !== null ? (
                     <TextField
                     label="Comment"
                     fullWidth
                     onChange={(e) => setReviewData({ ...reviewData, teacherFinalisedComment: e.target.value })}
                     margin="normal"
                     />
-                )}
+                ): null}
             
             <Button variant={'contained'} sx={{textTransform: 'none', width: '100%', my: '1rem'}}
             onClick={()=>handleEditAssignment()}>
@@ -321,7 +386,7 @@ export default function AssignmentPage() {
         </Box>
 
 
-    </Box>)} {isStudent &&
+    </Box>)} {isStudent && flag !==1 && a.isFinalised === false
     (<Box>
         <Box sx={{
             boxShadow: 3,
@@ -333,35 +398,37 @@ export default function AssignmentPage() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center', mt: '0.5rem'
-            }}><Typography
+            }}>
+                <Typography
                 variant={'h5'}
                 sx={{fontColor: 'rgba(0,0,0,.549)', fontFamily: 'Google', fontWeight: 500}}>
                 Request for review
                  </Typography>
                 </Box>
-                <TextField
-                label="Expected Grade"
-                fullWidth
-                type="number"
-                value={reviewData.grade}
-                onChange={(e) => setReviewData({ ...reviewData, expectedGrade: Number(e.target.value) })}
-                margin="normal"
-                />
-                {a.teacherComment === null ? (
+            
                     <TextField
-                    label="Comment"
+                    label="Expected Grade"
                     fullWidth
-                    onChange={(e) => setReviewData({ ...reviewData, studentExplanation: e.target.value })}
+                    type="number"
+                    value={reviewData.grade}
+                    onChange={(e) => setReviewData({ ...reviewData, expectedGradeg: Number(e.target.value) })}
                     margin="normal"
                     />
-                ) : (
-                    <TextField
-                    label="Comment"
-                    fullWidth
-                    onChange={(e) => setReviewData({ ...reviewData, studentComment: e.target.value })}
-                    margin="normal"
-                    />
-                )}
+                    {a.studentComment === null && a.grade !== null ? (
+                        <TextField
+                        label="Comment"
+                        fullWidth
+                        onChange={(e) => setReviewData({ ...reviewData, teacherComment: e.target.value })}
+                        margin="normal"
+                        />
+                    ) : a.studentComment !== null && a.grade !== null ? (
+                        <TextField
+                        label="Comment"
+                        fullWidth
+                        onChange={(e) => setReviewData({ ...reviewData, teacherFinalisedComment: e.target.value })}
+                        margin="normal"
+                        />
+                    ): null}
             
             <Button variant={'contained'} sx={{textTransform: 'none', width: '100%', my: '1rem'}}
             onClick={()=>handleEditAssignment()}>
