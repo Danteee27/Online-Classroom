@@ -45,7 +45,22 @@ export default function AssignmentPage() {
                 return response.data
             }
         });
+        const [classMembership, setClassMembership] = useState(null);
+        const userId = localStorage.getItem("userId").toString();
+        const {data: userDetails} = useQuery(
+            {
+                queryKey: ["user", userId],
+                queryFn: async () => {
+                    const response = await axios.get(`api/v1/users/${userId}`);
+                    return response.data
+                }
+        });
 
+        useEffect(() => {
+            // Assuming userDetails is fetched successfully
+            const membership = userDetails?.classMemberships?.find(member => member.class.id === Number(classId));
+            setClassMembership(membership);
+          }, [userDetails, classId]); 
     const a = {
         name: assignment?.name,
         createdAt: details?.createdAt && new Date(details?.createdAt).toDateString(),
@@ -88,35 +103,51 @@ export default function AssignmentPage() {
           [fieldName]: e.target.value,
         }));
       };
-    const sendReview = () => {
-        // todo handle post review
-    }
     const queryClient = useQueryClient();
     const theme = useTheme();
     const [review, setReview] = useState("");
-    const handleEditAssignment = async (role) => {
-        console.log(reviewData)
+    const handleEditAssignment = async () => {
         try {
-          if(role === 'student'){
-            if(reviewData.isRequested === false) {setReviewData({...reviewData, isRequested: true})}
-            else {toast.error("You have already requested for review!");
-            return;}
+          if (!['student', 'teacher'].includes(classMembership.role)) {
+            throw new Error('Invalid role specified.');
           }
-          else if(role === 'teacher'){
-            if(reviewData.isRequested === true) {setReviewData({...reviewData, isRequested: false})}
-            else {toast.error("You have already reviewed this assignment!");
-            return;}
+          if (classMembership.role === 'student') {
+            if (reviewData.isRequested === false) {
+                setReviewData((prevReviewData) => ({
+                    ...prevReviewData,
+                    isRequested: true,
+                  }));
+            } else {
+              toast.error("You have already requested a review!");
+              return;
+            }
+          } else if (classMembership.role === 'teacher') {
+            console.log(reviewData.isRequested)
+            if (reviewData.isRequested === true) {
+                setReviewData((prevReviewData) => ({
+                    ...prevReviewData,
+                    isRequested: false,
+                  }));
+            } else {
+              toast.error("You have already reviewed this assignment!");
+              return;
+            }
           }
-          const response = await axios.put( `/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, reviewData);
-          console.log(response)
-          
-          // Refetch the data after deletion
+          const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, reviewData);
+          console.log(response);
+      
           await queryClient.refetchQueries();
-          toast.success("Assignment updated successfully!");
+          
+          if (classMembership.role === 'student') {
+            toast.success("Review request sent successfully!");
+          } else if (classMembership.role=== 'teacher') {
+            toast.success("Review updated successfully!");
+          }
         } catch (e) {
-          toast.error(e.message);
+          toast.error(e.message || "An error occurred while updating the assignment.");
         }
       };
+      
     const leftColumn = (
         <Box sx={{display: 'flex'}}>
             <Box sx={{
@@ -189,7 +220,7 @@ export default function AssignmentPage() {
                 {a.teacherComment && <ChatDialog name={a.teacherName} reason={a.teacherComment}/>}
                 {a.studentComment && <ChatDialog name={a.studentName} reason={a.studentComment}/>}
                 {a.teacherFinalisedComment && <ChatDialog name={a.teacherName} reason={a.teacherFinalisedComment}/>}
-                <form autoComplete="off" style={{display: 'flex', paddingTop: '2ch'}} onSubmit={sendReview}>
+                <form autoComplete="off" style={{display: 'flex', paddingTop: '2ch'}} >
                     <Box sx={{'& fieldset': {borderRadius: 100}, flexGrow: 1}}>
                         <TextField placeholder={'Add private comment...'}
                                    size="small"
@@ -232,26 +263,10 @@ export default function AssignmentPage() {
         </Box>
     }
     const RightColumn = () => {
-        const [classMembership, setClassMembership] = useState(null);
-        const userId = localStorage.getItem("userId").toString();
-        const {classId} = useParams();
-        console.log(userId)
-        const {data: userDetails} = useQuery(
-            {
-                queryKey: ["user", userId],
-                queryFn: async () => {
-                    const response = await axios.get(`api/v1/users/${userId}`);
-                    return response.data
-                }
-        });
-
-        useEffect(() => {
-            // Assuming userDetails is fetched successfully
-            const membership = userDetails?.classMemberships?.find(member => member.class.id === Number(classId));
-            setClassMembership(membership);
-          }, [userDetails, classId]);        
-        const isTeacher = classMembership?.role === 'teacher';
-        const isStudent = classMembership?.role === 'student';
+        const role = classMembership?.role;   
+        const isTeacher = role === 'teacher';
+        const isStudent = role === 'student';
+        
         return ( <Box>
         {isTeacher &&  (<Box>
         <Box sx={{
@@ -349,7 +364,7 @@ export default function AssignmentPage() {
                 )}
             
             <Button variant={'contained'} sx={{textTransform: 'none', width: '100%', my: '1rem'}}
-            onClick={()=>handleEditAssignment(classMembership?.role)}>
+            onClick={()=>handleEditAssignment()}>
                 <Typography sx={{
                     fontSize: '.875rem',
                     fontFamily: 'Google',

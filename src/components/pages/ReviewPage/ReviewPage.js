@@ -86,6 +86,7 @@ export default function ReviewPage() {
         const assignmentsForAllClasses = await Promise.all(classes.map(classItem => getAssignmentsWithReviewCount(classItem.id)));
         const allAssignments = assignmentsForAllClasses.flat();
         setAssignments(allAssignments);
+        console.log(assignments)
       } catch (error) {
         console.error(`Error fetching assignments: ${error.message}`);
       }

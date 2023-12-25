@@ -48,10 +48,18 @@ export default function AllAssignmentsPage() {
         }
       };
       const associateAssignmentsWithStudents = (classMemberships, classMembershipAssignments) => {
-        return classMemberships.map((membership) => {
-          const assignment = classMembershipAssignments.find((assignment) => assignment.classMembership.id === membership.id);
-          return { student: membership, assignment };
+        const result = [];
+      
+        classMemberships.forEach((membership) => {
+          const assignment = classMembershipAssignments.find((assignment) => {
+            // Assuming classMembership.id is a primitive type (e.g., number or string)
+            return assignment.classMembership && assignment.classMembership.id === membership.id;
+          });
+      
+          result.push({ student: membership, assignment });
         });
+      
+        return result;
       };
       useEffect(() => {
         const fetchData = async () => {
@@ -69,22 +77,22 @@ export default function AllAssignmentsPage() {
     
         fetchData();
       }, []);
+
       useEffect(() => {
         console.log(assignmentDetails);
         console.log(classMemberships)
       }, [assignmentDetails]);
+
       useEffect(() => {
         const studentsWithAssignments = associateAssignmentsWithStudents(classMemberships, classMembershipAssignments);
-        setStudents(studentsWithAssignments)
-        console.log(students)
-      }, [classMemberships],[classMembershipAssignments]);
+        setStudents(studentsWithAssignments);
+      }, [classMemberships, classMembershipAssignments]);
+
       const formatDate = (dateString) => {
         const date = new Date(dateString);
         const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
         return new Intl.DateTimeFormat('en-GB', options).format(date);
       };
-
-      const studentsWithAssignments = associateAssignmentsWithStudents(classMemberships, classMembershipAssignments);
     return (
     <Grid container spacing={3} alignItems="top" justifyContent="center" sx={{ margin: '0 auto', maxWidth: '1000px' }}>
       <Grid item xs={12}>
@@ -98,7 +106,7 @@ export default function AllAssignmentsPage() {
             marginBottom="0.5rem"
           >
             <Typography variant="h4" sx={{ fontFamily: 'Google' }}>{classDetails.className} - {assignmentDetails.name}</Typography>
-            <Typography sx={{ fontFamily: 'Google', fontWeight:500, padding:'0.4rem' }}>{students.length}/{students.filter((student) => student.assignment !== null).length} submitted</Typography>
+            <Typography sx={{ fontFamily: 'Google', fontWeight:500, padding:'0.4rem' }}>{students.filter(student => student.assignment !== undefined).length}/{students.length} submitted</Typography>
         </Box>
           <Box
             alignItems="center"
@@ -141,7 +149,8 @@ export default function AllAssignmentsPage() {
                 </Box>
               )}
             </Box>
-          {students.map((student)=> (
+          {students
+          .map((student)=> (
           <Box 
           onClick={() => navigateToNewPath(assignmentDetails.id,student.student.id,classDetails.id)}
           display="flex"
@@ -166,7 +175,9 @@ export default function AllAssignmentsPage() {
                   <Icon component={Person} fontSize="large" />
                 </Box>
                 <Box color='black'>
-                  <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{student.student.user.firstName}</Typography>
+                  {student.student.fullname!== undefined ? (
+                    <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{student?.student?.fullName}</Typography>
+                  ):<Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{student?.student?.user.firstName}</Typography>}
                   {student.assignment ? (
                     <Typography sx={{ fontFamily: 'Google', fontWeight: 100, fontSize: 12 }}>
                       Submitted on {formatDate(student.assignment.createdAt)}
@@ -178,15 +189,18 @@ export default function AllAssignmentsPage() {
                   )}
                 </Box>
             </Box>
+            
             <Box display="flex" alignItems="center" padding='8px' >
               <Box display="flex" alignItems="center" color='grey' >
               <Box display='flex' borderRight={`0.0625rem solid ${theme.palette.primary.main}`} paddingRight='1rem'>
-                    <Typography sx={{ fontFamily: 'Google', fontWeight:500, fontSize:20, marginLeft:1}}> 
-                        {student.assignment.grade !== null && (
-                        <Typography sx={{ fontFamily: 'Google', fontWeight: 500, fontSize: 16 }}>
-                        {student.assignment.grade} / 100
-                        </Typography>
-                    )}</Typography>
+              {student?.assignment !== undefined &&
+              <Typography sx={{ fontFamily: 'Google', fontWeight: 500, fontSize: 20, marginLeft: 1 }}>
+                {student?.assignment.grade !== null && (
+                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500, fontSize: 16 }}>
+                    {student?.assignment?.grade} / 100
+                  </Typography>
+                )}
+              </Typography>}
               </Box>
                <Box alignContent='center' paddingLeft='1rem'>
                     <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>
