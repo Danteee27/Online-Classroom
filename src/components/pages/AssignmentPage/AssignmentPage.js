@@ -207,7 +207,7 @@ export default function AssignmentPage() {
             <Box sx={{flexGrow: 1}}>
                 <Box sx={{display:'flex', justifyContent:'space-between'}}>
                     <Typography variant='h4' sx={{fontFamily:'Google'}}>{a.name}</Typography>
-                    {classMembership.role === "teacher" ? (
+                    {classMembership?.role === "teacher" ? (
                     <Button
                     variant="outlined"
                     onClick={handleFinalised}
