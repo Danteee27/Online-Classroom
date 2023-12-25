@@ -17,8 +17,16 @@ export default function AllAssignmentsPage() {
     const theme = useTheme();
     const {classId, assignmentId} = useParams();
     const [classMembershipAssignments, setClassmembershipAssignments] = useState([]);
+    const [classMemberships, setClassMemberships] = useState([]);
     const [classDetails, setClassDetails] = useState([]);
     const [assignmentDetails, setAssignmentDetails] = useState([]);
+    const [students, setStudents] = useState([]);
+    const navigate = useNavigate();
+
+    const navigateToNewPath = (assignmentId, studentId, classId) => {
+      const newPath = `/u/c/${classId}/a/${assignmentId}/m/${studentId}`; // Adjust the numbers as needed
+      navigate(newPath);
+    };
     const getClass = async (classId) =>{
         try {
             const response = await axios.get(`api/v1/classes/${classId}`);
@@ -39,6 +47,12 @@ export default function AllAssignmentsPage() {
           return [];
         }
       };
+      const associateAssignmentsWithStudents = (classMemberships, classMembershipAssignments) => {
+        return classMemberships.map((membership) => {
+          const assignment = classMembershipAssignments.find((assignment) => assignment.classMembership.id === membership.id);
+          return { student: membership, assignment };
+        });
+      };
       useEffect(() => {
         const fetchData = async () => {
           try {
@@ -46,8 +60,8 @@ export default function AllAssignmentsPage() {
             setClassmembershipAssignments(assignments); console.log(classDetails)
             const class_ = await getClass(classId);
             setClassDetails(class_);
-            
-            console.log(assignmentDetails)
+            setAssignmentDetails(class_.assignments.filter(assignment => assignment.id === Number(assignmentId))[0]);
+            setClassMemberships(class_.classMemberships.filter(member => member.role !== 'teacher'));
           } catch (error) {
             console.error(`Error fetching assignments: ${error.message}`);
           }
@@ -55,28 +69,81 @@ export default function AllAssignmentsPage() {
     
         fetchData();
       }, []);
-      useEffect(() =>  {
-        setAssignmentDetails(classDetails.assignments.filter(assignment => assignment.id === assignmentId));
+      useEffect(() => {
         console.log(assignmentDetails);
-      }, [classDetails]);
+        console.log(classMemberships)
+      }, [assignmentDetails]);
+      useEffect(() => {
+        const studentsWithAssignments = associateAssignmentsWithStudents(classMemberships, classMembershipAssignments);
+        setStudents(studentsWithAssignments)
+        console.log(students)
+      }, [classMemberships],[classMembershipAssignments]);
+      const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+        return new Intl.DateTimeFormat('en-GB', options).format(date);
+      };
+
+      const studentsWithAssignments = associateAssignmentsWithStudents(classMemberships, classMembershipAssignments);
     return (
     <Grid container spacing={3} alignItems="top" justifyContent="center" sx={{ margin: '0 auto', maxWidth: '1000px' }}>
       <Grid item xs={12}>
         <Box marginTop={2}>
           <Box
             display="flex"
+            alignItems="end"
+            justifyContent="space-between"
+            color={theme.palette.primary.main}
+            borderBottom={`0.0625rem solid ${theme.palette.primary.main}`}
+            marginBottom="0.5rem"
+          >
+            <Typography variant="h4" sx={{ fontFamily: 'Google' }}>{classDetails.className} - {assignmentDetails.name}</Typography>
+            <Typography sx={{ fontFamily: 'Google', fontWeight:500, padding:'0.4rem' }}>{students.length}/{students.filter((student) => student.assignment !== null).length} submitted</Typography>
+        </Box>
+          <Box
             alignItems="center"
             //justifyContent="space-between"
             color={theme.palette.primary.main}
-            borderBottom={`0.0625rem solid ${theme.palette.primary.main}`}
             marginBottom="1rem"
           >
-            <Typography variant="h4" sx={{ fontFamily: 'Google' }}>{classDetails.className}</Typography>
-            <Typography  sx={{ fontFamily: 'Google' }}>{assignmentDetails.maxGrade}%</Typography>
-          </Box>
-        {classMembershipAssignments.map((assignment)=> (
+              <Box
+                display="flex"
+                alignItems="center"
+                //justifyContent="space-between"
+                color={theme.palette.primary.main}
+              >
+                <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>Description:</Typography>
+                <Typography sx={{ fontFamily: 'Google', fontWeight:500, color: 'black', marginLeft: '0.5rem' }}>{assignmentDetails.description}</Typography>
+              </Box>
+              <Box
+                display="flex"
+                alignItems="center"
+                //justifyContent="space-between"
+                color={theme.palette.primary.main}
+              >
+                <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>Percentage:</Typography>
+                <Typography sx={{ fontFamily: 'Google', fontWeight:500, color: 'black', marginLeft: '0.5rem' }}>{assignmentDetails.maxGrade}%</Typography>
+              </Box>
+              {assignmentDetails.createdDate && (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  color={theme.palette.primary.main}
+                >
+                  <Typography sx={{ fontFamily: 'Google', fontWeight: 500, fontSize: 14, color: 'black' }}>
+                    From {formatDate(assignmentDetails.createdDate)}
+                  </Typography>
+                  {assignmentDetails.dueDate && (
+                    <Typography sx={{ fontFamily: 'Google', fontWeight: 500, fontSize: 14, color: 'black', marginLeft: '0.5rem' }}>
+                      to {formatDate(assignmentDetails.dueDate)}
+                    </Typography>
+                  )}
+                </Box>
+              )}
+            </Box>
+          {students.map((student)=> (
           <Box 
-          onClick={() => null}
+          onClick={() => navigateToNewPath(assignmentDetails.id,student.student.id,classDetails.id)}
           display="flex"
           alignItems="center"
           justifyContent="space-between"
@@ -99,20 +166,41 @@ export default function AllAssignmentsPage() {
                   <Icon component={Person} fontSize="large" />
                 </Box>
                 <Box color='black'>
-                  <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{assignment.classMembership.user.firstName}</Typography>
-                  <Box display='flex'>
-                    <Typography sx={{ fontFamily: 'Google', fontWeight:100, fontSize:12}}>Expected Grade: {assignment.expectedGrade}</Typography> 
-                    <Typography sx={{ fontFamily: 'Google', fontWeight:100, fontSize:12, marginLeft:1}}> 
-                        {assignment.grade !== null && (
-                        <Typography sx={{ fontFamily: 'Google', fontWeight: 100, fontSize: 12 }}>
-                        Current Grade: {assignment.grade}
-                        </Typography>
-                    )}</Typography>
-                   </Box>
+                  <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>{student.student.user.firstName}</Typography>
+                  {student.assignment ? (
+                    <Typography sx={{ fontFamily: 'Google', fontWeight: 100, fontSize: 12 }}>
+                      Submitted on {formatDate(student.assignment.createdAt)}
+                    </Typography>
+                  ) : (
+                    <Typography sx={{ fontFamily: 'Google', fontWeight: 100, fontSize: 12 }}>
+                      Haven't submitted!
+                    </Typography>
+                  )}
                 </Box>
             </Box>
             <Box display="flex" alignItems="center" padding='8px' >
               <Box display="flex" alignItems="center" color='grey' >
+              <Box display='flex' borderRight={`0.0625rem solid ${theme.palette.primary.main}`} paddingRight='1rem'>
+                    <Typography sx={{ fontFamily: 'Google', fontWeight:500, fontSize:20, marginLeft:1}}> 
+                        {student.assignment.grade !== null && (
+                        <Typography sx={{ fontFamily: 'Google', fontWeight: 500, fontSize: 16 }}>
+                        {student.assignment.grade} / 100
+                        </Typography>
+                    )}</Typography>
+              </Box>
+               <Box alignContent='center' paddingLeft='1rem'>
+                    <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>
+                        {student.assignment.grade === null
+                        ? 'Request for grade'
+                        : student.assignment.isRequested
+                        ? 'Request for review'
+                        : student.assignment.isReviewed
+                        ? 'Reviewed'
+                        : student.assignment.isFinalised
+                        ? 'Finalised'
+                        : 'No request'}
+                    </Typography>
+                </Box>
                 <Box
                           alignContent='center'
                           paddingX="0.4rem" // Adjust padding as needed
@@ -121,16 +209,6 @@ export default function AllAssignmentsPage() {
                           
                           >
                     <Icon component={Comment} fontSize="medium" />
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontFamily: 'Google', fontWeight:500 }}>
-                        {assignment.grade === null
-                        ? 'Request for grade'
-                        : assignment.isRequested
-                        ? 'Request for review'
-                        : assignment.isReviewed
-                        ? 'Reviewed': ''}
-                    </Typography>
                   </Box>
               </Box>
               <Box>
