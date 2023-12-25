@@ -207,6 +207,7 @@ export default function AssignmentPage() {
             <Box sx={{flexGrow: 1}}>
                 <Box sx={{display:'flex', justifyContent:'space-between'}}>
                     <Typography variant='h4' sx={{fontFamily:'Google'}}>{a.name}</Typography>
+                    {classMembership.role === "teacher" ? (
                     <Button
                     variant="outlined"
                     onClick={handleFinalised}
@@ -219,7 +220,7 @@ export default function AssignmentPage() {
                     // onClick={(e) => setAnchorElChangePassword(e.currentTarget)}
                 >
                     <Star sx={{width: 20, height: 20, fill: theme.palette.primary.main}}/> &nbsp;&nbsp;Finalised 
-                </Button>
+                </Button>):null}
                 </Box>
                 <Box sx={{display:'flex'}}><Typography variant={'subtitle2'}
                                sx={{
@@ -386,7 +387,7 @@ export default function AssignmentPage() {
         </Box>
 
 
-    </Box>)} {isStudent && flag !==1 && a.isFinalised === false
+    </Box>)} {isStudent && flag !==1 && a.isFinalised === false &&
     (<Box>
         <Box sx={{
             boxShadow: 3,

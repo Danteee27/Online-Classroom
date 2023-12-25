@@ -31,10 +31,6 @@ export default function PrimaryAppBar({onClick}) {
         e.preventDefault();
 
         try {
-            const response = await axios.post(
-                "api/v1/auth/logout"
-            );
-            console.log("Log out successfully", response.data);
             localStorage.removeItem("isAuthenticated");
             localStorage.removeItem("firstName");
             localStorage.removeItem("lastName");
@@ -42,6 +38,11 @@ export default function PrimaryAppBar({onClick}) {
             localStorage.removeItem("userId");
             localStorage.removeItem("role");
             localStorage.removeItem("token");
+            navigate("/");
+            const response = await axios.post(
+                "api/v1/auth/logout"
+            );
+            console.log("Log out successfully", response.data);
             navigate("/");
             // Add any additional logic or redirection after successful logout
         } catch (error) {

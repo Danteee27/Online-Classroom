@@ -20,7 +20,8 @@ export default function ToDoPage() {
   const [assignments, setAssignments] = useState([]);
   const [assignmentId, setAssignmentId] = useState();
   const [openModal, setOpenModal] = useState(false);
-
+  const userId = localStorage.getItem('userId').toString();
+  
   const [selectedAssignment, setSelectedAssignment] = useState({
     currentGrade: null,
     grade: null,
@@ -45,7 +46,7 @@ export default function ToDoPage() {
         queryKey: ["classes"],
         queryFn: async () => {
             try {
-            const response = await axios.get(`api/v1/users/${localStorage.getItem('userId')}`);
+            const response = await axios.get(`api/v1/users/${userId}`);
             return response.data;
             } catch (error) {
             throw new Error(`Error fetching data: ${error.message}`);
@@ -202,7 +203,18 @@ export default function ToDoPage() {
     }
   };
 
-  const handleOpenModal = (assignment) => {
+  const navigateToNewPath = (assignmentId, classId) => {
+    const studentId = classMemberships.filter(member => member.class.id === classId)[0].id
+    const newPath = `/u/c/${classId}/a/${assignmentId}/m/${studentId}`; // Adjust the numbers as needed
+    navigate(newPath);
+  };
+
+  const handleOpenModal = (assignment,classItem) => {
+    if(assignment.isSubmitted === true) {
+      toast.success("You have already submitted!");
+      navigateToNewPath(assignment.id,classItem.id)
+      return;
+    }
     setAssignmentId(assignment.id);
     setSelectedClassId(assignment.class.id);
     setOpenModal(true);
@@ -284,7 +296,7 @@ export default function ToDoPage() {
                 .filter(assignment => assignment.class.className === classItem.className)
                 .map((assignment)=> (
           <Box
-            onClick={() => (handleOpenModal(assignment))}
+            onClick={() => (handleOpenModal(assignment,classItem))}
             display="flex"
             alignItems="center"
             justifyContent="space-between"
