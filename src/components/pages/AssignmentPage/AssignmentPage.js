@@ -89,7 +89,7 @@ export default function AssignmentPage() {
         teacherComment: details?.teacherComment,
         studentComment: details?.studentComment,
         teacherFinalisedComment: details?.teacherFinalisedComment,
-        grade: '',
+        grade: details?.grade ?? null,
         currentGrade: details?.currentGrade ?? 0,
         expectedGrade: details?.expectedGrade ?? 0,
         isFinalised: details?.isFinalised,
@@ -136,6 +136,7 @@ export default function AssignmentPage() {
                     ...prevReviewData,
                     isRequested: true,
                   }));
+                console.log(reviewData)
             } else {
                 if(flag === 1) {
                     setReviewData((prevReviewData) => ({
@@ -243,7 +244,7 @@ export default function AssignmentPage() {
                                 }}>
                         <b>{a.grade}</b>/100
                     </Typography>
-                    { !a.isRequested && (
+                    { a.expectedGrade !== null && (
                     <Typography variant={'subtitle2'}
                                 sx={{
                                     fontFamily: 'Google',
@@ -347,7 +348,6 @@ export default function AssignmentPage() {
                     label="Adjusted Grade"
                     fullWidth
                     type="number"
-                    value={reviewData.grade}
                     onChange={(e) => setReviewData({ ...reviewData, grade: Number(e.target.value) })}
                     margin="normal"
                     />
@@ -355,7 +355,6 @@ export default function AssignmentPage() {
                 label="Initial Grade"
                 fullWidth
                 type="number"
-                value={reviewData.grade}
                 onChange={(e) => setReviewData({ ...reviewData, grade: Number(e.target.value) })}
                 margin="normal"
                 />}
@@ -411,8 +410,7 @@ export default function AssignmentPage() {
                     label="Expected Grade"
                     fullWidth
                     type="number"
-                    value={reviewData.grade}
-                    onChange={(e) => setReviewData({ ...reviewData, expectedGradeg: Number(e.target.value) })}
+                    onChange={(e) => setReviewData({ ...reviewData, expectedGrade: Number(e.target.value) })}
                     margin="normal"
                     />
                     {a.studentComment === null && a.grade !== null ? (

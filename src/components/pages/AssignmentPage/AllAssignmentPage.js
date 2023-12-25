@@ -23,8 +23,12 @@ export default function AllAssignmentsPage() {
     const [students, setStudents] = useState([]);
     const navigate = useNavigate();
 
-    const navigateToNewPath = (assignmentId, studentId, classId) => {
-      const newPath = `/u/c/${classId}/a/${assignmentId}/m/${studentId}`; // Adjust the numbers as needed
+    const navigateToNewPath = (assignmentId, student, classId) => {
+      if (!student.assignment){
+        toast.error("Student hasn't submitted!")
+        return;
+      }
+      const newPath = `/u/c/${classId}/a/${assignmentId}/m/${student.student.id}`; // Adjust the numbers as needed
       navigate(newPath);
     };
     const getClass = async (classId) =>{
@@ -152,7 +156,7 @@ export default function AllAssignmentsPage() {
           {students
           .map((student)=> (
           <Box 
-          onClick={() => navigateToNewPath(assignmentDetails.id,student.student.id,classDetails.id)}
+          onClick={() => navigateToNewPath(assignmentDetails.id,student,classDetails.id)}
           display="flex"
           alignItems="center"
           justifyContent="space-between"
