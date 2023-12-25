@@ -108,7 +108,7 @@ export default function ReviewPage() {
     try {
       const response = await axios.get(`api/v1/classes/${classId}/assignments/${assignmentId}`);
       console.log(response.data)
-      return response.data;
+      return response.data.filter(assignment => assignment.classMembership.role !== "teacher");
     } catch (error) {
       console.error(`Error fetching assignments: ${error.message}`);
       return [];
