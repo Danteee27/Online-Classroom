@@ -210,8 +210,11 @@ export default function ToDoPage() {
   };
 
   const handleOpenModal = (assignment,classItem) => {
-    if(assignment.isSubmitted === true) {
-      toast.success("You have already submitted!");
+    if(assignment.isSubmitted !== true) {
+      toast.error("You didn't submitted!");
+      return;
+    }
+    else if (assignment.isSubmitted === true){
       navigateToNewPath(assignment.id,classItem.id)
       return;
     }

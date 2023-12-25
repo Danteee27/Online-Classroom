@@ -214,8 +214,6 @@ export default function AllAssignmentsPage() {
                         ? 'Request for grade'
                         : student.assignment?.isRequested
                         ? 'Request for review'
-                        : !student.assignment?.isRequested
-                        ? 'Reviewed'
                         : student.assignment?.isFinalised
                         ? 'Finalised'
                         : 'No request'}
