@@ -44,10 +44,13 @@ export default function ClassInvitation({ hash }) {
     },
   });
 
+  const fullName = user?.firstName + ' '+user?.lastName;
+
   const handleAcceptInvitation = async () => {
     const data = {
       userId: userId,
       role: role,
+      fullName: fullName
     };
 
     try {
