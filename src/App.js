@@ -23,6 +23,7 @@ import SettingsPage from "./components/pages/SettingsPage";
 import { withTranslation } from "react-i18next";
 import { SocketContext, socket } from "./context/socket.js";
 import AllAssignmentsPage from "./components/pages/AssignmentPage/AllAssignmentPage";
+import ClassInvitationByLink from "./components/pages/ClassInvitationByLink";
 
 const theme = createTheme({
   palette: {
@@ -86,6 +87,7 @@ function App() {
           <Route path="forgotPassword" element={<ForgotPassword />} />
           <Route path="resetPassword" element={<ResetPassword />} />
           <Route path="classinvitation" element={<ClassInvitation />} />
+          <Route path="join/:classCode" element={<ClassInvitationByLink />} />
           <Route path="/u" element={<AppLayout />}>
             <Route path="home" element={<HomePage />} />
             <Route path="c/:classId" element={<ClassPage />} />

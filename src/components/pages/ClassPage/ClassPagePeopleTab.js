@@ -15,6 +15,7 @@ import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import i18n from "i18next";
 import {ImportStudentDialog} from "./ImportStudentDialog";
+import Link from "@mui/material/Link";
 
 export default function ClassPagePeopleTab() {
 
@@ -30,7 +31,8 @@ export default function ClassPagePeopleTab() {
 
     const teachers = classDetails?.classMemberships.filter(member => member.role === "teacher");
     const students = classDetails?.classMemberships.filter(member => member.role === "student");
-    const inviteStudentLink = 'https://a.b.com';
+    const inviteStudentLink = 'https://online-classroom-navy.vercel.app/join/' + classDetails?.classCode;
+    // const inviteStudentLink = 'http://localhost:3000/join/' + classDetails?.classCode;
 
     const inviteTeachers = async (event) => {
         event.preventDefault();
@@ -165,7 +167,7 @@ export default function ClassPagePeopleTab() {
                         borderBottom: '0.0625rem solid rgb(218,220,224)',
                         marginBottom: '-1rem'
                     }}>
-                        <Typography variant={'h6'} sx={{fontSize: '0.75rem'}}>{inviteStudentLink}</Typography>
+                        <Link href={inviteStudentLink} variant={'h6'} sx={{fontSize: '0.75rem'}}>{inviteStudentLink}</Link>
                         <IconButton sx={{color: theme.palette.primary.main}} onClick={() => {
                             navigator.clipboard.writeText(inviteStudentLink);
                             toast.info('Link copied');
