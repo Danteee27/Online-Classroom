@@ -51,10 +51,15 @@ export default function AddClassButton() {
             const getClassResponse = await axios.get(`api/v1/classes/byClasscode/${classInviteLink}`);
 
             const classId = getClassResponse.data.id;
-            const data = {
+            const data = user?.studentId != null ? {
                 fullName: user?.firstName + ' ' + user?.lastName ?? '',
                 role: 'student',
-                studentId: (user?.studentId).toString()
+                userId: (user?.id).toString(),
+                studentId:  (user?.studentId).toString()
+            } :  {
+                fullName: user?.firstName + ' ' + user?.lastName ?? '',
+                role: 'student',
+                userId: (user?.id).toString(),
             }
 
             const addClassResponse = await axios.post(`api/v1/classes/${classId}/classMemberships`, data);
