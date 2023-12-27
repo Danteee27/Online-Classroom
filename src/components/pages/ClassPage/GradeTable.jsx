@@ -31,7 +31,7 @@ const DNDTableCell = ({ assignment, onDrop }) => {
         <TableCell
             ref={(node) => drag(drop(node))}
             key={assignment.id} align="center" style={{ fontWeight: 'bold', border: '1px solid #ddd'  }}>
-            {assignment.name}
+            {assignment.name} - {assignment.maxGrade}%
         </TableCell>
     );
 };
@@ -122,15 +122,15 @@ const StudentGradesTable = ({ assignments, students, refetch}) => {
                     </TableCell>
                     ))}
                     <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid #ddd' }}>
-                    {(assignments.reduce(
-                        (sum, assignment) =>
-                            sum +
-                            ((student.grades[assignment.id]?.grade || 0) / (student.grades[assignment.id]?.maxGrade || 1)) *
-                            (assignment.maxGrade || 0),0
-                        ) / assignments.reduce((sum, assignment) => sum + (assignment.maxGrade || 0), 0) / 10 ).toFixed(2)}
-                    </TableCell>
-                </TableRow>
-            ))}
+                          {((assignments.reduce((sum, assignment) => {
+                              const assignmentGrade = student.grades[assignment.id]?.grade || 0;
+                              const assignmentMaxGrade = assignment.maxGrade || 1; // Ensure maxGrade is at least 1 to avoid division by zero
+
+                              return sum + (assignmentGrade * assignmentMaxGrade / 100 / 10);
+                            }, 0))).toFixed(2)}
+                          </TableCell>
+                      </TableRow>
+                  ))}
             </TableBody>
         </Table>
         </DndProvider>
@@ -139,8 +139,6 @@ const StudentGradesTable = ({ assignments, students, refetch}) => {
 };
 
 
-
-const students = [];
 
 
 const GradeTable = () => {
@@ -158,12 +156,12 @@ const GradeTable = () => {
         switch (mode) {
           case 'whole-table':
             // Calculate total maxGrade
-            const totalMaxGrade = assignments.reduce((sum, assignment) => sum + (assignment.maxGrade || 0), 0);
+            const totalMaxGrade = assignments?.reduce((sum, assignment) => sum + (assignment.maxGrade || 0), 0);
             data = [
               // Headers
               ['Student ID', 'Student Name', ...assignments?.map((assignment) => assignment.name), 'Total'],
               // Data
-              ...students?.map((student) => [
+              ...studentsWithGrades.map((student) => [
                 student.id,
                 student.name,
                 ...assignments?.map(
@@ -184,28 +182,31 @@ const GradeTable = () => {
             ];
             break;
       
-          case 'only':
-            // Extract the assignment name from mode
-            const assignment = assignments.find((a) => a.name === assignmentName);
-      
-            if (!assignment) {
-              console.error(`Assignment not found: ${assignmentName}`);
-              return;
-            }
-      
-            data = [
-                // Headers
-                ['Student ID', 'Student Name', assignmentName],
-                // Data
-                ...students?.map((student) => [
-                  student.id,
-                  student.name,
-                  student.grades[assignment.id]?.grade !== undefined
-                    ? `${student.grades[assignment.id]?.grade}/100`
-                    : '-',
-                ]),
-            ];
-            break;
+            case 'only':
+              // Extract the assignment name from mode
+              const assignment = assignments.find((a) => a.name === assignmentName);
+        
+              if (!assignment) {
+                console.error(`Assignment not found: ${assignmentName}`);
+                return;
+              }
+        
+              // Ensure students is not null or undefined before mapping
+              data = studentsWithGrades
+                ? [
+                    // Headers
+                    ['Student ID', 'Student Name', assignmentName],
+                    // Data
+                    ...studentsWithGrades.map((student) => [
+                      student.id,
+                      student.name,
+                      student.grades[assignment.id]?.grade !== undefined
+                        ? `${student.grades[assignment.id]?.grade}/100`
+                        : '-',
+                    ]),
+                  ]
+                : [];
+              break;
       
           default:
             // Handle unknown mode
@@ -231,64 +232,56 @@ const GradeTable = () => {
         });
     const assignments = classDetails?.assignments?.filter((assignment) => !assignment.deleted).sort((a, b) => a.order - b.order);
     const studentsList = classDetails?.classMemberships?.filter(member => member.role === "student");
-    const getStudentGrades = async (students, assignments, classId) => {
-        try {
-          // Map each student to a promise that fetches their grades
-          const promises = students?.map(async (student) => {
+    //return {
+    //  id: studentId,
+    //  name: student?.fullName ?? student?.user?.firstName + ' ' + student?.user?.lastName,
+    //  grades: grades,
+    const getStudentGrades = async (students, assignments) => {
+      try {
+        const result = [];
+    
+        for (const assignment of assignments) {
+          const assignmentId = assignment.id;
+          const response = await axios.get(`api/v1/classes/${classId}/assignments/${assignmentId}`);
+          const allAssignmentsOfStudents = response.data;
+    
+          for (const student of students) {
             const studentId = student.id;
-            const grades = {};
-      
-            try {
-              // Fetch the user data with classMemberships
-              const response = await axios.get(`api/v1/users/${studentId}`);
-              const userWithDetails = response.data;
-      
-              // Check if classMemberships is an array before calling flatMap
-              if (Array.isArray(userWithDetails.classMemberships)) {
-                // Map each classMembershipAssignment to a promise that fetches the grade
-                await Promise.all(
-                  userWithDetails.classMemberships.flatMap((classMembership) =>
-                    classMembership.classMembershipAssignments?.map(async (assignment) => {
-                      const assignmentId = assignment.assignment.id;
-      
-                      try {
-                        const foundAssignment = classMembership.classMembershipAssignments.find(
-                          (classAssignment) => classAssignment.assignment.id === assignmentId
-                        );
-                        const grade = foundAssignment ? foundAssignment.grade : null;
-      
-                        // Use the assignment id to get the maxGrade
-                        const foundAssignmentDetails = assignments.find((a) => a.id === assignmentId);
-      
-                        grades[assignmentId] = {
-                          grade: grade,
-                          maxGrade: foundAssignmentDetails ? foundAssignmentDetails.maxGrade : null,
-                        };
-                      } catch (error) {
-                        console.error(`Error fetching grade for student ${studentId} and assignment ${assignmentId}: ${error.message}`);
-                      }
-                    })
-                  )
-                );
-              }
-            } catch (error) {
-              console.error(`Error fetching user details for student ${studentId}: ${error.message}`);
-            }
-      
-            return {
-              id: studentId,
-              name: student?.fullName ?? student?.user?.firstName + ' ' + student?.user?.lastName,
-              grades: grades,
+            const studentName = student?.fullName ?? `${student?.user?.firstName} ${student?.user?.lastName}`;
+            
+            // Find the assignment for the current student
+            const studentAssignment = allAssignmentsOfStudents.find(asm => asm.classMembership.id === studentId);
+    
+            // Store the grade information
+            const gradeInfo = {
+              grade: studentAssignment?.grade,
+              maxGrade: assignment.maxGrade,
             };
-          });
-      
-          // Wait for all promises to be resolved and return the array
-          return Promise.all(promises);
-        } catch (error) {
-          console.error(`Error fetching student grades: ${error.message}`);
-          return []; // Return an empty array in case of an error
+    
+            // If the student is not already in the result array, add them
+            const existingStudent = result.find(entry => entry.id === studentId);
+            if (!existingStudent) {
+              result.push({
+                id: studentId,
+                name: studentName,
+                grades: { [assignmentId]: gradeInfo },
+              });
+            } else {
+              // If the student is already in the result array, update their grades
+              existingStudent.grades[assignmentId] = gradeInfo;
+            }
+          }
         }
-      };      
+    
+        // Return the final result array
+        return result;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        // Handle errors here
+        return [];
+      }
+    };
+       
       
       const fetchStudentGrades = async () => {
         try {
@@ -300,13 +293,26 @@ const GradeTable = () => {
         }
       };
       // Usage
-      useEffect(() => {
-        const fetchData = async () => {
+      const fetchData = async () => {
+        try {
           const grades = await fetchStudentGrades();
+          console.log(grades);
           setStudentsWithGrades(grades);
-        };
+        } catch (error) {
+          console.error(`Error fetching student grades: ${error.message}`);
+          setStudentsWithGrades([]); // Ensure that studentsWithGrades is set even on error
+        }
+      };
+    
+      useEffect(() => {
         fetchData();
       }, []);
+    
+      // Render only if studentsWithGrades is not null
+      if (studentsWithGrades === null) {
+        return <div>Loading...</div>; // or another loading indicator
+      }
+      
     return (
         <Box spacing={3} maxWidth="1000px" marginX="auto" overflowX="auto">
 
@@ -363,7 +369,7 @@ const GradeTable = () => {
                         <MenuItem
                             sx={{ fontSize: 'small' }}
                             key={assignment.id}
-                            onClick={() => csvExport(`only`,`${assignment.name}`)}
+                            onClick={() => csvExport(`only`,`${assignment.name}`,studentsWithGrades)}
                         >
                             Only {assignment.name} grade
                         </MenuItem>
