@@ -14,10 +14,12 @@ import axios from "axios";
 import { useQueryClient } from '@tanstack/react-query';
 import {toast} from "react-toastify";
 import { useEffect } from 'react';
+import { SocketContext } from '../../../context/socket';
 
 export default function AssignmentPage() {
     const {classId, assignmentId, membershipId} = useParams();
     const [flag, setFlag] = useState(0)
+    const socket = React.useContext(SocketContext);
     const {data: classDetails} = useQuery(
         {
             queryKey: ["class", classId],
@@ -98,7 +100,13 @@ export default function AssignmentPage() {
         isSubmitted: details?.isSubmitted,
         // Add other fields as needed
       });
-    
+      const [notification, setNotification] = useState( {
+        senderId: null,
+        receiverId: null,
+        classMembershipAssignmentId: null,
+        title: "",
+        description: "",
+    });
       const handleFieldChange = (fieldName) => (e) => {
         setReviewData((prevData) => ({
           ...prevData,
@@ -117,6 +125,15 @@ export default function AssignmentPage() {
                 isFinalised: true,
             });
             console.log(response);
+            socket.emit("clientNotification", 
+                {
+                    receiverId: classMembership.id,
+                    senderId: membershipId,
+                    classMembershipAssignmentId: details.id,
+                    title: "Your grade is finalised!",
+                    description: `Your ${details.assignment.name} grade has been finalised!`
+                }
+                );
             toast.success("Successfully finalised!")
         }
         catch(e){
@@ -126,23 +143,30 @@ export default function AssignmentPage() {
     }
     const handleEditAssignment = async () => {
         console.log(details)
+        const name = classMembership?.fullName ?? `${classMembership?.user?.firstName} ${classMembership?.user?.lastName}`
         try {
           if (!['student', 'teacher'].includes(classMembership.role)) {
             throw new Error('Invalid role specified.');
           }
           if (classMembership.role === 'student') {
+            const teacherId = classDetails.classMemberships?.filter(member => member.role === 'teacher')[0].id;
             if (a.isRequested === false) {
-                setReviewData((prevReviewData) => ({
-                    ...prevReviewData,
+                const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, {
+                    ...reviewData,
                     isRequested: true,
-                  }));
-                console.log(reviewData)
+                  });
+                console.log(response);
+                socket.emit("clientNotification", 
+                {
+                    receiverId: teacherId,
+                    senderId: classMembership.id,
+                    classMembershipAssignmentId: details.id,
+                    title: "You have a new review request",
+                    description: `${name} has send you a review request`
+                }
+                );
             } else {
                 if(flag === 1) {
-                    setReviewData((prevReviewData) => ({
-                        ...prevReviewData,
-                        isRequested: false,
-                      }));
                     toast.error("The teachers haven't graded  your work!");
                     return
                 }
@@ -154,17 +178,28 @@ export default function AssignmentPage() {
           } else if (classMembership.role === 'teacher') {
             console.log(a.isRequested)
             if (a.isRequested === true) {
-                setReviewData((prevReviewData) => ({
-                    ...prevReviewData,
+                const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, {
+                    ...reviewData,
                     isRequested: false,
-                  }));
+                  });
+                console.log(response);
+                socket.emit("clientNotification", 
+                {
+                    receiverId: membershipId,
+                    senderId: classMembership.id,
+                    classMembershipAssignmentId: details.id,
+                    title: "Teacher has reviewed your work!",
+                    description: `${name} has reviewed your work!`
+                }
+                );
             } else if(details.isRequested !== true) {
                 if(flag === 1) {
                     console.log("grading");
-                    setReviewData((prevReviewData) => ({
-                        ...prevReviewData,
+                    const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, {
+                        ...reviewData,
                         isRequested: false,
-                      }));
+                      });
+                    console.log(response);
                 }
                 else{
                     toast.error("You have already reviewed this assignment!");
@@ -172,8 +207,6 @@ export default function AssignmentPage() {
                 }
             }
           }
-          const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, reviewData);
-          console.log(response);
       
           await queryClient.refetchQueries();
           

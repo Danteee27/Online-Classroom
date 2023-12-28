@@ -11,6 +11,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import {toast} from "react-toastify";
 import { useNavigate } from 'react-router';
 import EmptyConversation from '../../misc/EmptyConversation';
+import { SocketContext } from '../../../context/socket';
+import { use } from 'i18next';
 
 export default function ToDoPage() {
   const theme = useTheme();
@@ -21,7 +23,10 @@ export default function ToDoPage() {
   const [assignmentId, setAssignmentId] = useState();
   const [openModal, setOpenModal] = useState(false);
   const userId = localStorage.getItem('userId').toString();
-  
+  const [teacherID,setTeacherID] = useState();
+  const socket = React.useContext(SocketContext);
+
+
   const [selectedAssignment, setSelectedAssignment] = useState({
     currentGrade: null,
     grade: null,
@@ -209,8 +214,10 @@ export default function ToDoPage() {
     navigate(newPath);
   };
 
-  const handleOpenModal = (assignment,classItem) => {
-    if(assignment.isSubmitted !== true) {
+  const handleOpenModal = async (assignment,classItem) => {
+    const today = new Date();
+    const dueDate = new Date(assignment.dueDate);
+    if(assignment.isSubmitted !== true && dueDate < today) {
       toast.error("You didn't submitted!");
       return;
     }
@@ -219,6 +226,8 @@ export default function ToDoPage() {
       return;
     }
     setAssignmentId(assignment.id);
+    const response = await axios.get(`api/v1/classes/${assignment.class.id}`);
+    setTeacherID(response.data?.classMemberships?.filter(member => member.role ==='teacher')[0]?.id)
     setSelectedClassId(assignment.class.id);
     setOpenModal(true);
   };  
@@ -232,13 +241,28 @@ export default function ToDoPage() {
       const filteredClassMemberships = classMemberships.filter(member => member.class.id === selectedClassId);
       // Assuming you want to get the 'id' of the first matching classMembership, adjust as needed
       const id = filteredClassMemberships.length > 0 ? filteredClassMemberships[0].id : null;
-  
+      const name = filteredClassMemberships?.fullName ?? `${filteredClassMemberships?.user?.firstName} ${filteredClassMemberships?.user?.lastName}`
       console.log(id);
       console.log(selectedAssignment);
+
       const response = await axios.post(`/api/v1/classes/${selectedClassId}/classMemberships/${id}/assignment/${assignmentId}`);
       const putRequest = await axios.put(`/api/v1/classes/${selectedClassId}/classMemberships/${id}/assignment/${assignmentId}`, selectedAssignment);
       console.log(response);
       console.log(putRequest);
+      const assignment = await axios.get(`/api/v1/classes/${selectedClassId}/classMemberships/${id}/assignment/${assignmentId}`);
+
+      console.log(assignment)
+      console.log(teacherID)
+      
+      socket.emit("clientNotification", 
+                {
+                    receiverId: teacherID,
+                    senderId: id,
+                    classMembershipAssignmentId: assignment.id,
+                    title: "You have a new review request",
+                    description: `${name} has send you a review request`
+                }
+                );
       toast.success("Successfully submitted!")
       handleCloseModal();
     } catch (e) {
