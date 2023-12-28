@@ -253,7 +253,7 @@ export default function AssignmentPage() {
             <Box sx={{flexGrow: 1}}>
                 <Box sx={{display:'flex', justifyContent:'space-between'}}>
                     <Typography variant='h4' sx={{fontFamily:'Google'}}>{a.name}</Typography>
-                    {classMembership?.role === "teacher" ? (
+                    {classMembership?.role === "teacher" && a.isFinalised === false ? (
                     <Button
                     variant="outlined"
                     onClick={handleFinalised}
@@ -267,6 +267,13 @@ export default function AssignmentPage() {
                 >
                     <Star sx={{width: 20, height: 20, fill: theme.palette.primary.main}}/> &nbsp;&nbsp;Finalised 
                 </Button>):null}
+                {a.isFinalised === true && (<Typography variant={'subtitle2'}
+                                sx={{
+                                    marginTop: '1rem',
+                                    fontFamily: 'Google',
+                                   fontWeight: 500,
+                                   fontSize: '.875rem'
+                                }}>Finalised</Typography>)}
                 </Box>
                 <Box sx={{display:'flex'}}><Typography variant={'subtitle2'}
                                sx={{
