@@ -76,9 +76,9 @@ export default function AssignmentPage() {
         teacherComment: details?.teacherComment,
         studentComment: details?.studentComment,
         teacherFinalisedComment: details?.teacherFinalisedComment,
-        grade: details?.grade ?? null,
+        grade: details?.grade,
         currentGrade: details?.currentGrade ?? 0,
-        expectedGrade: details?.expectedGrade ?? 0,
+        expectedGrade: details?.expectedGrade,
         isFinalised: details?.isFinalised,
         isRequested: details?.isRequested,
         isReviewed: details?.isReviewed,
@@ -91,9 +91,9 @@ export default function AssignmentPage() {
         teacherComment: details?.teacherComment,
         studentComment: details?.studentComment,
         teacherFinalisedComment: details?.teacherFinalisedComment,
-        grade: details?.grade ?? null,
+        grade: details?.grade,
         currentGrade: details?.currentGrade ?? 0,
-        expectedGrade: details?.expectedGrade ?? 0,
+        expectedGrade: details?.expectedGrade,
         isFinalised: details?.isFinalised,
         isRequested: details?.isRequested,
         isReviewed: details?.isReviewed,
@@ -107,12 +107,6 @@ export default function AssignmentPage() {
         title: "",
         description: "",
     });
-      const handleFieldChange = (fieldName) => (e) => {
-        setReviewData((prevData) => ({
-          ...prevData,
-          [fieldName]: e.target.value,
-        }));
-      };
     const queryClient = useQueryClient();
     const theme = useTheme();
     const [review, setReview] = useState("");
@@ -151,11 +145,15 @@ export default function AssignmentPage() {
           if (classMembership.role === 'student') {
             const teacherId = classDetails.classMemberships?.filter(member => member.role === 'teacher')[0].id;
             if (a.isRequested === false) {
-                const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, {
-                    ...reviewData,
-                    isRequested: true,
-                  });
-                console.log(response);
+                console.log(reviewData)
+                setReviewData((prevReviewData) => ({
+                    ...prevReviewData, isRequested: true}));
+
+                const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, 
+                    {...reviewData,isRequested:true}
+                );
+                console.log(response.data);
+                console.log(classMembership.id)
                 socket.emit("clientNotification", 
                 {
                     receiverId: teacherId,
@@ -178,11 +176,13 @@ export default function AssignmentPage() {
           } else if (classMembership.role === 'teacher') {
             console.log(a.isRequested)
             if (a.isRequested === true) {
-                const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, {
-                    ...reviewData,
-                    isRequested: false,
-                  });
-                console.log(response);
+                setReviewData((prevReviewData) => ({
+                    ...prevReviewData, isRequested: false}));
+
+                const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, 
+                {...reviewData,isRequested:false}
+                );
+                console.log(response.data);
                 socket.emit("clientNotification", 
                 {
                     receiverId: membershipId,
@@ -195,11 +195,23 @@ export default function AssignmentPage() {
             } else if(details.isRequested !== true) {
                 if(flag === 1) {
                     console.log("grading");
-                    const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, {
-                        ...reviewData,
-                        isRequested: false,
-                      });
-                    console.log(response);
+                    setReviewData((prevReviewData) => ({
+                        ...prevReviewData, isRequested: false}));
+    
+                    const response = await axios.put(`/api/v1/classes/${classId}/classMemberships/${membershipId}/assignment/${assignmentId}`, 
+                    {...reviewData,isRequested:false}
+                    );
+                    console.log(response.data);
+                      socket.emit("clientNotification", 
+                      {
+                          receiverId: membershipId,
+                          senderId: classMembership.id,
+                          classMembershipAssignmentId: details?.id,
+                          title: "Teacher has graded your work!",
+                          description: `${name} has reviewed your ${details.asignment?.name}`
+                      }
+                      );
+                    console.log(`${name} has reviewed your ${details.asignment?.name}`);
                 }
                 else{
                     toast.error("You have already reviewed this assignment!");
@@ -391,14 +403,14 @@ export default function AssignmentPage() {
                 onChange={(e) => setReviewData({ ...reviewData, grade: Number(e.target.value) })}
                 margin="normal"
                 />}
-                {a.teacherComment === null && a.grade !== null ? (
+                {(a.teacherComment === null || a.teacherComment === "") && flag !==1  ? (
                     <TextField
                     label="Comment"
                     fullWidth
                     onChange={(e) => setReviewData({ ...reviewData, teacherComment: e.target.value })}
                     margin="normal"
                     />
-                ) : a.teacherComment !== null && a.grade !== null ? (
+                ) : a.teacherComment !== null  && flag !==1  ? (
                     <TextField
                     label="Comment"
                     fullWidth
@@ -446,18 +458,18 @@ export default function AssignmentPage() {
                     onChange={(e) => setReviewData({ ...reviewData, expectedGrade: Number(e.target.value) })}
                     margin="normal"
                     />
-                    {a.studentComment === null && a.grade !== null ? (
+                    {a.studentExplanation === null ? (
                         <TextField
                         label="Comment"
                         fullWidth
-                        onChange={(e) => setReviewData({ ...reviewData, teacherComment: e.target.value })}
+                        onChange={(e) => setReviewData({ ...reviewData, studentExplanation: e.target.value })}
                         margin="normal"
                         />
-                    ) : a.studentComment !== null && a.grade !== null ? (
+                    ) : a.studentExplanation !== null ? (
                         <TextField
                         label="Comment"
                         fullWidth
-                        onChange={(e) => setReviewData({ ...reviewData, teacherFinalisedComment: e.target.value })}
+                        onChange={(e) => setReviewData({ ...reviewData, studentComment: e.target.value })}
                         margin="normal"
                         />
                     ): null}

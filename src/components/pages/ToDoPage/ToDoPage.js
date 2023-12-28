@@ -391,8 +391,7 @@ export default function ToDoPage() {
             label="Expected Grade"
             fullWidth
             type="number"
-            value={selectedAssignment.expectedGrade || ''}  // Bind to expectedGrade
-            onChange={(e) => setSelectedAssignment({ ...selectedAssignment, expectedGrade: e.target.value })}
+            onChange={(e) => setSelectedAssignment({ ...selectedAssignment, expectedGrade: Number(e.target.value )})}
             margin="normal"
           />
           <TextField
