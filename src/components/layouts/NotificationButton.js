@@ -11,18 +11,19 @@ import i18n from "i18next";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { SocketContext } from "../../context/socket";
+import { toast } from "react-toastify";
 
 export default function NotificationButton() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [notifications, setNotifications] = React.useState([]);
   const userId = localStorage.getItem("userId");
 
-  const { data, refetch } = useQuery({
+  const { data: notifications, refetch } = useQuery({
     queryKey: ["userId", userId],
     queryFn: async () => {
       const response = await axios.get(
         `api/v1/classes/user/${userId}/notifications`
       );
+      console.log(response.data);
       return response.data;
     },
   });
@@ -31,6 +32,7 @@ export default function NotificationButton() {
 
   React.useEffect(() => {
     socket.on(userId, (notification) => {
+      toast.info(notification.title);
       console.log(notification);
       refetch();
     });
@@ -133,7 +135,7 @@ export default function NotificationButton() {
         >
           {i18n.t("Mark all as read")}
         </Button>
-        {notifications.map((notification) => (
+        {notifications?.map((notification) => (
           <NotificationItem {...notification} />
         ))}
       </Box>
