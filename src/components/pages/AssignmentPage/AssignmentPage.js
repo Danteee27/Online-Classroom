@@ -125,7 +125,7 @@ export default function AssignmentPage() {
                     senderId: membershipId,
                     classMembershipAssignmentId: details.id,
                     title: "Your grade is finalised!",
-                    description: `Your ${details.assignment.name} grade has been finalised!`
+                    description: `Your ${a.name} grade has been finalised!`
                 }
                 );
             toast.success("Successfully finalised!")
@@ -159,8 +159,8 @@ export default function AssignmentPage() {
                     receiverId: teacherId,
                     senderId: classMembership.id,
                     classMembershipAssignmentId: details.id,
-                    title: "You have a new review request",
-                    description: `${name} has send you a review request`
+                    title: "You have a new review request!",
+                    description: `${name} has send you a review request for ${a.name}!`
                 }
                 );
             } else {
@@ -189,7 +189,7 @@ export default function AssignmentPage() {
                     senderId: classMembership.id,
                     classMembershipAssignmentId: details.id,
                     title: "Teacher has reviewed your work!",
-                    description: `${name} has reviewed your work!`
+                    description: `${name} has reviewed your work on ${a.name}!`
                 }
                 );
             } else if(details.isRequested !== true) {
@@ -208,7 +208,7 @@ export default function AssignmentPage() {
                           senderId: classMembership.id,
                           classMembershipAssignmentId: details?.id,
                           title: "Teacher has graded your work!",
-                          description: `${name} has reviewed your ${details.asignment?.name}`
+                          description: `${name} has graded your ${a.name}!`
                       }
                       );
                     console.log(`${name} has reviewed your ${details.asignment?.name}`);

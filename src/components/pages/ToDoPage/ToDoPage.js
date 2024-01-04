@@ -259,8 +259,8 @@ export default function ToDoPage() {
                     receiverId: teacherID,
                     senderId: id,
                     classMembershipAssignmentId: assignment.id,
-                    title: "You have a new review request",
-                    description: `${name} has send you a review request`
+                    title: "You have a new grade request!",
+                    description: `${name} has submitted work on ${assignment.name}!`
                 }
                 );
       toast.success("Successfully submitted!")
