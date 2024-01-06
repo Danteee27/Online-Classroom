@@ -110,7 +110,10 @@ function ClassItem({ className, classSubject, teacherName, avatar, classId, disa
               queryFn: async () => {
                   const response = await axios.get(`api/v1/users/${localStorage.getItem('userId')}`);
                   return response.data
-              }
+              },
+              onSuccess: () => {
+                console.log('Classes successfully fetched!');
+              },
           });
       const classes = data?.classMemberships ?? null;
       const isBanned = data?.isLocked ?? false;

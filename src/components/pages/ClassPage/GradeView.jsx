@@ -14,7 +14,15 @@ const GradeView = () => {
   const userId = localStorage.getItem("userId").toString();
   const [openModal, setOpenModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
-  
+  const {data: userDetails} = useQuery(
+    {
+        queryKey: ["user", localStorage.getItem("userId").toString()],
+        queryFn: async () => {
+            const response = await axios.get(`api/v1/users/${localStorage.getItem("userId").toString()}`);
+            return response.data
+        }
+  });
+  const [classMembership, setClassMembership] = useState(null);
   const {classId} = useParams();
 
   const {data: classDetails} = useQuery(
@@ -117,7 +125,12 @@ const GradeView = () => {
       toast.error(e.message);
     }
   };
-
+  useEffect(() => {
+    // Assuming userDetails is fetched successfully
+    const membership = userDetails?.classMemberships?.find(member => member.class.id === Number(classId));
+    setClassMembership(membership);
+    console.log(membership.role);
+  }, [userDetails, classId]); 
   return (
     <Box spacing={3} maxWidth="1000px" marginX="auto">
       <Box
@@ -129,9 +142,9 @@ const GradeView = () => {
         marginBottom="1rem"
       >
         <Typography variant="h4" sx={{ fontFamily: 'Google' }}>Assignments</Typography>
-        <IconButton size={'large'}
+        {classMembership?.role==="teacher" && <IconButton size={'large'}
                         onClick={(e) => handleOpenModal()}
-                        sx={{color: theme.palette.primary.main}}><NoteAdd/></IconButton>
+                        sx={{color: theme.palette.primary.main}}><NoteAdd/></IconButton>}
       </Box>
       <TableContainer component={Paper}>
       <Table>
@@ -176,21 +189,22 @@ const GradeView = () => {
                   display="flex"
                   alignItems="center"
                   justifyContent="space-between"
-                >
+                >{classMembership?.role==="teacher" && 
                   <IconButton
                     size="large"
                     onClick={() => handleOpenEditModal(assignment)}
                     style={{ color: theme.palette.success.main }}
                   >
                     <Edit/>
-                  </IconButton>
+                  </IconButton>}
+                  {classMembership?.role==="teacher" && 
                   <IconButton
                     size="large"
                     onClick={() => handleDeleteAssignment(assignment)}
                     style={{ color: theme.palette.error.main }}
                   >
                     <DeleteForever />
-                  </IconButton>
+                  </IconButton>}
                 </Box>
               </TableCell>
             </TableRow>

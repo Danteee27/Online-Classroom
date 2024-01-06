@@ -12,7 +12,7 @@ import {baseUrl} from "../../apis/api.config";
 import {toast} from "react-toastify";
 import i18n from "i18next";
 import {useQuery} from "@tanstack/react-query";
-
+import { useQueryClient } from '@tanstack/react-query';
 export default function AddClassButton() {
     const [anchorElMenu, setAnchorElMenu] = React.useState(null);
     const [anchorElCreateClass, setAnchorElCreateClass] = React.useState(null);
@@ -20,7 +20,7 @@ export default function AddClassButton() {
 
     const [className, setClassName] = React.useState("");
     const [classNameError, setClassNameError] = React.useState(false);
-
+    const queryClient = useQueryClient();
     const [section, setSection] = React.useState("");
     const [subject, setSubject] = React.useState("");
     const [room, setRoom] = React.useState("");
@@ -90,6 +90,8 @@ export default function AddClassButton() {
 
         const response = await axios.post( 'api/v1/classes', data);
         console.log(response)
+        
+        queryClient.invalidateQueries('classes');
         // on complete
         setAnchorElCreateClass(null);
     }

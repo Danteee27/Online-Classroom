@@ -280,30 +280,44 @@ export default function ToDoPage() {
           </MenuItem>
         ))}
       </Select>
-      {classes.map((classItem) => {
-          const classAssignments = assignments.filter(assignment => assignment.class.className === classItem.className);
-          if (selectedClassId !== "defaul" && classAssignments===0){
-            return (
+      {assignments?.length===0 && selectedClassId ==="default" && (<Box marginTop={2}>
             <Box mt={3} sx={{px: 4, py: 4, border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex'}}>
               <EmptyConversation style={{width: '150px'}}/>
               <div style={{marginLeft: '4ch'}}>
                 <Typography variant={'h5'}sx={{fontFamily: 'Google', color: theme.palette.primary.main}}>
-                                                            sadasdasdsda
+                You have had no assignments!
                 </Typography>
                 <Typography variant={'subtitle2'}
-                              sx={{fontFamily: 'Google'}}>asdsdads
+                              sx={{fontFamily: 'Google'}}>See you later!
                 </Typography>
-                  <Button sx={{
-                      textTransform: 'none', fontFamily: 'Google', border: '0.0625rem solid rgb(218,220,224)',
-                      mb: -1,
-                      mr: -1,
-                      ml: 'auto',
-                      display: 'flex', alignItems: 'center'
-                  }}>
-                      <Settings fill={theme.palette.primary.main} style={{width: '20px', marginRight: '1ch'}}/> Settings
-                  </Button>
               </div>
-           </Box>);
+           </Box></Box>)}
+      {classes.map((classItem) => {
+          const classAssignments = assignments.filter(assignment => assignment.class.className === classItem.className);
+          if (selectedClassId===classItem.id && classAssignments.length===0){
+            return (
+              <Box key={classItem.id} marginTop={2}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  color={theme.palette.primary.main}
+                  borderBottom={`0.0625rem solid ${theme.palette.primary.main}`}
+                  marginBottom="1rem"
+                >
+                  <Typography variant="h4" sx={{ fontFamily: 'Google' }}>{classItem.className}</Typography>
+                </Box>
+            <Box mt={3} sx={{px: 4, py: 4, border: '0.0625rem solid rgb(218,220,224)', borderRadius: 2, display: 'flex'}}>
+              <EmptyConversation style={{width: '150px'}}/>
+              <div style={{marginLeft: '4ch'}}>
+                <Typography variant={'h5'}sx={{fontFamily: 'Google', color: theme.palette.primary.main}}>
+                You have had no assignments for {classItem.className}!
+                </Typography>
+                <Typography variant={'subtitle2'}
+                              sx={{fontFamily: 'Google'}}>See you later!
+                </Typography>
+              </div>
+           </Box></Box>);
           }
           // Only render the class header if there are assignments for the class
           else if (classAssignments.length > 0) {
