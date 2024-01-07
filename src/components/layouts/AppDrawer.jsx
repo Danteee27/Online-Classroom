@@ -148,8 +148,8 @@ export default function AppDrawer({open}) {
     const isStudying = data?.classMemberships?.some(membership => membership.role === "student" ) ?? false;
     const isBanned = data?.isLocked ?? false;
 
-    const enrolledClasses = classes.filter(member => member.role === 'student');
-    const teachingClasses = classes.filter(member => member.role === 'teacher');
+    const enrolledClasses= classes?.filter(member => member.role === 'student') ?? null;
+    const teachingClasses = classes?.filter(member => member.role === 'teacher') ?? null;
 
     const drawerList = (<List sx={{paddingTop: '4rem'}}>
 
@@ -182,7 +182,7 @@ export default function AppDrawer({open}) {
                                     icon={(<AssignmentOutlined/>)}
                                     open={open}
                                     to={'todo'}/>
-                        {open && classes != null && enrolledClasses.map((item) => (
+                        {open && enrolledClasses != null && enrolledClasses.map((item) => (
                             <DrawerItem key={item.class.className}
                                         title={item.class.className}
                                         icon={(<Avatar sx={{
@@ -225,7 +225,7 @@ export default function AppDrawer({open}) {
                                     icon={(<SourceOutlined/>)}
                                     open={open}
                                     to={'toReview'}/>
-                        {open && classes != null && teachingClasses.map((item) => (
+                        {open && teachingClasses != null && teachingClasses.map((item) => (
                             <DrawerItem key={item.class.className}
                                         title={item.class.className}
                                         icon={(<Avatar sx={{

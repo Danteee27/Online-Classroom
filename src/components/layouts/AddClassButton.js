@@ -51,18 +51,14 @@ export default function AddClassButton() {
             const getClassResponse = await axios.get(`api/v1/classes/byClasscode/${classInviteLink}`);
 
             const classId = getClassResponse.data.id;
-            const data = user?.studentId != null ? {
-                fullName: user?.firstName + ' ' + user?.lastName ?? '',
-                role: 'student',
-                userId: (user?.id).toString(),
-                studentId:  (user?.studentId).toString()
-            } :  {
+            const data = {
                 fullName: user?.firstName + ' ' + user?.lastName ?? '',
                 role: 'student',
                 userId: (user?.id).toString(),
             }
 
             const addClassResponse = await axios.post(`api/v1/classes/${classId}/classMemberships`, data);
+            queryClient.invalidateQueries('classes');
             toast.success(`You have been added to ${getClassResponse.data.className + ' - ' + getClassResponse.data.description}. Welcome to the class!`);
         } catch (e) {
             toast.error(e.message)
