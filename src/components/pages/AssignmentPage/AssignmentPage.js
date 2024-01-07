@@ -121,8 +121,8 @@ export default function AssignmentPage() {
             console.log(response);
             socket.emit("clientNotification", 
                 {
-                    receiverId: classMembership.id,
-                    senderId: membershipId,
+                    receiverId: membershipId,
+                    senderId: classMembership.id,
                     classMembershipAssignmentId: details.id,
                     title: "Your grade is finalised!",
                     description: `Your ${a.name} grade has been finalised!`

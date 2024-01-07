@@ -200,7 +200,7 @@ if (isError) {
            </Box></Box>);
           }
           // Only render the class header if there are assignments for the class
-          else if (classAssignments.length > 0) {
+          if (selectedClassId !== "default" && classAssignments===0){
             return (
               <Box key={classItem.id} marginTop={2}>
                 <Box

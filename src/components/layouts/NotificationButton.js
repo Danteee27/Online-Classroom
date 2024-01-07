@@ -63,6 +63,7 @@ export default function NotificationButton() {
         queryKey: ["user", localStorage.getItem("userId").toString()],
         queryFn: async () => {
             const response = await axios.get(`api/v1/users/${localStorage.getItem("userId").toString()}`);
+            console.log(response.data);
             return response.data
         }
   });
@@ -74,11 +75,6 @@ export default function NotificationButton() {
     const newPath = `/u/c/${classId}/a/${assignmentId}/m/${studentId}`; // Adjust the numbers as needed
     navigate(newPath);
   };
-  const getAssignmentId = (assignmentId) =>{
-    if (assignmentId){
-        console.log(userDetails);
-    }
-  }
   function NotificationItem(props) {
     return (
       <Button
