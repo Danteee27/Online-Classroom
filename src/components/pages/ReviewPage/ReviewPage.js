@@ -173,7 +173,7 @@ if (isError) {
               </div>
            </Box></Box>)}
         {classes.map((classItem) => {
-          const classAssignments = assignments.filter(assignment => assignment.class.className === classItem.className);
+          const classAssignments = assignments.filter(assignment => assignment.class.id === classItem.id);
           if (selectedClassId===classItem.id && classAssignments.length===0){
             return (
               <Box key={classItem.id} marginTop={2}>

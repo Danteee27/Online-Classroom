@@ -12,11 +12,12 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { SocketContext } from "../../context/socket";
 import { toast } from "react-toastify";
-
+import { useNavigate
+ } from "react-router-dom";
 export default function NotificationButton() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const userId = localStorage.getItem("userId");
-
+  const navigate = useNavigate();
   const { data: notifications, refetch } = useQuery({
     queryKey: ["userId", userId],
     queryFn: async () => {
@@ -57,6 +58,27 @@ export default function NotificationButton() {
     socket.emit("clientNotification", notification);
   };
 
+  const {data: userDetails} = useQuery(
+    {
+        queryKey: ["user", localStorage.getItem("userId").toString()],
+        queryFn: async () => {
+            const response = await axios.get(`api/v1/users/${localStorage.getItem("userId").toString()}`);
+            return response.data
+        }
+  });
+  const navigateToNewPath = (assignmentId, studentId, classId) => {
+    if (!studentId){
+      toast.error("Student hasn't submitted!")
+      return;
+    }
+    const newPath = `/u/c/${classId}/a/${assignmentId}/m/${studentId}`; // Adjust the numbers as needed
+    navigate(newPath);
+  };
+  const getAssignmentId = (assignmentId) =>{
+    if (assignmentId){
+        console.log(userDetails);
+    }
+  }
   function NotificationItem(props) {
     return (
       <Button
@@ -74,6 +96,7 @@ export default function NotificationButton() {
             background: "#e0e5ec",
           },
         }}
+        onClick={navigate('')}
       >
         <Avatar sx={{ width: "40px", height: "40px" }} />
         <div>
