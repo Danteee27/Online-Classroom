@@ -278,7 +278,7 @@ const GradeView = () => {
             fullWidth
             type="number"
             value={selectedAssignment?.maxGrade || ''}
-            onChange={(e) => setSelectedAssignment({ ...selectedAssignment, maxGrade: e.target.value })}
+            onChange={(e) => setSelectedAssignment({ ...selectedAssignment, maxGrade: Number(e.target.value) })}
             margin="normal"
           />
           <TextField
