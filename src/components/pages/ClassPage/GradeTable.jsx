@@ -143,9 +143,13 @@ const StudentGradesTable = ({ assignments, students, refetch, classMembership}) 
                 <TableCell align="center" style={{border: '1px solid #ddd' }}>{student.name}</TableCell>
                 {assignments?.map((assignment) => (
                   <TableCell key={assignment.id} align="center" style={{ border: '1px solid #ddd'}} onClick={() => { navigate('a/'+assignment.id + '/m/' + student.id) }}>
-                    {student.grades[assignment.id]?.grade !== undefined
-                      ? `${student.grades[assignment.id]?.grade}/100`
-                      : '-'}
+                    {
+                    student.grades[assignment.id]?.grade !== undefined
+                      ? student.grades[assignment.id]?.grade !== null
+                        ? `${student.grades[assignment.id]?.grade}/100`
+                        : 'Ungraded'
+                      : '-'
+                  }
                   </TableCell>
                 ))}
                 <TableCell align="center" style={{ fontWeight: 'bold', border: '1px solid #ddd' }}>
@@ -506,7 +510,7 @@ const GradeTable = () => {
         // Assuming userDetails is fetched successfully
         const membership = userDetails?.classMemberships?.find(member => member.class.id === Number(classId));
         setClassMembership(membership);
-        console.log(membership.role);
+        console.log(membership?.role);
       }, [userDetails, classId]); 
       // Render only if studentsWithGrades is not null
       if (studentsWithGrades === null) {
